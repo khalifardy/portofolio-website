@@ -1,0 +1,268 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Astrophotography Gallery - IDEASOPHIA{% endblock %}
+
+{% block content %}
+<!-- Gallery Header -->
+<section class="gallery-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="header-icon">🔭</div>
+            <h1>Astrophotography Gallery</h1>
+            <p class="header-subtitle">Capturing the Beauty of the Cosmos</p>
+            <p class="header-description">
+                A collection of celestial wonders captured through my telescope. 
+                Each photograph tells a story of the universe beyond our world. 🌌
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="gallery-page">
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3 class="filter-title">🌟 Browse by Object Type</h3>
+            <div class="filter-buttons">
+                <a href="{% url 'astronomy:gallery' %}" 
+                   class="filter-btn {% if not current_type %}active{% endif %}">
+                    <span>🌿</span> All Photos
+                </a>
+                {% for value, label in object_types %}
+                <a href="?type={{ value }}" 
+                   class="filter-btn {% if current_type == value %}active{% endif %}">
+                    <span>
+                        {% if value == 'planet' %}🪐
+                        {% elif value == 'moon' %}🌙
+                        {% elif value == 'star' %}⭐
+                        {% elif value == 'nebula' %}🌌
+                        {% elif value == 'galaxy' %}🌀
+                        {% elif value == 'constellation' %}✨
+                        {% elif value == 'meteor' %}☄️
+                        {% elif value == 'sun' %}☀️
+                        {% elif value == 'eclipse' %}🌑
+                        {% else %}🔭{% endif %}
+                    </span>
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Stats Info -->
+        <div class="gallery-stats">
+            <div class="stat-card">
+                <span class="stat-icon">📸</span>
+                <div class="stat-info">
+                    <span class="stat-value">{{ page_obj.paginator.count }}</span>
+                    <span class="stat-label">Total Photos</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🔭</span>
+                <div class="stat-info">
+                    <span class="stat-value">{{ object_types|length }}</span>
+                    <span class="stat-label">Object Types</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Grid -->
+        <div class="astro-grid">
+            {% for photo in page_obj %}
+            <div class="astro-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:0|divisibleby:3|yesno:'0,100,200' }}">
+                <div class="astro-image" onclick="openLightbox({{ forloop.counter0 }})">
+                    {% if photo.image %}
+                    <img src="{{ photo.image.url }}" alt="{{ photo.title }}" loading="lazy" class="gallery-img">
+                    {% else %}
+                    <div class="astro-placeholder">
+                        <span class="placeholder-icon">🌌</span>
+                        <p>No Image</p>
+                    </div>
+                    {% endif %}
+                    <div class="astro-overlay">
+                        <div class="overlay-content">
+                            <h3>{{ photo.title }}</h3>
+                            <p class="photo-date">📅 {{ photo.capture_date|date:"F d, Y" }}</p>
+                            <div class="astro-details">
+                                {% if photo.exposure_time %}
+                                <span class="detail-item">
+                                    <span class="detail-icon">📸</span>
+                                    {{ photo.exposure_time }}
+                                </span>
+                                {% endif %}
+                                {% if photo.telescope %}
+                                <span class="detail-item">
+                                    <span class="detail-icon">🔭</span>
+                                    {{ photo.telescope }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <button class="view-full-btn">
+                                <span>👁️</span> View Full Size
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-items">
+                <div class="no-items-icon">🌌</div>
+                <h3>No Photos Found</h3>
+                <p>No astrophotography matches your filter. Try a different category!</p>
+                <a href="{% url 'astronomy:gallery' %}" class="btn-primary">View All Photos</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if current_type %}&type={{ current_type }}{% endif %}" 
+                   class="page-link page-prev">
+                    ← Previous
+                </a>
+            {% endif %}
+            
+            <div class="page-numbers">
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span class="page-number active">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}{% if current_type %}&type={{ current_type }}{% endif %}" 
+                           class="page-number">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if current_type %}&type={{ current_type }}{% endif %}" 
+                   class="page-link page-next">
+                    Next →
+                </a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="lightbox">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <span class="lightbox-prev" onclick="changeImage(-1)">&#10094;</span>
+    <span class="lightbox-next" onclick="changeImage(1)">&#10095;</span>
+    
+    <div class="lightbox-content">
+        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-info">
+            <h3 id="lightbox-title"></h3>
+            <p id="lightbox-date"></p>
+            <div id="lightbox-details" class="lightbox-details"></div>
+        </div>
+    </div>
+    
+    <div class="lightbox-counter">
+        <span id="lightbox-current">1</span> / <span id="lightbox-total">{{ page_obj.paginator.count }}</span>
+    </div>
+</div>
+
+<!-- Hidden data for lightbox -->
+<script id="photos-data" type="application/json">
+[
+    {% for photo in page_obj %}
+    {
+        "image": "{% if photo.image %}{{ photo.image.url }}{% endif %}",
+        "title": "{{ photo.title|escapejs }}",
+        "date": "{{ photo.capture_date|date:'F d, Y' }}",
+        "exposure": "{% if photo.exposure_time %}{{ photo.exposure_time }}{% endif %}",
+        "telescope": "{% if photo.telescope %}{{ photo.telescope }}{% endif %}",
+        "object_name": "{{ photo.object_name|escapejs }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+
+<script>
+// Lightbox functionality
+let currentImageIndex = 0;
+let photosData = [];
+
+// Load photos data
+document.addEventListener('DOMContentLoaded', function() {
+    const dataScript = document.getElementById('photos-data');
+    if (dataScript) {
+        photosData = JSON.parse(dataScript.textContent);
+    }
+});
+
+function openLightbox(index) {
+    currentImageIndex = index;
+    const lightbox = document.getElementById('lightbox');
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    showImage(currentImageIndex);
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function changeImage(direction) {
+    currentImageIndex += direction;
+    
+    // Loop around
+    if (currentImageIndex >= photosData.length) {
+        currentImageIndex = 0;
+    } else if (currentImageIndex < 0) {
+        currentImageIndex = photosData.length - 1;
+    }
+    
+    showImage(currentImageIndex);
+}
+
+function showImage(index) {
+    const photo = photosData[index];
+    
+    document.getElementById('lightbox-img').src = photo.image;
+    document.getElementById('lightbox-title').textContent = photo.title;
+    document.getElementById('lightbox-date').textContent = '📅 ' + photo.date;
+    
+    let detailsHTML = '';
+    if (photo.exposure) {
+        detailsHTML += `<span class="lightbox-detail">📸 ${photo.exposure}</span>`;
+    }
+    if (photo.telescope) {
+        detailsHTML += `<span class="lightbox-detail">🔭 ${photo.telescope}</span>`;
+    }
+    document.getElementById('lightbox-details').innerHTML = detailsHTML;
+    
+    document.getElementById('lightbox-current').textContent = index + 1;
+    document.getElementById('lightbox-total').textContent = photosData.length;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox.style.display === 'flex') {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+            changeImage(-1);
+        } else if (e.key === 'ArrowRight') {
+            changeImage(1);
+        }
+    }
+});
+
+// Close on background click
+document.getElementById('lightbox')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeLightbox();
+    }
+});
+</script>
+{% endblock %}

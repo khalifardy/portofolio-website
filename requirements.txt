@@ -1,0 +1,13 @@
+asgiref==3.9.1
+Django==5.2.6
+django-environ==0.12.0
+django-taggit==6.1.0
+Markdown==3.9
+pillow==11.3.0
+psycopg2-binary==2.9.10
+pymdown-extensions==10.16.1
+python-decouple==3.8
+python-slugify==8.0.4
+PyYAML==6.0.3
+sqlparse==0.5.3
+text-unidecode==1.3

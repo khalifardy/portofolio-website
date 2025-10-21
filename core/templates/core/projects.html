@@ -1,0 +1,231 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Projects - IDEASOPHIA{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header projects-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="header-icon">🌱</div>
+            <h1>Projects & Research Portfolio</h1>
+            <p class="header-subtitle">Where Ideas Transform Into Innovation</p>
+            <p class="header-description">
+                Explore my journey in Software Development, AI Research, Astronomy, Physics, Mathematics, and Engineering. 
+                Each project represents a leaf in the garden of knowledge.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="projects-page">
+    <div class="container">
+        <!-- Type Filter (Projects vs Research) -->
+        <div class="type-filter-section">
+            <h3 class="filter-title">📂 Browse by Type</h3>
+            <div class="type-buttons">
+                <a href="?type=all" class="type-btn {% if not request.GET.type or request.GET.type == 'all' %}active{% endif %}">
+                    <span>🌿</span> All
+                </a>
+                <a href="?type=projects" class="type-btn {% if request.GET.type == 'projects' %}active{% endif %}">
+                    <span>💻</span> Projects
+                </a>
+                <a href="?type=research" class="type-btn {% if request.GET.type == 'research' %}active{% endif %}">
+                    <span>🔬</span> Research
+                </a>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        {% if request.GET.type != 'research' %}
+        <div class="filter-section">
+            <h3 class="filter-title">🔍 Browse by Category</h3>
+            <div class="filter-buttons">
+                <a href="{% url 'core:projects' %}" 
+                   class="filter-btn {% if not current_category %}active{% endif %}">
+                    <span>🌿</span> All Categories
+                </a>
+                {% for category in categories %}
+                <a href="?category={{ category.slug }}" 
+                   class="filter-btn {% if current_category == category.slug %}active{% endif %}">
+                    <span>{{ category.icon|default:"📁" }}</span> {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Research Category Filter (Only show if type=research) -->
+        {% if request.GET.type == 'research' %}
+        <div class="filter-section research-filter">
+            <h3 class="filter-title">🔬 Research Fields</h3>
+            <div class="filter-buttons">
+                <a href="?type=research" class="filter-btn {% if not research_category %}active{% endif %}">
+                    <span>🌿</span> All Research
+                </a>
+                <a href="?type=research&research_category=Astronomy" class="filter-btn {% if research_category == 'Astronomy' %}active{% endif %}">
+                    <span>🔭</span> Astronomy
+                </a>
+                <a href="?type=research&research_category=AI & Machine Learning" class="filter-btn {% if research_category == 'AI & Machine Learning' %}active{% endif %}">
+                    <span>🤖</span> AI & ML
+                </a>
+                <a href="?type=research&research_category=Physics" class="filter-btn {% if research_category == 'Physics' %}active{% endif %}">
+                    <span>⚛️</span> Physics
+                </a>
+                <a href="?type=research&research_category=Mathematics" class="filter-btn {% if research_category == 'Mathematics' %}active{% endif %}">
+                    <span>∑</span> Mathematics
+                </a>
+                <a href="?type=research&research_category=Engineering" class="filter-btn {% if research_category == 'Engineering' %}active{% endif %}">
+                    <span>⚙️</span> Engineering
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Projects Grid -->
+        <div class="projects-grid">
+            {% for project in projects %}
+            <article class="project-card {% if project.type_project == 'research' %}research-card{% endif %}">
+                <!-- Project Type Badge -->
+                <div class="project-type-badge {% if project.type_project == 'research' %}research-badge{% endif %}">
+                    {% if project.type_project == 'research' %}
+                        🔬 Research
+                    {% else %}
+                        💻 Project
+                    {% endif %}
+                </div>
+
+                <!-- Project Image -->
+                {% if project.thumbnail %}
+                <div class="project-image">
+                    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="view-project">View Details →</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="project-image-placeholder">
+                    <div class="placeholder-content">
+                        {% if project.type_project == 'research' %}
+                            <span class="placeholder-icon">🔬</span>
+                        {% else %}
+                            <span class="placeholder-icon">{{ project.category.icon|default:"🚀" }}</span>
+                        {% endif %}
+                        <p>{{ project.category.name }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Project Content -->
+                <div class="project-content">
+                    <!-- Badges -->
+                    <div class="project-badges">
+                        {% if project.is_featured %}
+                        <span class="badge badge-featured">⭐ Featured</span>
+                        {% endif %}
+                        <span class="badge badge-status status-{{ project.status }}">
+                            {{ project.get_status_display }}
+                        </span>
+                        {% if project.type_project == 'research' and project.research_category %}
+                        <span class="badge badge-research-category">
+                            {{ project.research_category.kategori }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Title & Description -->
+                    <h3 class="project-title">
+                        <a href="{% url 'core:project_detail' project.slug %}">
+                            {{ project.title }}
+                        </a>
+                    </h3>
+                    <p class="project-description">{{ project.short_description|truncatewords:25 }}</p>
+                    
+                    <!-- Category Tag -->
+                    <div class="project-meta">
+                        <span class="category-tag">
+                            <span>{{ project.category.icon|default:"📁" }}</span>
+                            {{ project.category.name }}
+                        </span>
+                        {% if project.type_project == 'research' and project.research_category %}
+                        <span class="research-field-tag">
+                            {% if project.research_category.kategori == 'Astronomy' %}🔭
+                            {% elif project.research_category.kategori == 'AI & Machine Learning' %}🤖
+                            {% elif project.research_category.kategori == 'Physics' %}⚛️
+                            {% elif project.research_category.kategori == 'Mathematics' %}∑
+                            {% elif project.research_category.kategori == 'Engineering' %}⚙️
+                            {% else %}🔬{% endif %}
+                            {{ project.research_category.kategori }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="project-actions">
+                        <a href="{% url 'core:project_detail' project.slug %}" class="btn-project-detail">
+                            Learn More →
+                        </a>
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" class="btn-icon" title="GitHub">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" target="_blank" class="btn-icon" title="Live Demo">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="no-projects">
+                <img class = 'no-posts-icon' src="{% static 'core/images/Thinking (1).png' %}" alt="sophiathink" width="150">
+                <h3>No Projects Found</h3>
+                <p>No projects match your criteria. Try a different filter!</p>
+                <a href="{% url 'core:projects' %}" class="btn-primary">View All</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if projects.has_other_pages %}
+        <nav class="pagination">
+            {% if projects.has_previous %}
+                <a href="?page={{ projects.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if research_category %}&research_category={{ research_category }}{% endif %}" 
+                   class="page-link">
+                    ← Previous
+                </a>
+            {% endif %}
+            
+            <span class="page-info">
+                Page {{ projects.number }} of {{ projects.paginator.num_pages }}
+            </span>
+            
+            {% if projects.has_next %}
+                <a href="?page={{ projects.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if research_category %}&research_category={{ research_category }}{% endif %}" 
+                   class="page-link">
+                    Next →
+                </a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Interested in Collaboration?</h2>
+            <p>Let's work together on innovative projects and groundbreaking research! 🔬🌱</p>
+            <a href="{% url 'core:contact' %}" class="btn-primary btn-large">Get In Touch</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

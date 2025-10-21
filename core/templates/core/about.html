@@ -1,0 +1,285 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}About Me - IDEASOPHIA{% endblock %}
+
+{% block content %}
+<!-- About Header -->
+<section class="about-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="header-icon">🦉</div>
+            <h1>About Me</h1>
+            <p class="header-subtitle">Meet Sophia's Guide Through the Garden of Knowledge</p>
+            <p class="header-description">
+                Where curiosity meets expertise, and ideas grow like leaves under the sun. 🌱
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Intro Section -->
+<section class="about-intro">
+    <div class="container">
+        <div class="intro-grid">
+            <div class="intro-image">
+                <img src="{% static 'core/images/Reading1.png' %}" alt="Sophia the Owl" class="sophia-img">
+                <div class="image-decoration">
+                    <span class="deco-leaf">🍃</span>
+                    <span class="deco-star">✨</span>
+                    <span class="deco-book">📚</span>
+                </div>
+            </div>
+            <div class="intro-content">
+                <h2>👋 Hello, I'm Khalifardy Miqdarsah</h2>
+                <p class="intro-tagline">
+                    A curious explorer at the intersection of <strong>Technology</strong>, 
+                    <strong>Science</strong>, and <strong>Philosophy</strong>.
+                </p>
+                <p class="intro-text">
+                    Welcome to IDEASOPHIA – my digital garden where ideas bloom and knowledge grows. 
+                    I'm a software developer, astronomy enthusiast, and lifelong learner passionate about 
+                    understanding the universe through both telescopes and algorithms.
+                </p>
+                <p class="intro-text">
+                    Like Sophia the Owl, my mascot and guide, I believe in the wisdom that comes from 
+                    patient observation, careful analysis, and continuous learning. Every project, every 
+                    line of code, and every night under the stars is an opportunity to discover something new.
+                </p>
+                <div class="intro-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">💻</span>
+                        <span class="stat-value">5+</span>
+                        <span class="stat-label">Years Coding</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔭</span>
+                        <span class="stat-value">100+</span>
+                        <span class="stat-label">Night Observations</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🚀</span>
+                        <span class="stat-value">20+</span>
+                        <span class="stat-label">Projects Completed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills & Expertise -->
+<section class="skills-section">
+    <div class="container">
+        <h2 class="section-heading">
+            <span class="heading-icon">🛠️</span>
+            Skills & Expertise
+        </h2>
+        
+        <div class="skills-grid">
+            <div class="skill-category">
+                <div class="category-header">
+                    <span class="category-icon">💻</span>
+                    <h3>Software Development</h3>
+                </div>
+                <div class="skills-list">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Django</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">PostgreSQL</span>
+                    <span class="skill-tag">Git</span>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <div class="category-header">
+                    <span class="category-icon">🤖</span>
+                    <h3>AI & Machine Learning</h3>
+                </div>
+                <div class="skills-list">
+                    <span class="skill-tag">TensorFlow</span>
+                    <span class="skill-tag">PyTorch</span>
+                    <span class="skill-tag">Scikit-learn</span>
+                    <span class="skill-tag">NLP</span>
+                    <span class="skill-tag">Computer Vision</span>
+                    <span class="skill-tag">Data Analysis</span>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <div class="category-header">
+                    <span class="category-icon">🔭</span>
+                    <h3>Astronomy & Research</h3>
+                </div>
+                <div class="skills-list">
+                    <span class="skill-tag">Astrophotography</span>
+                    <span class="skill-tag">Data Collection</span>
+                    <span class="skill-tag">Telescope Operation</span>
+                    <span class="skill-tag">Image Processing</span>
+                    <span class="skill-tag">Sky Observation</span>
+                    <span class="skill-tag">Research Analysis</span>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <div class="category-header">
+                    <span class="category-icon">⚛️</span>
+                    <h3>Science & Mathematics</h3>
+                </div>
+                <div class="skills-list">
+                    <span class="skill-tag">Physics</span>
+                    <span class="skill-tag">Mathematics</span>
+                    <span class="skill-tag">Statistical Analysis</span>
+                    <span class="skill-tag">Engineering</span>
+                    <span class="skill-tag">Problem Solving</span>
+                    <span class="skill-tag">Critical Thinking</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Journey Timeline -->
+<section class="journey-section">
+    <div class="container">
+        <h2 class="section-heading">
+            <span class="heading-icon">🌱</span>
+            My Journey
+        </h2>
+        
+        <div class="timeline">
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-marker">🌟</div>
+                <div class="timeline-content">
+                    <h3>The Beginning</h3>
+                    <span class="timeline-date">Early Years</span>
+                    <p>Fascinated by the night sky and computers, I started exploring both worlds with curiosity and wonder.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item" data-aos="fade-left">
+                <div class="timeline-marker">💻</div>
+                <div class="timeline-content">
+                    <h3>Software Development</h3>
+                    <span class="timeline-date">2018 - Present</span>
+                    <p>Began my journey in programming, mastering Python, web development, and building solutions that matter.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-marker">🔭</div>
+                <div class="timeline-content">
+                    <h3>Astronomy Passion</h3>
+                    <span class="timeline-date">2020 - Present</span>
+                    <p>Started serious astronomical observations, astrophotography, and documenting celestial phenomena.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item" data-aos="fade-left">
+                <div class="timeline-marker">🤖</div>
+                <div class="timeline-content">
+                    <h3>AI & Research</h3>
+                    <span class="timeline-date">2022 - Present</span>
+                    <p>Expanded into AI/ML, combining technology with scientific research and data analysis.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-marker">🌿</div>
+                <div class="timeline-content">
+                    <h3>IDEASOPHIA</h3>
+                    <span class="timeline-date">2024 - Present</span>
+                    <p>Created this digital garden to share knowledge, projects, and research with the world.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Philosophy & Values -->
+<section class="philosophy-section">
+    <div class="container">
+        <h2 class="section-heading">
+            <span class="heading-icon">💡</span>
+            Philosophy & Values
+        </h2>
+        
+        <div class="philosophy-grid">
+            <div class="philosophy-card">
+                <div class="philosophy-icon">🌱</div>
+                <h3>Continuous Growth</h3>
+                <p>Like leaves growing under the sun, I believe in constant learning and improvement. Every day is an opportunity to learn something new.</p>
+            </div>
+            
+            <div class="philosophy-card">
+                <div class="philosophy-icon">🔬</div>
+                <h3>Scientific Curiosity</h3>
+                <p>Question everything, observe carefully, and let data guide your conclusions. Science and technology are tools for understanding our world.</p>
+            </div>
+            
+            <div class="philosophy-card">
+                <div class="philosophy-icon">🤝</div>
+                <h3>Knowledge Sharing</h3>
+                <p>Knowledge grows when shared. I'm committed to open-source contributions, teaching, and collaborative learning.</p>
+            </div>
+            
+            <div class="philosophy-card">
+                <div class="philosophy-icon">⚡</div>
+                <h3>Innovation & Impact</h3>
+                <p>Build solutions that matter. Technology should serve humanity and make the world a better place.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Research Interests -->
+<section class="interests-section">
+    <div class="container">
+        <h2 class="section-heading">
+            <span class="heading-icon">🔍</span>
+            Research Interests
+        </h2>
+        
+        <div class="interests-grid">
+            <div class="interest-card">
+                <div class="interest-icon">🔭</div>
+                <h3>Observational Astronomy</h3>
+                <p>Documenting celestial events, astrophotography, and citizen science contributions to astronomical research.</p>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-icon">🤖</div>
+                <h3>AI for Science</h3>
+                <p>Applying machine learning to scientific problems, data analysis, and pattern recognition in research.</p>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-icon">⚛️</div>
+                <h3>Physics & Mathematics</h3>
+                <p>Exploring fundamental principles, computational physics, and mathematical modeling of natural phenomena.</p>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-icon">🌍</div>
+                <h3>Technology & Society</h3>
+                <p>Understanding the impact of technology on society, ethics in AI, and sustainable innovation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Let's Explore Together</h2>
+            <p>Interested in collaboration, have questions, or just want to connect? I'd love to hear from you! 🌟</p>
+            <div class="cta-buttons">
+                <a href="{% url 'core:contact' %}" class="btn-primary btn-large">Get In Touch</a>
+                <a href="{% url 'core:projects' %}" class="btn-secondary btn-large">View My Work</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

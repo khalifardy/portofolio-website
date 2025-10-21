@@ -1,0 +1,696 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ================== BLOG DETAIL STYLING ================== */
+.blog-detail-page {
+    background: var(--bg-primary);
+    padding: 3rem 0;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: var(--accent);
+}
+
+.breadcrumb .separator {
+    color: var(--text-secondary);
+}
+
+.breadcrumb .current {
+    color: var(--accent);
+}
+
+/* Post Header */
+.post-header {
+    background: linear-gradient(135deg, rgba(44, 124, 65, 0.2), rgba(55, 167, 73, 0.1));
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 20px;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.post-meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.post-meta > span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.post-category {
+    padding: 0.5rem 1rem;
+    background: rgba(55, 167, 73, 0.3);
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    color: var(--accent) !important;
+    font-weight: 600;
+}
+
+.post-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.featured-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #000;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.post-excerpt {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+    border-left: 4px solid var(--accent);
+}
+
+/* Post Content */
+.post-content {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 2rem 0;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+    color: var(--accent);
+    margin: 2rem 0 1rem;
+}
+
+.post-content h2 {
+    font-size: 2rem;
+    border-bottom: 2px solid rgba(55, 167, 73, 0.3);
+    padding-bottom: 0.5rem;
+}
+
+.post-content h3 {
+    font-size: 1.6rem;
+}
+
+.post-content p {
+    margin-bottom: 1.5rem;
+}
+
+.post-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+.post-content a:hover {
+    color: var(--accent-hover);
+}
+
+.post-content ul,
+.post-content ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.post-content li {
+    margin-bottom: 0.75rem;
+}
+
+/* ================== IMAGE STYLING ================== */
+.blog-image {
+    margin: 2rem 0;
+    clear: both;
+}
+
+.blog-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 2px solid rgba(55, 167, 73, 0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.blog-image img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 30px rgba(55, 167, 73, 0.3);
+}
+
+/* Image Sizes */
+.img-tiny img { max-width: 150px; }
+.img-small img { max-width: 300px; }
+.img-medium img { max-width: 500px; }
+.img-large img { max-width: 700px; }
+.img-xl img { max-width: 900px; }
+.img-full img { width: 100%; max-width: none; }
+
+/* Image Positioning */
+.img-center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.img-left { text-align: left; }
+.img-right { text-align: right; }
+
+.img-left.float {
+    float: left;
+    margin: 0 2rem 1rem 0;
+    max-width: 40%;
+}
+
+.img-right.float {
+    float: right;
+    margin: 0 0 1rem 2rem;
+    max-width: 40%;
+}
+
+/* Image Captions */
+.blog-image figcaption {
+    margin-top: 0.75rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0 1rem;
+}
+
+/* ================== TEXT FORMATTING ================== */
+mark {
+    background: linear-gradient(120deg, #ffeb3b 0%, #ffc107 100%);
+    color: #000;
+    padding: 0.1em 0.2em;
+    border-radius: 2px;
+}
+
+u {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+
+/* ================== CODE BLOCKS ================== */
+.post-content pre {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(55, 167, 73, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.post-content code {
+    background: rgba(55, 167, 73, 0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--accent);
+}
+
+.post-content pre code {
+    background: none;
+    padding: 0;
+}
+
+/* ================== BLOCKQUOTES ================== */
+.post-content blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: rgba(55, 167, 73, 0.1);
+    border-radius: 0 10px 10px 0;
+    font-style: italic;
+}
+
+/* ================== TABLES ================== */
+.post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.post-content table th,
+.post-content table td {
+    border: 1px solid rgba(55, 167, 73, 0.2);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.post-content table th {
+    background: rgba(55, 167, 73, 0.3);
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.post-content table tr:nth-child(even) {
+    background: rgba(55, 167, 73, 0.05);
+}
+
+/* ================== POST FOOTER ================== */
+.post-footer {
+    max-width: 850px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: rgba(44, 124, 65, 0.1);
+    border: 1px solid rgba(55, 167, 73, 0.3);
+    border-radius: 15px;
+}
+
+.post-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.post-info p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* Author Card */
+.author-card {
+    max-width: 850px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(30, 41, 59, 0.6);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 15px;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.author-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    object-fit: cover;
+}
+
+.author-info h3 {
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.author-info p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Share Buttons */
+.share-section {
+    max-width: 850px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 1px solid var(--accent);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.share-section h3 {
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+}
+
+.share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(30, 41, 59, 0.6);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.share-btn:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    transform: translateY(-2px);
+}
+
+/* Related Posts */
+.related-posts-section {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.related-posts-section h2 {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.related-post-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 2px solid rgba(55, 167, 73, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.related-post-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(55, 167, 73, 0.3);
+}
+
+.related-post-card h3 {
+    margin-bottom: 1rem;
+}
+
+.related-post-card h3 a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 1.3rem;
+    transition: color 0.3s;
+}
+
+.related-post-card h3 a:hover {
+    color: var(--accent);
+}
+
+.related-post-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.related-post-card .post-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Back Navigation */
+.back-navigation {
+    text-align: center;
+    margin: 3rem 0;
+}
+
+.btn-back {
+    padding: 0.75rem 2rem;
+    background: rgba(55, 167, 73, 0.2);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-back:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    transform: translateY(-2px);
+}
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 768px) {
+    .post-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .post-title {
+        font-size: 1.8rem;
+    }
+    
+    .post-content {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .img-left.float,
+    .img-right.float {
+        float: none;
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+    
+    .author-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .related-posts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================== SPECIAL ELEMENTS ================== */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 3rem 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<article class="blog-detail-page">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'core:home' %}">🏠 Home</a>
+            <span class="separator">/</span>
+            <a href="{% url 'core:blog' %}">📝 Blog</a>
+            <span class="separator">/</span>
+            <span class="current">{{ post.title|truncatewords:5 }}</span>
+        </nav>
+
+        <!-- Post Header -->
+        <header class="post-header">
+            {% if post.is_featured %}
+            <span class="featured-badge">
+                ⭐ Featured Article
+            </span>
+            {% endif %}
+            
+            <div class="post-meta">
+                <span class="post-category">
+                    <span>{{ post.category.icon|default:"📁" }}</span>
+                    {{ post.category.name|default:"General" }}
+                </span>
+                <span class="post-date">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                    </svg>
+                    {{ post.published_at|date:"F d, Y"|default:post.created_at|date:"F d, Y" }}
+                </span>
+                <span class="post-author">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    </svg>
+                    {{ post.author.get_full_name|default:post.author.username }}
+                </span>
+                <span class="reading-time">
+                    📖 {{ post.reading_time_minutes|default:5 }} min read
+                </span>
+            </div>
+            
+            <h1 class="post-title">{{ post.title }}</h1>
+            
+            {% if post.excerpt %}
+            <div class="post-excerpt">
+                {{ post.excerpt }}
+            </div>
+            {% endif %}
+        </header>
+
+        <!-- Post Content -->
+        <div class="post-content">
+            {% if post.content_type == 'markdown' %}
+                {{ processed_content|safe }}
+            {% else %}
+                {{ post.content|linebreaks }}
+            {% endif %}
+        </div>
+
+        <!-- Post Footer Info -->
+        <footer class="post-footer">
+            <div class="post-info">
+                <p><strong>📖 Reading time:</strong> {{ post.reading_time_minutes|default:5 }} minutes</p>
+                <p><strong>🕐 Last updated:</strong> {{ post.updated_at|date:"M d, Y" }}</p>
+                {% if post.images.all %}
+                <p><strong>📷 Images:</strong> {{ post.images.count }} image{{ post.images.count|pluralize }}</p>
+                {% endif %}
+                <p><strong>🏷️ Category:</strong> {{ post.category.name|default:"General" }}</p>
+            </div>
+        </footer>
+
+        <!-- Author Card -->
+        <div class="author-card">
+            <div class="author-avatar-placeholder" style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 3px solid var(--accent);">
+                🦉
+            </div>
+            <div class="author-info">
+                <h3>About {{ post.author.get_full_name|default:post.author.username }}</h3>
+                <p>{{ post.author.profile.bio|default:"Passionate about AI, Science, and Technology. Exploring the intersection of knowledge and innovation." }}</p>
+            </div>
+        </div>
+
+        <!-- Share Section -->
+        <div class="share-section">
+            <h3>📤 Share This Article</h3>
+            <div class="share-buttons">
+                <button class="share-btn" onclick="shareOnTwitter()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+                    </svg>
+                    Twitter
+                </button>
+                <button class="share-btn" onclick="shareOnLinkedIn()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
+                    </svg>
+                    LinkedIn
+                </button>
+                <button class="share-btn" onclick="shareOnFacebook()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                    </svg>
+                    Facebook
+                </button>
+                <button class="share-btn" onclick="copyLink()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
+                        <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
+                    </svg>
+                    Copy Link
+                </button>
+            </div>
+        </div>
+
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <section class="related-posts-section">
+            <h2>🔗 Related Articles</h2>
+            <div class="related-posts-grid">
+                {% for related in related_posts %}
+                <article class="related-post-card">
+                    <h3>
+                        <a href="{% url 'core:blog_detail' related.slug %}">
+                            {{ related.title }}
+                        </a>
+                    </h3>
+                    <p>{{ related.excerpt|truncatewords:20 }}</p>
+                    <span class="post-date">
+                        📅 {{ related.published_at|date:"M d, Y"|default:related.created_at|date:"M d, Y" }}
+                    </span>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Back Navigation -->
+        <div class="back-navigation">
+            <a href="{% url 'core:blog' %}" class="btn-back">
+                ← Back to All Articles
+            </a>
+        </div>
+    </div>
+</article>
+
+<script>
+// Share functions
+function shareOnTwitter() {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('{{ post.title|escapejs }}');
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+}
+
+function shareOnLinkedIn() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+}
+
+function shareOnFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('✅ Link copied to clipboard!');
+    });
+}
+
+// Initialize syntax highlighting
+document.addEventListener('DOMContentLoaded', (event) => {
+    if (typeof hljs !== 'undefined') {
+        hljs.highlightAll();
+    }
+    
+    // Re-render MathJax after page load
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
+});
+</script>
+{% endblock %}

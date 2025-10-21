@@ -1,0 +1,201 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        
+        <img src="{% static 'core/images/element2.png' %}" alt="leaves" width="100">
+        <h1 class="hero-title">Welcome to IDEASOPHIA</h1>
+        <p class="hero-subtitle">
+            <span class="typing-text" id="typing"></span>
+        </p>
+        <p class="hero-description">
+            Where Ideas Grow Like Leaves Under the Sun 🌱
+        </p>
+        <div class="hero-buttons">
+            <a href="#projects" class="btn btn-primary">Explore Ideas</a>
+            <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+        </div>
+    </div>
+    
+    <!-- Animated leaves decoration -->
+    <div class="leaves-decoration" id="leaves"></div>
+</section>
+
+<!-- Skills Section -->
+<section class="skills" id="skills">
+    <div class="container">
+        <h2 class="section-title">Skills & Interests</h2>
+        <div class="skills-grid">
+            {% for skill in featured_skills %}
+            <div class="skill-card">
+                <span class="skill-icon">{% if skill.image_icon %}<img src="{{ skill.image_icon.url }}" loading="lazy">{% else %}{{ skill.icon|default:"💻" }}{% endif %}</span>
+                <h3>{{ skill.name }}</h3>
+                <div class="skill-progress">
+                    <div class="progress-bar" style="width: {{ skill.proficiency }}%"></div>
+                </div>
+                <small>{{ skill.proficiency }}%</small>
+            </div>
+            {% empty %}
+            <!-- Fallback kalau belum ada data -->
+            <div class="skill-card">
+                <span class="skill-icon">🤖</span>
+                <h3>AI/ML</h3>
+                <p>Deep Learning, NLP</p>
+            </div>
+            <div class="skill-card">
+                <span class="skill-icon">🌌</span>
+                <h3>Astronomy</h3>
+                <p>Astrophotography</p>
+            </div>
+            <div class="skill-card">
+                <span class="skill-icon">⚛️</span>
+                <h3>Physics</h3>
+                <p>Quantum, Relativity</p>
+            </div>
+            <div class="skill-card">
+                <span class="skill-icon">∑</span>
+                <h3>Mathematics</h3>
+                <p>Calculus, Statistics</p>
+            </div>
+            <div class="skill-card">
+                <span class="skill-icon">💻</span>
+                <h3>Web Dev</h3>
+                <p>Django, React</p>
+            </div>
+            <div class="skill-card">
+                <span class="skill-icon">✍️</span>
+                <h3>Writing</h3>
+                <p>Fiction & Non-Fiction</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<!-- Projects Section -->
+<section class="projects" id="projects">
+    <div class="container">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="projects-grid">
+            {% for project in featured_projects %}
+            <div class="project-card">
+                {% if project.thumbnail %}
+                <div class="project-image">
+                    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" loading="lazy">
+                </div>
+                {% else %}
+                <div class="project-image-placeholder">
+                    <span>{{ project.category.name|slice:":1"|upper|default:"🚀" }}</span>
+                </div>
+                {% endif %}
+                <div class="project-content">
+                    <h3>{{ project.title }}</h3>
+                    <p>{{ project.short_description|truncatewords:20 }}</p>
+                    <div class="project-links">
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" class="project-link">
+                            GitHub
+                        </a>
+                        {% endif %}
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" target="_blank" class="project-link">
+                            Live Demo
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="project-card">
+                <div class="project-image-placeholder">
+                    <span>🚀</span>
+                </div>
+                <div class="project-content">
+                    <h3>Projects Coming Soon</h3>
+                    <p>Exciting projects are being developed and will be showcased here.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if featured_projects %}
+        <div class="view-all">
+            <a href="{% url 'core:projects' %}" class="btn btn-secondary">View All Projects →</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Astronomy Gallery Section -->
+<section class="astronomy-gallery" id="astronomy">
+    <div class="container">
+        <h2 class="section-title">Astrophotography Gallery</h2>
+        <div class="astro-grid">
+            {% for photo in astro_photos %}
+            <div class="astro-card">
+                <div class="astro-image">
+                    {% if photo.image %}
+                    <img src="{{ photo.image.url }}" alt="{{ photo.title }}" loading="lazy">
+                    {% else %}
+                    <div class="astro-placeholder">🌌</div>
+                    {% endif %}
+                    <div class="astro-overlay">
+                        <h3>{{ photo.object_name }}</h3>
+                        <p>{{ photo.capture_date|date:"M d, Y" }}</p>
+                        <div class="astro-details">
+                            {% if photo.exposure_time %}
+                            <span>📸 {{ photo.exposure_time }}</span>
+                            {% endif %}
+                            {% if photo.telescope %}
+                            <span>🔭 {{ photo.telescope }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="astro-card">
+                <div class="astro-placeholder">
+                    <span>🌌</span>
+                    <p>Astrophotography coming soon</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="view-all">
+            <a href="{% url 'astronomy:gallery' %}" class="btn btn-secondary">View Full Gallery →</a>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Section -->
+<section class="blog" id="blog">
+    <div class="container">
+        <h2 class="section-title">Latest Writings</h2>
+        <div class="blog-grid">
+            {% for post in latest_posts %}
+            <article class="blog-card">
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.excerpt }}</p>
+                <div class="blog-meta">
+                    <span>{{ post.category.name|default:"Article" }}</span>
+                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                </div>
+            </article>
+            {% empty %}
+            <article class="blog-card">
+                <h3>Coming Soon</h3>
+                <p>Blog posts are being written...</p>
+                <div class="blog-meta">
+                    <span>📝</span>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

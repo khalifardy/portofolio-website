@@ -1,0 +1,547 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ observation.title }} - IDEASOPHIA{% endblock %}
+
+{% block content %}
+<article class="observation-detail">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'core:home' %}">🏠 Home</a>
+            <span class="separator">/</span>
+            <a href="{% url 'astronomy:observations' %}">📓 Observations</a>
+            <span class="separator">/</span>
+            <span class="current">{{ observation.title|truncatewords:5 }}</span>
+        </nav>
+
+        <!-- Header -->
+        <header class="observation-detail-header">
+            <div class="header-icon">
+                {% if observation.eclipse_data %}🌑
+                {% elif 'Moon' in observation.object_name %}🌙
+                {% elif 'Sun' in observation.object_name %}☀️
+                {% elif 'Jupiter' in observation.object_name or 'Saturn' in observation.object_name %}🪐
+                {% elif 'Mars' in observation.object_name %}🔴
+                {% else %}⭐{% endif %}
+            </div>
+            <h1>{{ observation.title }}</h1>
+            <div class="observation-meta">
+                <span class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    {{ observation.observation_date|date:"F d, Y - H:i" }}
+                </span>
+                <span class="meta-item">
+                    <span class="meta-icon">📍</span>
+                    {{ observation.location }}
+                </span>
+                {% if observation.eclipse_data %}
+                <span class="eclipse-indicator">
+                    🌑 Eclipse Observation
+                </span>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Eclipse Data Section (if applicable) -->
+        {% if observation.eclipse_data %}
+        <section class="eclipse-data-section">
+            <h2 class="section-heading">
+                <span class="heading-icon">🌑</span>
+                Eclipse Details
+            </h2>
+            
+            {% if observation.eclipse_data.is_solar %}
+            <div class="safety-notice">
+                <div class="notice-icon">⚠️</div>
+                <div class="notice-content">
+                    <strong>Solar Eclipse Safety</strong>
+                    <p>This observation was conducted using proper safety equipment: 
+                        <strong>{{ observation.eclipse_data.get_safety_equipment_display }}</strong>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="eclipse-info-grid">
+                <div class="eclipse-stat-card">
+                    <div class="stat-icon">🌓</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Eclipse Type</span>
+                        <span class="stat-value">{{ observation.eclipse_data.get_eclipse_type_display }}</span>
+                    </div>
+                </div>
+                
+                {% if observation.eclipse_data.magnitude %}
+                <div class="eclipse-stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Magnitude</span>
+                        <span class="stat-value">{{ observation.eclipse_data.magnitude }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if observation.eclipse_data.obscuration %}
+                <div class="eclipse-stat-card">
+                    <div class="stat-icon">🌗</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Obscuration</span>
+                        <span class="stat-value">{{ observation.eclipse_data.obscuration }}%</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if observation.eclipse_data.duration_seconds %}
+                <div class="eclipse-stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <span class="stat-label">Duration</span>
+                        <span class="stat-value">{{ observation.eclipse_data.duration_seconds }}s</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Eclipse Timing -->
+            {% if observation.eclipse_data.c1_time or observation.eclipse_data.u1_time %}
+            <div class="eclipse-timing">
+                <h3>⏰ Eclipse Contact Times</h3>
+                <div class="timing-grid">
+                    {% if observation.eclipse_data.is_lunar %}
+                        {% if observation.eclipse_data.p1_time %}<div class="timing-item"><span class="timing-label">P1 (Penumbral Start):</span><span class="timing-value">{{ observation.eclipse_data.p1_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.u1_time %}<div class="timing-item"><span class="timing-label">U1 (Partial Start):</span><span class="timing-value">{{ observation.eclipse_data.u1_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.u2_time %}<div class="timing-item"><span class="timing-label">U2 (Total Start):</span><span class="timing-value">{{ observation.eclipse_data.u2_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.max_time %}<div class="timing-item"><span class="timing-label">Maximum:</span><span class="timing-value">{{ observation.eclipse_data.max_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.u3_time %}<div class="timing-item"><span class="timing-label">U3 (Total End):</span><span class="timing-value">{{ observation.eclipse_data.u3_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.u4_time %}<div class="timing-item"><span class="timing-label">U4 (Partial End):</span><span class="timing-value">{{ observation.eclipse_data.u4_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.p2_time %}<div class="timing-item"><span class="timing-label">P2 (Penumbral End):</span><span class="timing-value">{{ observation.eclipse_data.p2_time|date:"H:i:s" }}</span></div>{% endif %}
+                    {% else %}
+                        {% if observation.eclipse_data.c1_time %}<div class="timing-item"><span class="timing-label">C1 (Partial Start):</span><span class="timing-value">{{ observation.eclipse_data.c1_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.c2_time %}<div class="timing-item"><span class="timing-label">C2 (Total Start):</span><span class="timing-value">{{ observation.eclipse_data.c2_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.max_time %}<div class="timing-item"><span class="timing-label">Maximum:</span><span class="timing-value">{{ observation.eclipse_data.max_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.c3_time %}<div class="timing-item"><span class="timing-label">C3 (Total End):</span><span class="timing-value">{{ observation.eclipse_data.c3_time|date:"H:i:s" }}</span></div>{% endif %}
+                        {% if observation.eclipse_data.c4_time %}<div class="timing-item"><span class="timing-label">C4 (Partial End):</span><span class="timing-value">{{ observation.eclipse_data.c4_time|date:"H:i:s" }}</span></div>{% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Phenomena Observed (Solar Eclipse) -->
+            {% if observation.eclipse_data.is_solar %}
+            <div class="phenomena-section">
+                <h3>✨ Observed Phenomena</h3>
+                <div class="phenomena-grid">
+                    {% if observation.eclipse_data.shadow_bands_observed %}
+                    <div class="phenomenon-item observed">
+                        <span class="check">✅</span>
+                        Shadow Bands
+                    </div>
+                    {% endif %}
+                    {% if observation.eclipse_data.baileys_beads_observed %}
+                    <div class="phenomenon-item observed">
+                        <span class="check">✅</span>
+                        Bailey's Beads
+                    </div>
+                    {% endif %}
+                    {% if observation.eclipse_data.diamond_ring_observed %}
+                    <div class="phenomenon-item observed">
+                        <span class="check">✅</span>
+                        Diamond Ring Effect
+                    </div>
+                    {% endif %}
+                    {% if observation.eclipse_data.prominences_observed %}
+                    <div class="phenomenon-item observed">
+                        <span class="check">✅</span>
+                        Solar Prominences
+                    </div>
+                    {% endif %}
+                </div>
+                {% if observation.eclipse_data.corona_shape %}
+                <div class="corona-info">
+                    <strong>👑 Corona Shape:</strong> {{ observation.eclipse_data.corona_shape }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Lunar Eclipse Danjon Scale -->
+            {% if observation.eclipse_data.is_lunar and observation.eclipse_data.danjon_scale %}
+            <div class="danjon-section">
+                <h3>🌙 Danjon Scale</h3>
+                <div class="danjon-display">
+                    <span class="danjon-value">L{{ observation.eclipse_data.danjon_scale }}</span>
+                    <span class="danjon-description">
+                        {% if observation.eclipse_data.danjon_scale == 0 %}Very dark, Moon almost invisible
+                        {% elif observation.eclipse_data.danjon_scale == 1 %}Dark gray to brownish
+                        {% elif observation.eclipse_data.danjon_scale == 2 %}Deep red or rust colored
+                        {% elif observation.eclipse_data.danjon_scale == 3 %}Brick red
+                        {% elif observation.eclipse_data.danjon_scale == 4 %}Bright copper or orange
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Environmental Data -->
+            {% if observation.eclipse_data.temperature_drop or observation.eclipse_data.animal_behavior_notes %}
+            <div class="environmental-section">
+                <h3>🌍 Environmental Observations</h3>
+                {% if observation.eclipse_data.temperature_drop %}
+                <div class="env-item">
+                    <span class="env-icon">🌡️</span>
+                    <span class="env-label">Temperature Drop:</span>
+                    <span class="env-value">{{ observation.eclipse_data.temperature_drop }}°C</span>
+                </div>
+                {% endif %}
+                {% if observation.eclipse_data.animal_behavior_notes %}
+                <div class="env-item">
+                    <span class="env-icon">🦅</span>
+                    <span class="env-label">Animal Behavior:</span>
+                    <span class="env-value">{{ observation.eclipse_data.animal_behavior_notes }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Main Content Grid -->
+        <div class="observation-content-grid">
+            <!-- Main Content -->
+            <div class="observation-main">
+                <!-- Object Information -->
+                <section class="info-section">
+                    <h2 class="section-heading">
+                        <span class="heading-icon">🎯</span>
+                        Object Observed
+                    </h2>
+                    <div class="object-info-card">
+                        <div class="object-header">
+                            <h3>{{ observation.object_name }}</h3>
+                        </div>
+                        {% if observation.celestial_object %}
+                        <div class="object-details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Type:</span>
+                                <span class="detail-value">{{ observation.celestial_object.get_object_type_display }}</span>
+                            </div>
+                            {% if observation.celestial_object.constellation %}
+                            <div class="detail-item">
+                                <span class="detail-label">Constellation:</span>
+                                <span class="detail-value">{{ observation.celestial_object.constellation }}</span>
+                            </div>
+                            {% endif %}
+                            {% if observation.celestial_object.magnitude %}
+                            <div class="detail-item">
+                                <span class="detail-label">Magnitude:</span>
+                                <span class="detail-value">{{ observation.celestial_object.magnitude }}</span>
+                            </div>
+                            {% endif %}
+                            {% if observation.celestial_object.ra %}
+                            <div class="detail-item">
+                                <span class="detail-label">Right Ascension:</span>
+                                <span class="detail-value">{{ observation.celestial_object.ra }}</span>
+                            </div>
+                            {% endif %}
+                            {% if observation.celestial_object.dec %}
+                            <div class="detail-item">
+                                <span class="detail-label">Declination:</span>
+                                <span class="detail-value">{{ observation.celestial_object.dec }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Observation Notes -->
+                <section class="info-section">
+                    <h2 class="section-heading">
+                        <span class="heading-icon">📝</span>
+                        Observation Notes
+                    </h2>
+                    <div class="notes-content">
+                        {{ observation.notes|linebreaks }}
+                    </div>
+                </section>
+
+                <!-- Photos Section with Lightbox -->
+                {% if photos %}
+                <section class="info-section">
+                    <h2 class="section-heading">
+                        <span class="heading-icon">📸</span>
+                        Photography
+                    </h2>
+                    <div class="observation-photos-grid">
+                        {% for photo in photos %}
+                        <div class="photo-card" onclick="openObservationLightbox({{ forloop.counter0 }})">
+                            <img src="{{ photo.image.url }}" alt="{{ photo.title }}" loading="lazy">
+                            <div class="photo-overlay">
+                                <div class="overlay-content">
+                                    <h4>{{ photo.title }}</h4>
+                                    {% if photo.exact_time %}
+                                    <p>⏰ {{ photo.exact_time|date:"H:i:s" }}</p>
+                                    {% endif %}
+                                    <button class="view-btn">👁️ View Full</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="observation-sidebar">
+                <!-- Observation Conditions -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-heading">
+                        <span>🌤️</span> Conditions
+                    </h3>
+                    <div class="conditions-list">
+                        <div class="condition-item">
+                            <span class="condition-label">Seeing:</span>
+                            <span class="condition-value seeing-{{ observation.seeing }}">
+                                {{ observation.get_seeing_display }}
+                            </span>
+                        </div>
+                        {% if observation.transparency %}
+                        <div class="condition-item">
+                            <span class="condition-label">Transparency:</span>
+                            <span class="condition-value">{{ observation.get_transparency_display }}</span>
+                        </div>
+                        {% endif %}
+                        {% if observation.cloud_cover %}
+                        <div class="condition-item">
+                            <span class="condition-label">Cloud Cover:</span>
+                            <span class="condition-value">{{ observation.cloud_cover }}%</span>
+                        </div>
+                        {% endif %}
+                        {% if observation.temperature %}
+                        <div class="condition-item">
+                            <span class="condition-label">Temperature:</span>
+                            <span class="condition-value">{{ observation.temperature }}°C</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Equipment Used -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-heading">
+                        <span>🔭</span> Equipment
+                    </h3>
+                    <div class="equipment-list">
+                        {% if observation.telescope %}
+                        <div class="equipment-item">
+                            <span class="equipment-icon">🔭</span>
+                            <div class="equipment-info">
+                                <span class="equipment-label">Telescope:</span>
+                                <span class="equipment-value">{{ observation.telescope }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if observation.eyepiece %}
+                        <div class="equipment-item">
+                            <span class="equipment-icon">👁️</span>
+                            <div class="equipment-info">
+                                <span class="equipment-label">Eyepiece:</span>
+                                <span class="equipment-value">{{ observation.eyepiece }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if observation.magnification %}
+                        <div class="equipment-item">
+                            <span class="equipment-icon">🔍</span>
+                            <div class="equipment-info">
+                                <span class="equipment-label">Magnification:</span>
+                                <span class="equipment-value">{{ observation.magnification }}x</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if observation.camera %}
+                        <div class="equipment-item">
+                            <span class="equipment-icon">📷</span>
+                            <div class="equipment-info">
+                                <span class="equipment-label">Camera:</span>
+                                <span class="equipment-value">{{ observation.camera }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-heading">
+                        <span>📍</span> Location
+                    </h3>
+                    <div class="location-info">
+                        <p class="location-name">{{ observation.location }}</p>
+                        {% if observation.latitude and observation.longitude %}
+                        <div class="coordinates">
+                            <div class="coord-item">
+                                <span class="coord-label">Latitude:</span>
+                                <span class="coord-value">{{ observation.latitude }}°</span>
+                            </div>
+                            <div class="coord-item">
+                                <span class="coord-label">Longitude:</span>
+                                <span class="coord-value">{{ observation.longitude }}°</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Timestamps -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-heading">
+                        <span>🕐</span> Timestamps
+                    </h3>
+                    <div class="timestamps">
+                        <div class="timestamp-item">
+                            <span class="timestamp-label">Created:</span>
+                            <span class="timestamp-value">{{ observation.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <span class="timestamp-label">Updated:</span>
+                            <span class="timestamp-value">{{ observation.updated_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Related Observations -->
+        {% if related_observations %}
+        <section class="related-observations">
+            <h2 class="section-heading">
+                <span class="heading-icon">🔗</span>
+                Other Observations of {{ observation.object_name }}
+            </h2>
+            <div class="related-grid">
+                {% for related in related_observations %}
+                <a href="{% url 'astronomy:observation_detail' related.slug %}" class="related-card">
+                    <h4>{{ related.title }}</h4>
+                    <p class="related-date">📅 {{ related.observation_date|date:"M d, Y" }}</p>
+                    <span class="related-arrow">→</span>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Back Navigation -->
+        <div class="back-navigation">
+            <a href="{% url 'astronomy:observations' %}" class="btn-back">
+                ← Back to Observations
+            </a>
+        </div>
+    </div>
+</article>
+
+<!-- Lightbox for Observation Photos -->
+<div id="observation-lightbox" class="lightbox">
+    <span class="lightbox-close" onclick="closeObservationLightbox()">&times;</span>
+    <span class="lightbox-prev" onclick="changeObservationImage(-1)">&#10094;</span>
+    <span class="lightbox-next" onclick="changeObservationImage(1)">&#10095;</span>
+    
+    <div class="lightbox-content">
+        <img id="observation-lightbox-img" src="" alt="">
+        <div class="lightbox-info">
+            <h3 id="observation-lightbox-title"></h3>
+            <p id="observation-lightbox-time"></p>
+        </div>
+    </div>
+    
+    <div class="lightbox-counter">
+        <span id="observation-lightbox-current">1</span> / <span id="observation-lightbox-total">{{ photos.count }}</span>
+    </div>
+</div>
+
+<!-- Hidden data for lightbox -->
+<script id="observation-photos-data" type="application/json">
+[
+    {% for photo in photos %}
+    {
+        "image": "{{ photo.image.url }}",
+        "title": "{{ photo.title|escapejs }}",
+        "time": "{% if photo.exact_time %}{{ photo.exact_time|date:'H:i:s' }}{% endif %}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+
+<script>
+// Observation Lightbox functionality
+let currentObservationImageIndex = 0;
+let observationPhotosData = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const dataScript = document.getElementById('observation-photos-data');
+    if (dataScript) {
+        observationPhotosData = JSON.parse(dataScript.textContent);
+    }
+});
+
+function openObservationLightbox(index) {
+    currentObservationImageIndex = index;
+    const lightbox = document.getElementById('observation-lightbox');
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    showObservationImage(currentObservationImageIndex);
+}
+
+function closeObservationLightbox() {
+    const lightbox = document.getElementById('observation-lightbox');
+    lightbox.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function changeObservationImage(direction) {
+    currentObservationImageIndex += direction;
+    
+    if (currentObservationImageIndex >= observationPhotosData.length) {
+        currentObservationImageIndex = 0;
+    } else if (currentObservationImageIndex < 0) {
+        currentObservationImageIndex = observationPhotosData.length - 1;
+    }
+    
+    showObservationImage(currentObservationImageIndex);
+}
+
+function showObservationImage(index) {
+    const photo = observationPhotosData[index];
+    
+    document.getElementById('observation-lightbox-img').src = photo.image;
+    document.getElementById('observation-lightbox-title').textContent = photo.title;
+    document.getElementById('observation-lightbox-time').textContent = photo.time ? '⏰ ' + photo.time : '';
+    
+    document.getElementById('observation-lightbox-current').textContent = index + 1;
+    document.getElementById('observation-lightbox-total').textContent = observationPhotosData.length;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    const lightbox = document.getElementById('observation-lightbox');
+    if (lightbox && lightbox.style.display === 'flex') {
+        if (e.key === 'Escape') {
+            closeObservationLightbox();
+        } else if (e.key === 'ArrowLeft') {
+            changeObservationImage(-1);
+        } else if (e.key === 'ArrowRight') {
+            changeObservationImage(1);
+        }
+    }
+});
+
+// Close on background click
+document.getElementById('observation-lightbox')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeObservationLightbox();
+    }
+});
+</script>
+{% endblock %}
