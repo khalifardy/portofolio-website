@@ -15,7 +15,7 @@ services:
       - DEBUG=False
       - SECRET_KEY='django-insecure-dev-only-&*#@!%^)(_+=-0987654321qwertyuiopasdfghjklzxcvbnm'
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
-      - ALLOWED_HOSTS=localhost,202.10.36.13
+      - ALLOWED_HOSTS=localhost,202.10.36.13,ideasophia.com,www.ideasophia.com
     depends_on:
       - db
 
