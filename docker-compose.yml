@@ -5,8 +5,9 @@ services:
   web:
     build: .
     # Ganti ke gunicorn untuk production
-    command: gunicorn myportfolio.wsgi:application --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
+      - .:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     expose:
