@@ -22,12 +22,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . /app/
 
-ENV SECRET_KEY='django-insecure-dev-only-&*#@!%^)(_+=-0987654321qwertyuiopasdfghjklzxcvbnm'
-ENV DEBUG=False
+#ENV SECRET_KEY='django-insecure-dev-only-&*#@!%^)(_+=-0987654321qwertyuiopasdfghjklzxcvbnm'
+#ENV DEBUG=False
 
-ENV DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
+#ENV DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
 
-RUN python manage.py collectstatic --noinput
+#RUN python manage.py collectstatic --noinput
 
 # Run gunicorn
-CMD ["gunicorn", "myportfolio.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+#CMD ["gunicorn", "myportfolio.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
