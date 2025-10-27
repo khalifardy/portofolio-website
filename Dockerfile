@@ -25,6 +25,8 @@ COPY . /app/
 ENV SECRET_KEY='django-insecure-dev-only-&*#@!%^)(_+=-0987654321qwertyuiopasdfghjklzxcvbnm'
 ENV DEBUG=False
 
+ENV DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
+
 RUN python manage.py collectstatic --noinput
 
 # Run gunicorn
