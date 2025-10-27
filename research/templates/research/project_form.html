@@ -1,0 +1,522 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{% if mode == 'create' %}Create{% else %}Edit{% endif %} Research Project - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c7c41 100%);
+        min-height: 100vh;
+    }
+    
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 6rem 2rem 2rem;
+    }
+    
+    .form-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 2.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .form-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .form-title {
+        font-size: 2rem;
+        color: #f4f6d2;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-subtitle {
+        color: #b8baa0;
+        font-size: 1rem;
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+    }
+    
+    .section-title {
+        color: #83c441;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        color: #f4f6d2;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-label.required::after {
+        content: ' *';
+        color: #dc3545;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 0.875rem;
+        background: rgba(55, 167, 73, 0.1);
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        border-radius: 8px;
+        color: #f4f6d2;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: #37a749;
+        background: rgba(55, 167, 73, 0.15);
+        box-shadow: 0 0 0 3px rgba(55, 167, 73, 0.1);
+    }
+    
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .form-help {
+        color: #b8baa0;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .form-error {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .form-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #37a749, #2c7c41);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2c7c41, #37a749);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(55, 167, 73, 0.4);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid #f4f6d2;
+    }
+    
+    .btn-secondary:hover {
+        background: #f4f6d2;
+        color: #231f20;
+    }
+    
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .alert-error {
+        background: rgba(220, 53, 69, 0.1);
+        border: 2px solid rgba(220, 53, 69, 0.3);
+        color: #dc3545;
+    }
+    
+    @media (max-width: 768px) {
+        .form-grid,
+        .form-grid-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h1 class="form-title">
+                <span>{% if mode == 'create' %}➕{% else %}✏️{% endif %}</span>
+                {% if mode == 'create' %}Create New{% else %}Edit{% endif %} Research Project
+            </h1>
+            <p class="form-subtitle">
+                {% if mode == 'create' %}
+                Fill in the details below to create a new research project
+                {% else %}
+                Update the details of your research project
+                {% endif %}
+            </p>
+        </div>
+        
+        <!-- Error Messages -->
+        {% if form.errors %}
+        <div class="alert alert-error">
+            <span>⚠️</span>
+            <span>Please correct the errors below</span>
+        </div>
+        {% endif %}
+        
+        <!-- Form -->
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>📝</span> Basic Information
+                </h2>
+                
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}" class="form-label required">
+                        Title
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="form-error">{{ form.title.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">Choose a clear, descriptive title for your research</div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.field.id_for_label }}" class="form-label required">
+                            Research Field
+                        </label>
+                        {{ form.field }}
+                        {% if form.field.errors %}
+                            <div class="form-error">{{ form.field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.status.id_for_label }}" class="form-label required">
+                            Status
+                        </label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="form-error">{{ form.status.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}" class="form-label required">
+                        Description
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="form-error">{{ form.description.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">Brief overview of your research project</div>
+                </div>
+            </div>
+            
+            <!-- Research Details -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>🔬</span> Research Details
+                </h2>
+                
+                <div class="form-group">
+                    <label for="{{ form.objectives.id_for_label }}" class="form-label required">
+                        Objectives
+                    </label>
+                    {{ form.objectives }}
+                    {% if form.objectives.errors %}
+                        <div class="form-error">{{ form.objectives.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">What are the main goals of this research?</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.methodology.id_for_label }}" class="form-label">
+                        Methodology
+                    </label>
+                    {{ form.methodology }}
+                    {% if form.methodology.errors %}
+                        <div class="form-error">{{ form.methodology.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">Describe your research methods and approach</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.hypothesis.id_for_label }}" class="form-label">
+                        Hypothesis
+                    </label>
+                    {{ form.hypothesis }}
+                    {% if form.hypothesis.errors %}
+                        <div class="form-error">{{ form.hypothesis.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">Your hypothesis (if applicable)</div>
+                </div>
+            </div>
+            
+            <!-- Timeline & Progress -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>📅</span> Timeline & Progress
+                </h2>
+                
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label for="{{ form.start_date.id_for_label }}" class="form-label required">
+                            Start Date
+                        </label>
+                        {{ form.start_date }}
+                        {% if form.start_date.errors %}
+                            <div class="form-error">{{ form.start_date.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.end_date.id_for_label }}" class="form-label">
+                            End Date
+                        </label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}
+                            <div class="form-error">{{ form.end_date.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.priority.id_for_label }}" class="form-label required">
+                            Priority
+                        </label>
+                        {{ form.priority }}
+                        {% if form.priority.errors %}
+                            <div class="form-error">{{ form.priority.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.progress_percentage.id_for_label }}" class="form-label required">
+                        Progress (%)
+                    </label>
+                    {{ form.progress_percentage }}
+                    {% if form.progress_percentage.errors %}
+                        <div class="form-error">{{ form.progress_percentage.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">Current progress percentage (0-100)</div>
+                </div>
+            </div>
+            
+            <!-- Results (Collapsible) -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>📊</span> Results (Optional)
+                </h2>
+                
+                <div class="form-group">
+                    <label for="{{ form.findings.id_for_label }}" class="form-label">
+                        Findings
+                    </label>
+                    {{ form.findings }}
+                    {% if form.findings.errors %}
+                        <div class="form-error">{{ form.findings.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.conclusions.id_for_label }}" class="form-label">
+                        Conclusions
+                    </label>
+                    {{ form.conclusions }}
+                    {% if form.conclusions.errors %}
+                        <div class="form-error">{{ form.conclusions.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.future_work.id_for_label }}" class="form-label">
+                        Future Work
+                    </label>
+                    {{ form.future_work }}
+                    {% if form.future_work.errors %}
+                        <div class="form-error">{{ form.future_work.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Metadata -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>👥</span> Metadata (Optional)
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.institution.id_for_label }}" class="form-label">
+                            Institution
+                        </label>
+                        {{ form.institution }}
+                        {% if form.institution.errors %}
+                            <div class="form-error">{{ form.institution.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.supervisor.id_for_label }}" class="form-label">
+                            Supervisor
+                        </label>
+                        {{ form.supervisor }}
+                        {% if form.supervisor.errors %}
+                            <div class="form-error">{{ form.supervisor.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.collaborators.id_for_label }}" class="form-label">
+                        Collaborators
+                    </label>
+                    {{ form.collaborators }}
+                    {% if form.collaborators.errors %}
+                        <div class="form-error">{{ form.collaborators.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">List collaborators, one per line</div>
+                </div>
+            </div>
+            
+            <!-- Advanced Data -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>⚙️</span> Advanced (Optional)
+                </h2>
+                
+                <div class="form-group">
+                    <label for="{{ form.data_schema.id_for_label }}" class="form-label">
+                        Data Schema (JSON)
+                    </label>
+                    {{ form.data_schema }}
+                    {% if form.data_schema.errors %}
+                        <div class="form-error">{{ form.data_schema.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-help">Flexible JSON data for field-specific requirements. Example: {"dataset_size": 1000, "model": "CNN"}</div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            {{ form.is_public }}
+                            <label for="{{ form.is_public.id_for_label }}" class="form-label" style="margin: 0;">
+                                Make this project public
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            {{ form.is_published }}
+                            <label for="{{ form.is_published.id_for_label }}" class="form-label" style="margin: 0;">
+                                Mark as published
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a href="{% url 'research:dashboard_research' %}" class="btn btn-secondary">
+                    ❌ Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    {% if mode == 'create' %}
+                        ✨ Create Project
+                    {% else %}
+                        💾 Save Changes
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

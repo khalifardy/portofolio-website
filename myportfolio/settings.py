@@ -48,6 +48,8 @@ DJANGO_LIB = [
 APPS_DJANGO =[
     'core',
     'astronomy',
+    'finance',
+    'research'
 ]
 
 APPS_THIRD = []
@@ -137,3 +139,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+LOGIN_URL = 'core:login'
+LOGIN_REDIRECT_URL = 'core:dashboard_selection'
+LOGOUT_REDIRECT_URL = 'core:login'

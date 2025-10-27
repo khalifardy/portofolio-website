@@ -1,6 +1,7 @@
+# finance/apps.py
 from django.apps import AppConfig
-# astronomy/apps.py
 
-class AstronomyConfig(AppConfig):
+
+class FinanceConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'astronomy'
+    name = 'finance'

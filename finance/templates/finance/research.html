@@ -1,0 +1,457 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Research Menu - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+.research-container {
+    padding: 6rem 0 3rem;
+    min-height: 100vh;
+}
+
+.research-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.research-header h1 {
+    color: var(--accent);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.field-selector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.field-btn {
+    padding: 1rem 2rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 10px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.field-btn:hover {
+    background: rgba(55, 167, 73, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(55, 167, 73, 0.2);
+}
+
+.field-btn.active {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+    box-shadow: 0 5px 20px rgba(55, 167, 73, 0.3);
+}
+
+.research-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.stat-box {
+    background: linear-gradient(135deg, rgba(55, 167, 73, 0.1) 0%, rgba(44, 124, 65, 0.1) 100%);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.stat-box .icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.stat-box .label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-box .value {
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.expenses-section {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.expenses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.expenses-header h3 {
+    color: var(--accent);
+}
+
+.expense-item {
+    background: rgba(55, 167, 73, 0.05);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+
+.expense-item:hover {
+    background: rgba(55, 167, 73, 0.1);
+    transform: translateX(5px);
+}
+
+.expense-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.expense-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.expense-amount {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.expense-meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.expense-description {
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    line-height: 1.6;
+}
+
+.add-expense-btn {
+    padding: 1rem 2rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.add-expense-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(55, 167, 73, 0.3);
+}
+
+.field-description {
+    background: rgba(55, 167, 73, 0.1);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.field-description h3 {
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.field-description p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.tools-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.tool-card {
+    background: rgba(55, 167, 73, 0.1);
+    border: 1px solid rgba(55, 167, 73, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.tool-card:hover {
+    background: rgba(55, 167, 73, 0.2);
+    transform: translateY(-3px);
+}
+
+.tool-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.tool-name {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .research-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .field-selector {
+        flex-direction: column;
+    }
+    
+    .expense-header {
+        flex-direction: column;
+        align-items: start;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="research-container">
+    <div class="container">
+        <div class="research-header">
+            <h1>🔬 Research Menu</h1>
+            <p style="color: var(--text-secondary);">
+                Kelola pengeluaran riset untuk berbagai bidang ilmu
+            </p>
+        </div>
+
+        <!-- Field Selector -->
+        <div class="field-selector">
+            {% for code, name in research_fields %}
+            <a href="?field={{ code }}" 
+               class="field-btn {% if field == code %}active{% endif %}">
+                {% if code == 'ai' %}🤖{% elif code == 'physics' %}⚛️{% elif code == 'math' %}📐{% elif code == 'engineering' %}⚙️{% elif code == 'astronomy' %}🌌{% endif %}
+                {{ name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Field Description -->
+        <div class="field-description">
+            <h3>
+                {% if field == 'ai' %}🤖 AI & Machine Learning
+                {% elif field == 'physics' %}⚛️ Fisika
+                {% elif field == 'math' %}📐 Matematika
+                {% elif field == 'engineering' %}⚙️ Engineering
+                {% elif field == 'astronomy' %}🌌 Astronomi
+                {% endif %}
+            </h3>
+            <p>
+                {% if field == 'ai' %}
+                    Penelitian dalam bidang kecerdasan buatan, machine learning, deep learning, NLP, computer vision, dan teknologi AI terkini. Track pengeluaran untuk GPU cloud, dataset, software licenses, dan tools AI lainnya.
+                {% elif field == 'physics' %}
+                    Penelitian fisika teoritis dan eksperimental, mekanika kuantum, termodinamika, elektromagnetisme, dan fisika modern. Catat pengeluaran untuk alat ukur, oscilloscope, multimeter, dan peralatan laboratorium.
+                {% elif field == 'math' %}
+                    Penelitian matematika murni dan terapan, analisis, aljabar, geometri, statistik, dan pemodelan matematika. Monitor pengeluaran untuk software komputasi seperti MATLAB, Mathematica, dan buku referensi.
+                {% elif field == 'engineering' %}
+                    Penelitian dalam berbagai bidang teknik: elektronika, mekanik, software engineering, robotika, dan sistem embedded. Track pengeluaran untuk Arduino, Raspberry Pi, sensor, actuator, dan komponen elektronik.
+                {% elif field == 'astronomy' %}
+                    Penelitian astronomi observasional, astrofotografi, analisis data astronomi, dan studi objek langit. Catat pengeluaran untuk eyepiece, filter, barlow lens, mount upgrade, dan software planetarium.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Research Stats -->
+        <div class="research-stats">
+            <div class="stat-box">
+                <div class="icon">💰</div>
+                <div class="label">Total Pengeluaran</div>
+                <div class="value">Rp {{ total_spent|floatformat:0 }}</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="icon">📊</div>
+                <div class="label">Jumlah Transaksi</div>
+                <div class="value">{{ expenses.count }}</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="icon">📅</div>
+                <div class="label">Rata-rata per Item</div>
+                <div class="value">
+                    {% if expenses.count > 0 %}
+                        {% widthratio total_spent expenses.count 1 as average %}
+                        Rp {{ average|floatformat:0 }}
+                    {% else %}
+                        Rp 0
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools & Resources -->
+        <div class="expenses-section">
+            <h3 style="color: var(--accent); margin-bottom: 1.5rem;">🛠️ Tools & Resources</h3>
+            <div class="tools-section">
+                {% if field == 'ai' %}
+                    <div class="tool-card">
+                        <div class="tool-icon">🐍</div>
+                        <div class="tool-name">Python & PyTorch</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🧠</div>
+                        <div class="tool-name">TensorFlow</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📚</div>
+                        <div class="tool-name">Jupyter Notebook</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">☁️</div>
+                        <div class="tool-name">Google Colab</div>
+                    </div>
+                {% elif field == 'physics' %}
+                    <div class="tool-card">
+                        <div class="tool-icon">📊</div>
+                        <div class="tool-name">Oscilloscope</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">⚡</div>
+                        <div class="tool-name">Multimeter</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔬</div>
+                        <div class="tool-name">Lab Equipment</div>
+                    </div>
+                {% elif field == 'math' %}
+                    <div class="tool-card">
+                        <div class="tool-icon">📐</div>
+                        <div class="tool-name">MATLAB</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔢</div>
+                        <div class="tool-name">Mathematica</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📊</div>
+                        <div class="tool-name">Wolfram Alpha</div>
+                    </div>
+                {% elif field == 'engineering' %}
+                    <div class="tool-card">
+                        <div class="tool-icon">🔧</div>
+                        <div class="tool-name">Arduino</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🥧</div>
+                        <div class="tool-name">Raspberry Pi</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📡</div>
+                        <div class="tool-name">Sensors & Modules</div>
+                    </div>
+                {% elif field == 'astronomy' %}
+                    <div class="tool-card">
+                        <div class="tool-icon">🔭</div>
+                        <div class="tool-name">Telescope</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📷</div>
+                        <div class="tool-name">Camera & Mount</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">💻</div>
+                        <div class="tool-name">Stellarium</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🌟</div>
+                        <div class="tool-name">Filters & Eyepieces</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Expenses List -->
+        <div class="expenses-section">
+            <div class="expenses-header">
+                <h3>📝 Daftar Pengeluaran Riset</h3>
+                <a href="{% url 'finance:add_transaction' %}" class="add-expense-btn">➕ Tambah Pengeluaran</a>
+            </div>
+
+            {% if expenses %}
+                {% for expense in expenses %}
+                <div class="expense-item">
+                    <div class="expense-header">
+                        <div class="expense-title">{{ expense.title }}</div>
+                        <div class="expense-amount">Rp {{ expense.amount|floatformat:0 }}</div>
+                    </div>
+                    <div class="expense-description">{{ expense.description }}</div>
+                    <div class="expense-meta">
+                        <span>📅 {{ expense.date|date:"d M Y" }}</span>
+                        {% if expense.vendor %}
+                        <span>🏪 {{ expense.vendor }}</span>
+                        {% endif %}
+                        {% if expense.invoice_number %}
+                        <span>📄 Invoice: {{ expense.invoice_number }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h3>Belum Ada Pengeluaran</h3>
+                    <p>Belum ada pengeluaran riset untuk bidang ini</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Back Button -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'finance:dashboard' %}" class="add-expense-btn">← Kembali ke Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

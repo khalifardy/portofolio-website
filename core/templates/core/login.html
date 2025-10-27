@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Finance Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #231f20;
+            --bg-secondary: #2c7c41;
+            --bg-tertiary: #37a749;
+            --text-primary: #f4f6d2;
+            --text-secondary: #83c441;
+            --accent: #37a749;
+            --accent-hover: #2c7c41;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Code Pro', monospace;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 50%, var(--bg-tertiary) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background */
+        .leaves-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+        }
+
+        .leaf-float {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .login-container {
+            background: rgba(35, 31, 32, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h1 {
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(55, 167, 73, 0.1);
+            border: 2px solid rgba(55, 167, 73, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Source Code Pro', monospace;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(55, 167, 73, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        .btn-login:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(55, 167, 73, 0.3);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(55, 167, 73, 0.2);
+            border: 2px solid rgba(55, 167, 73, 0.5);
+            color: #86efac;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Leaves Background -->
+    <div class="leaves-bg" id="leavesContainer"></div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <img src="{% static 'core/images/logo-only.png' %}" alt="IDEASOPHIA" class="logo-img">
+            <h1>💰 Finance Dashboard</h1>
+            <p>Silakan login untuk melanjutkan</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="Masukkan username Anda">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Masukkan password Anda">
+            </div>
+
+            <button type="submit" class="btn-login">🔐 Login</button>
+        </form>
+
+        <div class="footer-link">
+            <p>Belum punya akun? <a href="/contact/">Hubungi Admin</a></p>
+            <p style="margin-top: 1rem;"><a href="/">← Kembali ke Home</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Create floating leaves animation
+        const leavesContainer = document.getElementById('leavesContainer');
+        const leafEmojis = ['🌿', '🍃', '🌱', '🌾'];
+        
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf-float';
+            leaf.textContent = leafEmojis[Math.floor(Math.random() * leafEmojis.length)];
+            leaf.style.left = Math.random() * 100 + '%';
+            leaf.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            leaf.style.animationDelay = Math.random() * 5 + 's';
+            leavesContainer.appendChild(leaf);
+            
+            setTimeout(() => leaf.remove(), 20000);
+        }
+        
+        // Create leaves periodically
+        setInterval(createLeaf, 2000);
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createLeaf, i * 1000);
+        }
+    </script>
+</body>
+</html>

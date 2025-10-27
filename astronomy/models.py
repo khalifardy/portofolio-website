@@ -1,3 +1,4 @@
+# astronomy/models.py
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
@@ -248,7 +249,7 @@ class ResearchProject(models.Model):
         super().save(*args, **kwargs)
     
     def get_observation_count(self):
-        return self.get_observation_count()
+        return self.observation.count() 
     
     def get_data_entry_count(self):
         return self.data_entries.count()

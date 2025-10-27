@@ -1,0 +1,471 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}All Research Projects - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c7c41 100%);
+        min-height: 100vh;
+    }
+    
+    .page-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 6rem 2rem 2rem;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        color: #f4f6d2;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .page-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #37a749, #2c7c41);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2c7c41, #37a749);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(55, 167, 73, 0.4);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid #f4f6d2;
+    }
+    
+    .btn-secondary:hover {
+        background: #f4f6d2;
+        color: #231f20;
+    }
+    
+    .stats-bar {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #b8baa0;
+        font-size: 0.9rem;
+    }
+    
+    .stat-value {
+        color: #83c441;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    
+    .filter-section {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        margin-bottom: 2rem;
+    }
+    
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-group label {
+        display: block;
+        color: #b8baa0;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-group input,
+    .filter-group select {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(55, 167, 73, 0.1);
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        border-radius: 8px;
+        color: #f4f6d2;
+        font-size: 0.95rem;
+    }
+    
+    .filter-group input:focus,
+    .filter-group select:focus {
+        outline: none;
+        border-color: #37a749;
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+    
+    .btn-filter {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-apply {
+        background: linear-gradient(135deg, #37a749, #2c7c41);
+        color: white;
+    }
+    
+    .btn-clear {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .project-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(55, 167, 73, 0.3);
+        border-color: #37a749;
+    }
+    
+    .project-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .project-title {
+        color: #f4f6d2;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .project-description {
+        color: #b8baa0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .project-meta {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .badge-ai { background: #667eea; color: white; }
+    .badge-physics { background: #f093fb; color: white; }
+    .badge-mathematics { background: #4facfe; color: white; }
+    .badge-engineering { background: #fa709a; color: white; }
+    .badge-astronomy { background: #feca57; color: #231f20; }
+    .badge-other { background: #6c757d; color: white; }
+    
+    .badge-active { background: #37a749; color: white; }
+    .badge-planning { background: #6c757d; color: white; }
+    .badge-completed { background: #0d6efd; color: white; }
+    .badge-paused { background: #ffc107; color: #231f20; }
+    .badge-archived { background: #6c757d; color: white; }
+    
+    .badge-high, .badge-urgent { background: #dc3545; color: white; }
+    .badge-medium { background: #0d6efd; color: white; }
+    .badge-low { background: #6c757d; color: white; }
+    
+    .project-progress {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .progress-label {
+        color: #b8baa0;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(55, 167, 73, 0.2);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #37a749, #83c441);
+        transition: width 0.3s ease;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #b8baa0;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .stats-bar {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>📋</span>
+            All Research Projects
+        </h1>
+        <div class="page-actions">
+            <a href="{% url 'research:dashboard_research' %}" class="btn btn-secondary">
+                ⬅️ Back to Dashboard
+            </a>
+            <a href="{% url 'research:export_csv' %}" class="btn btn-secondary">
+                📥 Export CSV
+            </a>
+            <a href="{% url 'research:project_create' %}" class="btn btn-primary">
+                ➕ New Project
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-label">📊 Total:</span>
+            <span class="stat-value">{{ total_count }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">🚀 Active:</span>
+            <span class="stat-value">{{ active_count }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">✅ Completed:</span>
+            <span class="stat-value">{{ completed_count }}</span>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filter-section">
+        <form method="get" id="filterForm">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="search">🔍 Search</label>
+                    <input type="text" 
+                           name="search" 
+                           id="search" 
+                           value="{{ search_query }}"
+                           placeholder="Search by title, description...">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="field">Research Field</label>
+                    <select name="field" id="field">
+                        <option value="">All Fields</option>
+                        <option value="ai" {% if field_filter == 'ai' %}selected{% endif %}>AI & Machine Learning</option>
+                        <option value="physics" {% if field_filter == 'physics' %}selected{% endif %}>Physics</option>
+                        <option value="mathematics" {% if field_filter == 'mathematics' %}selected{% endif %}>Mathematics</option>
+                        <option value="engineering" {% if field_filter == 'engineering' %}selected{% endif %}>Engineering</option>
+                        <option value="astronomy" {% if field_filter == 'astronomy' %}selected{% endif %}>Astronomy</option>
+                        <option value="other" {% if field_filter == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status">
+                        <option value="">All Status</option>
+                        <option value="planning" {% if status_filter == 'planning' %}selected{% endif %}>Planning</option>
+                        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                        <option value="paused" {% if status_filter == 'paused' %}selected{% endif %}>Paused</option>
+                        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                        <option value="archived" {% if status_filter == 'archived' %}selected{% endif %}>Archived</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="priority">Priority</label>
+                    <select name="priority" id="priority">
+                        <option value="">All Priorities</option>
+                        <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Low</option>
+                        <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>High</option>
+                        <option value="urgent" {% if priority_filter == 'urgent' %}selected{% endif %}>Urgent</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter btn-apply">
+                    🔍 Apply Filters
+                </button>
+                <a href="{% url 'research:project_list' %}" class="btn-filter btn-clear">
+                    🔄 Clear All
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Projects Grid -->
+    {% if projects %}
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card" onclick="window.location.href='{% url 'research:project_detail' project.slug %}'">
+            <div class="project-icon">
+                {% if project.field == 'ai' %}🤖
+                {% elif project.field == 'physics' %}⚛️
+                {% elif project.field == 'mathematics' %}📐
+                {% elif project.field == 'engineering' %}⚙️
+                {% elif project.field == 'astronomy' %}🔭
+                {% else %}📚
+                {% endif %}
+            </div>
+            <h2 class="project-title">{{ project.title }}</h2>
+            <p class="project-description">{{ project.description|truncatewords:20 }}</p>
+            
+            <div class="project-meta">
+                <span class="badge badge-{{ project.field }}">
+                    {{ project.get_field_display }}
+                </span>
+                <span class="badge badge-{{ project.status }}">
+                    {{ project.get_status_display }}
+                </span>
+                <span class="badge badge-{{ project.priority }}">
+                    {{ project.get_priority_display }}
+                </span>
+            </div>
+            
+            {% if project.progress_percentage > 0 %}
+            <div class="project-progress">
+                <div class="progress-label">
+                    <span>Progress</span>
+                    <span>{{ project.progress_percentage }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h2 style="color: #f4f6d2; margin-bottom: 0.5rem;">
+            {% if search_query or field_filter or status_filter or priority_filter %}
+                No projects match your filters
+            {% else %}
+                No Research Projects Yet
+            {% endif %}
+        </h2>
+        <p>
+            {% if search_query or field_filter or status_filter or priority_filter %}
+                Try adjusting your filters or <a href="{% url 'research:project_list' %}" style="color: #83c441;">clear all filters</a>
+            {% else %}
+                Start by creating your first research project
+            {% endif %}
+        </p>
+        {% if not search_query and not field_filter and not status_filter and not priority_filter %}
+        <a href="{% url 'research:project_create' %}" class="btn btn-primary" style="margin-top: 1.5rem;">
+            ➕ Create Your First Project
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

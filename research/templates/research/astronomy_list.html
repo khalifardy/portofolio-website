@@ -1,0 +1,323 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Astronomy Research - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c7c41 100%);
+        min-height: 100vh;
+    }
+    
+    .page-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 6rem 2rem 2rem;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        color: #f4f6d2;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .page-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #37a749, #2c7c41);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2c7c41, #37a749);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(55, 167, 73, 0.4);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid #f4f6d2;
+    }
+    
+    .btn-secondary:hover {
+        background: #f4f6d2;
+        color: #231f20;
+    }
+    
+    .filter-section {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        margin-bottom: 2rem;
+    }
+    
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .filter-group label {
+        display: block;
+        color: #b8baa0;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-group select {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(55, 167, 73, 0.1);
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        border-radius: 8px;
+        color: #f4f6d2;
+        font-size: 0.95rem;
+    }
+    
+    .filter-group select:focus {
+        outline: none;
+        border-color: #37a749;
+    }
+    
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .project-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(55, 167, 73, 0.3);
+        border-color: #37a749;
+    }
+    
+    .project-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .project-title {
+        color: #f4f6d2;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .project-description {
+        color: #b8baa0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .project-meta {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .badge-orbital { background: #667eea; color: white; }
+    .badge-variable_star { background: #f093fb; color: white; }
+    .badge-meteor { background: #4facfe; color: white; }
+    .badge-eclipse { background: #fa709a; color: white; }
+    .badge-deep_sky { background: #feca57; color: #231f20; }
+    .badge-planetary { background: #48dbfb; color: white; }
+    .badge-other { background: #6c757d; color: white; }
+    
+    .badge-active { background: #37a749; color: white; }
+    .badge-planning { background: #6c757d; color: white; }
+    .badge-completed { background: #0d6efd; color: white; }
+    .badge-paused { background: #ffc107; color: #231f20; }
+    
+    .project-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .stat-item {
+        color: #d4d6bd;
+        font-size: 0.85rem;
+    }
+    
+    .stat-value {
+        color: #83c441;
+        font-weight: 700;
+    }
+
+    .stat-update {
+        color: #83c441;
+        font-weight: 700;
+        font-size:10pt;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #b8baa0;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>🔭</span>
+            Astronomy Research Projects
+        </h1>
+        <div class="page-actions">
+            <a href="{% url 'research:dashboard_research' %}" class="btn btn-secondary">
+                ⬅️ Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filter-section">
+        <form method="get" class="filter-grid">
+            <div class="filter-group">
+                <label for="status">Status</label>
+                <select name="status" id="status" onchange="this.form.submit()">
+                    <option value="">All Status</option>
+                    <option value="planning" {% if status_filter == 'planning' %}selected{% endif %}>Planning</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                    <option value="paused" {% if status_filter == 'paused' %}selected{% endif %}>Paused</option>
+                    <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="archived" {% if status_filter == 'archived' %}selected{% endif %}>Archived</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="type">Research Type</label>
+                <select name="type" id="type" onchange="this.form.submit()">
+                    <option value="">All Types</option>
+                    <option value="orbital" {% if type_filter == 'orbital' %}selected{% endif %}>Orbital</option>
+                    <option value="variable_star" {% if type_filter == 'variable_star' %}selected{% endif %}>Variable Star</option>
+                    <option value="meteor" {% if type_filter == 'meteor' %}selected{% endif %}>Meteor</option>
+                    <option value="eclipse" {% if type_filter == 'eclipse' %}selected{% endif %}>Eclipse</option>
+                    <option value="deep_sky" {% if type_filter == 'deep_sky' %}selected{% endif %}>Deep Sky</option>
+                    <option value="planetary" {% if type_filter == 'planetary' %}selected{% endif %}>Planetary</option>
+                    <option value="other" {% if type_filter == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Projects Grid -->
+    {% if projects %}
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card" onclick="window.location.href='{% url 'research:astronomy_detail' project.slug %}'">
+            <div class="project-icon">🔭</div>
+            <h2 class="project-title">{{ project.title }}</h2>
+            <p class="project-description">{{ project.description|truncatewords:20 }}</p>
+            
+            <div class="project-meta">
+                <span class="badge badge-{{ project.research_type }}">
+                    {{ project.get_research_type_display }}
+                </span>
+                <span class="badge badge-{{ project.status }}">
+                    {{ project.get_status_display }}
+                </span>
+            </div>
+            
+            <div class="project-stats">
+                <div class="stat-item">
+                    📊 Data: <span class="stat-value">{{ project.data_entries.count }}</span>
+                </div>
+                <div class="stat-item">
+                    🔬 Analysis: <span class="stat-value">{{ project.analyses.count }}</span>
+                </div>
+                <div class="stat-item">
+                    📸 Photos: <span class="stat-value">{{ project.observation.count }}</span>
+                </div>
+                <div class="stat-item">
+                    📅 Updated: <span class="stat-update">{{ project.updated_at|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🔭</div>
+        <h2 style="color: #f4f6d2; margin-bottom: 0.5rem;">No Astronomy Projects Yet</h2>
+        <p>Start by creating astronomy research projects in Django Admin</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

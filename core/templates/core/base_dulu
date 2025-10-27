@@ -66,7 +66,7 @@
             {% if user.is_authenticated %}
             <!-- ✨ UNIFIED DASHBOARD MENU (After Login) -->
             <li class="dropdown">
-                <a href="{% url 'core:dashboard' %}" style="color: #37a749; font-weight: 600;">
+                <a href="{% url 'finance:dashboard' %}" style="color: #37a749; font-weight: 600;">
                     💎 Dashboard
                 </a>
                 <ul class="dropdown-menu">
@@ -74,10 +74,40 @@
                     <li style="padding: 0.5rem 1rem; font-weight: 700; color: #37a749; font-size: 0.75rem; text-transform: uppercase;">
                         💰 Finance
                     </li>
-                    <li><a href="{% url 'finance:dashboard_finance' %}">📊 Finance Dashboard</a></li>
+                    <li><a href="{% url 'finance:dashboard' %}">📊 Finance Dashboard</a></li>
                     <li><a href="{% url 'finance:transactions' %}">📝 Transactions</a></li>
                     <li><a href="{% url 'finance:add_transaction' %}">➕ Add Transaction</a></li>
                     
+                    <!-- Divider -->
+                    <!--<li style="border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 0.5rem 0;"></li>-->
+                    
+                    <!-- Research Section -->
+                    <!--<li style="padding: 0.5rem 1rem; font-weight: 700; color: #8b5cf6; font-size: 0.75rem; text-transform: uppercase;">
+                        🔬 Research
+                    </li>
+                    <li><a href="{% url 'research:dashboard' %}">📊 Research Dashboard</a></li>
+                    <li><a href="{% url 'research:project_list' %}">📋 All Projects</a></li>
+                    <li><a href="{% url 'research:project_create' %}">➕ New Project</a></li>-->
+                    
+                    <!-- Research by Field (Submenu Style) -->
+                    <!--<li style="padding-left: 2rem; font-size: 0.875rem;">
+                        <a href="{% url 'research:project_list' %}?field=ai">🤖 AI & ML</a>
+                    </li>
+                    <li style="padding-left: 2rem; font-size: 0.875rem;">
+                        <a href="{% url 'research:project_list' %}?field=physics">⚛️ Physics</a>
+                    </li>
+                    <li style="padding-left: 2rem; font-size: 0.875rem;">
+                        <a href="{% url 'research:project_list' %}?field=math">📐 Math</a>
+                    </li>
+                    <li style="padding-left: 2rem; font-size: 0.875rem;">
+                        <a href="{% url 'research:project_list' %}?field=engineering">🔧 Engineering</a>
+                    </li>-->
+                    
+                    <!-- Divider -->
+                    <!--<li style="border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 0.5rem 0;"></li>-->
+                    
+                    <!-- Research Expenses -->
+                    <!--<li><a href="{% url 'finance:research_menu' %}">💸 Research Expenses</a></li>-->
                     
                     <!-- Logout -->
                     <li style="border-top: 1px solid rgba(148, 163, 184, 0.2); margin-top: 0.5rem; padding-top: 0.5rem;">

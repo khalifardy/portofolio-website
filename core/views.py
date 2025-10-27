@@ -1,7 +1,10 @@
+# core/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .models import (
     Project, 
     Skill, 
@@ -257,3 +260,50 @@ def about(request):
     }
     
     return render(request, 'core/about.html', context)
+
+# ========================================
+# AUTHENTICATION VIEWS
+# ========================================
+
+def login_view(request):
+    """
+    View untuk handle login user
+    - GET: Tampilkan form login
+    - POST: Process login credentials
+    """
+    # Redirect jika sudah login
+    if request.user.is_authenticated:
+        return redirect('core:dashboard')
+    
+    # Handle POST request (form submission)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        # Authenticate user
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # Login berhasil
+            login(request, user)
+            messages.success(request, f'Selamat datang kembali, {user.username}!')
+            return redirect('core:dashboard')
+        else:
+            # Login gagal
+            messages.error(request, 'Username atau password salah!')
+    
+    # Render form login
+    return render(request, 'core/login.html')
+
+@login_required
+def dashboard_selection(request):
+    return render(request, 'core/dashboard_selection.html')
+
+@login_required
+def logout_view(request):
+    """
+    View untuk handle logout user
+    """
+    logout(request)
+    messages.info(request, 'Anda telah logout.')
+    return redirect('core:home')
