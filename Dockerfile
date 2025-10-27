@@ -22,6 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . /app/
 
+ENV SECRET_KEY='django-insecure-dev-only-&*#@!%^)(_+=-0987654321qwertyuiopasdfghjklzxcvbnm'
+ENV DEBUG=False
+
 RUN python manage.py collectstatic --noinput
 
 # Run gunicorn
