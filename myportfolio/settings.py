@@ -32,7 +32,14 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
-print(ALLOWED_HOSTS)
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ideasophia.com',
+    'https://www.ideasophia.com',
+]
+
+# Security settings untuk proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
