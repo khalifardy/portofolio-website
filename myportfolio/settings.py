@@ -137,8 +137,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/project/portofolio-website/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'project/portofolio-website/media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = 'core:login'
 LOGIN_REDIRECT_URL = 'core:dashboard_selection'
