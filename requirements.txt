@@ -3,7 +3,9 @@ autopep8==2.3.2
 Django==5.2.6
 django-environ==0.12.0
 django-taggit==6.1.0
+gunicorn==23.0.0
 Markdown==3.9
+packaging==25.0
 pillow==11.3.0
 psycopg2-binary==2.9.10
 pycodestyle==2.14.0
