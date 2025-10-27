@@ -1,0 +1,433 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Daftar Transaksi - Finance Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+.transactions-container {
+    padding: 6rem 0 3rem;
+    min-height: 100vh;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    color: var(--accent);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.filters-section {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.75rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'Source Code Pro', monospace;
+    transition: all 0.3s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(55, 167, 73, 0.15);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.btn-filter {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.btn-filter:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.btn-reset {
+    padding: 0.75rem 1.5rem;
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.btn-reset:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.transactions-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-mini {
+    background: linear-gradient(135deg, rgba(55, 167, 73, 0.1) 0%, rgba(44, 124, 65, 0.1) 100%);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-mini .icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-mini .label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-mini .value {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.transactions-list {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(55, 167, 73, 0.3);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.list-header h3 {
+    color: var(--accent);
+}
+
+.transaction-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 150px 120px auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(55, 167, 73, 0.05);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+
+.transaction-row:hover {
+    background: rgba(55, 167, 73, 0.1);
+    transform: translateX(5px);
+}
+
+.row-icon {
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.row-details h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.row-details p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.row-category {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.row-date {
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.row-amount {
+    text-align: right;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.row-amount.income {
+    color: #37a749;
+}
+
+.row-amount.expense {
+    color: #ef4444;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.pagination a,
+.pagination span {
+    padding: 0.5rem 1rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 1px solid rgba(55, 167, 73, 0.3);
+    border-radius: 5px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.pagination a:hover {
+    background: rgba(55, 167, 73, 0.2);
+}
+
+.pagination .current {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+@media (max-width: 768px) {
+    .transaction-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .row-amount {
+        text-align: left;
+    }
+    
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        width: 100%;
+    }
+    
+    .btn-filter,
+    .btn-reset {
+        flex: 1;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="transactions-container">
+    <div class="container">
+        <div class="page-header">
+            <h1>📝 Daftar Transaksi</h1>
+            <p style="color: var(--text-secondary);">Kelola semua transaksi keuangan Anda</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <form method="GET" id="filterForm">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label>🔍 Tipe Transaksi</label>
+                        <select name="type" id="typeFilter">
+                            <option value="">Semua</option>
+                            <option value="income" {% if request.GET.type == 'income' %}selected{% endif %}>
+                                📈 Pemasukan
+                            </option>
+                            <option value="expense" {% if request.GET.type == 'expense' %}selected{% endif %}>
+                                📉 Pengeluaran
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>📅 Bulan</label>
+                        <input type="month" name="month" id="monthFilter" 
+                               value="{{ request.GET.month }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>📂 Kategori</label>
+                        <select name="category" id="categoryFilter">
+                            <option value="">Semua Kategori</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" 
+                                    {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                                {{ cat.icon }} {{ cat.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-filter">🔍 Filter</button>
+                        <a href="{% url 'finance:transactions' %}" class="btn-reset">↺ Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Stats Mini -->
+        <div class="transactions-stats">
+            <div class="stat-mini">
+                <div class="icon">📊</div>
+                <div class="label">Total Transaksi</div>
+                <div class="value">{{ transactions.count }}</div>
+            </div>
+            <div class="stat-mini">
+                <div class="icon">📈</div>
+                <div class="label">Total Pemasukan</div>
+                <div class="value" style="color: #37a749;">
+                    Rp {{ income_total|floatformat:0 }}
+                </div>
+            </div>
+            <div class="stat-mini">
+                <div class="icon">📉</div>
+                <div class="label">Total Pengeluaran</div>
+                <div class="value" style="color: #ef4444;">
+                    Rp {{ expense_total|floatformat:0 }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="transactions-list">
+            <div class="list-header">
+                <h3>Semua Transaksi</h3>
+                <a href="{% url 'finance:add_transaction' %}" class="btn-filter">
+                    ➕ Tambah Baru
+                </a>
+            </div>
+
+            {% if transactions %}
+                {% for transaction in transactions %}
+                <div class="transaction-row">
+                    <div class="row-icon">
+                        {% if transaction.type == 'income' %}💰{% else %}💸{% endif %}
+                    </div>
+                    
+                    <div class="row-details">
+                        <h4>{{ transaction.description|default:"Transaksi"|truncatewords:10 }}</h4>
+                        <p>{{ transaction.date|date:"l, d F Y" }}</p>
+                    </div>
+                    
+                    <div class="row-category">
+                        <span>{{ transaction.category.icon|default:"📂" }}</span>
+                        <span>{{ transaction.category.name|default:"Tanpa Kategori" }}</span>
+                    </div>
+                    
+                    <div class="row-date">
+                        <div>{{ transaction.date|date:"d M Y" }}</div>
+                        <small style="opacity: 0.7;">{{ transaction.created_at|date:"H:i" }}</small>
+                    </div>
+                    
+                    <div class="row-amount {{ transaction.type }}">
+                        {% if transaction.type == 'income' %}+{% else %}-{% endif %}
+                        Rp {{ transaction.amount|floatformat:0 }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h3>Belum Ada Transaksi</h3>
+                    <p>Mulai catat transaksi keuangan Anda sekarang!</p>
+                    <a href="{% url 'finance:add_transaction' %}" class="btn-filter" 
+                       style="display: inline-block; margin-top: 1rem;">
+                        ➕ Tambah Transaksi Pertama
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Back to Dashboard -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'finance:dashboard_finance' %}" class="btn-reset" 
+               style="display: inline-block;">
+                ← Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto submit on filter change (optional)
+document.querySelectorAll('#typeFilter, #monthFilter, #categoryFilter').forEach(element => {
+    element.addEventListener('change', function() {
+        // Uncomment line below for auto-submit on change
+        // document.getElementById('filterForm').submit();
+    });
+});
+</script>
+{% endblock %}

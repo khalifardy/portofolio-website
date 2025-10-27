@@ -1,0 +1,200 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Delete Project - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c7c41 100%);
+        min-height: 100vh;
+    }
+    
+    .delete-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 6rem 2rem 2rem;
+    }
+    
+    .delete-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 2.5rem;
+        border: 2px solid rgba(220, 53, 69, 0.5);
+        box-shadow: 0 8px 32px rgba(220, 53, 69, 0.2);
+    }
+    
+    .delete-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .delete-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+    
+    .delete-title {
+        font-size: 1.8rem;
+        color: #dc3545;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .delete-subtitle {
+        color: #b8baa0;
+        font-size: 1rem;
+    }
+    
+    .project-info {
+        background: rgba(220, 53, 69, 0.1);
+        border: 2px solid rgba(220, 53, 69, 0.3);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        color: #d4d6bd;
+    }
+    
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .info-label {
+        font-weight: 600;
+    }
+    
+    .info-value {
+        color: #f4f6d2;
+    }
+    
+    .warning-message {
+        background: rgba(220, 53, 69, 0.2);
+        border-left: 4px solid #dc3545;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        color: #f4f6d2;
+    }
+    
+    .warning-message strong {
+        color: #dc3545;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .delete-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #c82333, #bd2130);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid #f4f6d2;
+    }
+    
+    .btn-secondary:hover {
+        background: #f4f6d2;
+        color: #231f20;
+    }
+    
+    @media (max-width: 768px) {
+        .delete-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="delete-header">
+            <div class="delete-icon">⚠️</div>
+            <h1 class="delete-title">Delete Research Project?</h1>
+            <p class="delete-subtitle">This action cannot be undone</p>
+        </div>
+        
+        <div class="project-info">
+            <div class="info-item">
+                <span class="info-label">Title:</span>
+                <span class="info-value">{{ project.title }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Field:</span>
+                <span class="info-value">{{ project.get_field_display }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Status:</span>
+                <span class="info-value">{{ project.get_status_display }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Created:</span>
+                <span class="info-value">{{ project.created_at|date:"d M Y" }}</span>
+            </div>
+        </div>
+        
+        <div class="warning-message">
+            <strong>⚠️ Warning!</strong>
+            <p>You are about to permanently delete this research project. All associated data will be lost. This action cannot be undone.</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="delete-actions">
+                <a href="{% url 'research:project_detail' project.slug %}" class="btn btn-secondary">
+                    ❌ Cancel
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    🗑️ Yes, Delete Project
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

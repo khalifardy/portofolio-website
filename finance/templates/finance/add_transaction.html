@@ -1,0 +1,323 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Tambah Transaksi - Finance Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-container {
+    padding: 6rem 0 3rem;
+    min-height: 100vh;
+}
+
+.form-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: rgba(30, 41, 59, 0.5);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 20px;
+    padding: 3rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-header h1 {
+    color: var(--accent);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--text-secondary);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: 'Source Code Pro', monospace;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(55, 167, 73, 0.15);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.type-option {
+    position: relative;
+}
+
+.type-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.type-option label {
+    display: block;
+    padding: 1.5rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.type-option input[type="radio"]:checked + label {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.type-option label:hover {
+    background: rgba(55, 167, 73, 0.2);
+}
+
+.type-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.btn-submit {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+.btn-submit:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(55, 167, 73, 0.3);
+}
+
+.btn-cancel {
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    color: var(--text-primary);
+}
+
+.btn-cancel:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.amount-preview {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(55, 167, 73, 0.1);
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+.amount-preview .label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.amount-preview .value {
+    color: var(--accent);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .form-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .type-selector {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="container">
+        <div class="form-card">
+            <div class="form-header">
+                <h1>➕ Tambah Transaksi</h1>
+                <p>Catat pemasukan atau pengeluaran Anda</p>
+            </div>
+
+            <form method="POST" id="transactionForm">
+                {% csrf_token %}
+
+                <!-- Type Selector -->
+                <div class="type-selector">
+                    <div class="type-option">
+                        <input type="radio" id="income" name="type" value="income" required>
+                        <label for="income">
+                            <span class="type-icon">📈</span>
+                            Pemasukan
+                        </label>
+                    </div>
+                    <div class="type-option">
+                        <input type="radio" id="expense" name="type" value="expense" checked required>
+                        <label for="expense">
+                            <span class="type-icon">📉</span>
+                            Pengeluaran
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Amount -->
+                <div class="form-group">
+                    <label for="amount">💰 Jumlah (Rp)</label>
+                    <input type="number" id="amount" name="amount" 
+                           placeholder="0" min="0" step="1" required>
+                </div>
+
+                <!-- Amount Preview -->
+                <div class="amount-preview">
+                    <div class="label">Preview Jumlah:</div>
+                    <div class="value" id="amountPreview">Rp 0</div>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="category">📂 Kategori</label>
+                    <select id="category" name="category" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">
+                            {{ cat.icon }} {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Date -->
+                <div class="form-group">
+                    <label for="date">📅 Tanggal</label>
+                    <input type="date" id="date" name="date" 
+                           value="{{ today|date:'Y-m-d' }}" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">📝 Deskripsi (Opsional)</label>
+                    <textarea id="description" name="description" 
+                              placeholder="Catatan tambahan..."></textarea>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">
+                        ✅ Simpan Transaksi
+                    </button>
+                    <a href="{% url 'finance:dashboard_finance' %}" class="btn btn-cancel">
+                        ❌ Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Amount preview formatter
+const amountInput = document.getElementById('amount');
+const amountPreview = document.getElementById('amountPreview');
+
+function formatRupiah(number) {
+    return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+amountInput.addEventListener('input', function() {
+    const value = this.value || 0;
+    amountPreview.textContent = formatRupiah(value);
+});
+
+// Filter kategori berdasarkan tipe transaksi
+const typeInputs = document.querySelectorAll('input[name="type"]');
+const categorySelect = document.getElementById('category');
+const allCategories = Array.from(categorySelect.options);
+
+typeInputs.forEach(input => {
+    input.addEventListener('change', function() {
+        const selectedType = this.value;
+        
+        // Clear current options
+        categorySelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+        
+        // Filter dan tampilkan kategori sesuai tipe
+        allCategories.slice(1).forEach(option => {
+            // Asumsi: kategori income memiliki emoji yang berbeda
+            // Atau bisa ditambahkan data attribute di Django template
+            categorySelect.appendChild(option.cloneNode(true));
+        });
+    });
+});
+
+// Form validation
+document.getElementById('transactionForm').addEventListener('submit', function(e) {
+    const amount = document.getElementById('amount').value;
+    
+    if (amount <= 0) {
+        e.preventDefault();
+        alert('Jumlah harus lebih dari 0!');
+        return false;
+    }
+});
+</script>
+{% endblock %}

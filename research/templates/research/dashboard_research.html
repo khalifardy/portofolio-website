@@ -1,0 +1,632 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Research Dashboard - IDEASOPHIA{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c7c41 100%);
+        min-height: 100vh;
+    }
+    
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 6rem 2rem 2rem;
+    }
+    
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .dashboard-title {
+        font-size: 2rem;
+        color: #f4f6d2;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .dashboard-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #37a749, #2c7c41);
+        color: white;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2c7c41, #37a749);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(55, 167, 73, 0.4);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid #f4f6d2;
+    }
+    
+    .btn-secondary:hover {
+        background: #f4f6d2;
+        color: #231f20;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(55, 167, 73, 0.3);
+        border-color: #37a749;
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .stat-label {
+        color: #b8baa0;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-value {
+        color: #f4f6d2;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .section-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .section-title {
+        color: #f4f6d2;
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .project-item {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        background: rgba(55, 167, 73, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #37a749;
+        transition: all 0.3s ease;
+    }
+    
+    .project-item:hover {
+        background: rgba(55, 167, 73, 0.2);
+        transform: translateX(4px);
+    }
+    
+    .project-title {
+        color: #f4f6d2;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .project-meta {
+        color: #b8baa0;
+        font-size: 0.85rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .badge-ai { background: #667eea; color: white; }
+    .badge-physics { background: #f093fb; color: white; }
+    .badge-mathematics { background: #4facfe; color: white; }
+    .badge-engineering { background: #fa709a; color: white; }
+    .badge-astronomy { background: #feca57; color: #231f20; }
+    .badge-other { background: #6c757d; color: white; }
+    
+    .badge-active { background: #37a749; color: white; }
+    .badge-planning { background: #6c757d; color: white; }
+    .badge-completed { background: #0d6efd; color: white; }
+    .badge-paused { background: #ffc107; color: #231f20; }
+    
+    .badge-high, .badge-urgent { background: #dc3545; color: white; }
+    .badge-medium { background: #0d6efd; color: white; }
+    .badge-low { background: #6c757d; color: white; }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #b8baa0;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .field-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: rgba(55, 167, 73, 0.1);
+        border-radius: 8px;
+    }
+    
+    .field-name {
+        color: #f4f6d2;
+        font-weight: 600;
+    }
+    
+    .field-count {
+        color: #83c441;
+        font-weight: 700;
+    }
+    
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .chart-card {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .chart-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .chart-title {
+        color: #f4f6d2;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(55, 167, 73, 0.2);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #37a749, #83c441);
+        transition: width 0.3s ease;
+    }
+    
+    @media (max-width: 968px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <span>🔬</span>
+            Research Dashboard
+        </h1>
+        <div class="dashboard-actions">
+            <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">
+                ⬅️ Back to Selection
+            </a>
+            <a href="{% url 'finance:dashboard_finance' %}" class="btn btn-secondary">
+                💰 Switch to Finance
+            </a>
+            <a href="{% url 'research:astronomy_list' %}" class="btn btn-secondary">
+                🔭 Astronomy Research
+            </a>
+            <a href="{% url 'research:project_list' %}" class="btn btn-secondary">
+                📋 All Projects
+            </a>
+            <a href="{% url 'research:export_csv' %}" class="btn btn-secondary">
+                📥 Export CSV
+            </a>
+            <a href="{% url 'research:project_create' %}" class="btn btn-primary">
+                ➕ New Project
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon">📊</span>
+            <div class="stat-label">Total Projects</div>
+            <div class="stat-value">{{ total_projects }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <span class="stat-icon">🚀</span>
+            <div class="stat-label">Active Projects</div>
+            <div class="stat-value">{{ active_projects }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <div class="stat-label">Completed</div>
+            <div class="stat-value">{{ completed_projects }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <span class="stat-icon">📝</span>
+            <div class="stat-label">Planning</div>
+            <div class="stat-value">{{ planning_projects }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <span class="stat-icon">📈</span>
+            <div class="stat-label">Avg. Progress</div>
+            <div class="stat-value">{{ avg_progress }}%</div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    {% if field_labels %}
+    <div class="charts-grid">
+        <!-- Projects by Field Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">
+                    <span>📊</span> Projects by Field
+                </h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="fieldChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Projects by Status Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">
+                    <span>📈</span> Projects by Status
+                </h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Recent Projects -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span>📌</span> Recent Projects
+                </h2>
+            </div>
+            
+            {% if recent_general or recent_astro %}
+                {% for project in recent_general %}
+                <div class="project-item" onclick="window.location.href='{% url 'research:project_detail' project.slug %}'" style="cursor: pointer;">
+                    <div class="project-title">{{ project.title }}</div>
+                    <div class="project-meta">
+                        <span class="badge badge-{{ project.field }}">{{ project.get_field_display }}</span>
+                        <span class="badge badge-{{ project.status }}">{{ project.get_status_display }}</span>
+                        <span>{{ project.updated_at|timesince }} ago</span>
+                    </div>
+                    {% if project.progress_percentage > 0 %}
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                {% for project in recent_astro %}
+                <div class="project-item" onclick="window.location.href='{% url 'research:astronomy_detail' project.slug %}'" style="cursor: pointer;">
+                    <div class="project-title">🔭 {{ project.title }}</div>
+                    <div class="project-meta">
+                        <span class="badge badge-astronomy">Astronomy</span>
+                        <span class="badge badge-{{ project.status }}">{{ project.get_status_display }}</span>
+                        <span>{{ project.updated_at|timesince }} ago</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p>No recent projects yet</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Projects by Field -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span>🎯</span> Projects by Field
+                </h2>
+            </div>
+            
+            {% if projects_by_field %}
+                {% for field in projects_by_field %}
+                <div class="field-item">
+                    <span class="field-name">
+                        {% if field.field == 'ai' %}🤖 AI & Machine Learning
+                        {% elif field.field == 'physics' %}⚛️ Physics
+                        {% elif field.field == 'mathematics' %}📐 Mathematics
+                        {% elif field.field == 'engineering' %}⚙️ Engineering
+                        {% elif field.field == 'astronomy' %}🔭 Astronomy
+                        {% else %}📚 Other
+                        {% endif %}
+                    </span>
+                    <span class="field-count">{{ field.count }}</span>
+                </div>
+                {% endfor %}
+                
+                {% if recent_astro %}
+                <div class="field-item">
+                    <span class="field-name">🔭 Astronomy (Integrated)</span>
+                    <span class="field-count">{{ recent_astro|length }}</span>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <p>No projects yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- High Priority Projects -->
+    {% if high_priority %}
+    <div class="section-card">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span>⚡</span> High Priority Projects
+            </h2>
+        </div>
+        
+        <div class="content-grid">
+            {% for project in high_priority %}
+            <div class="project-item">
+                <div class="project-title">{{ project.title }}</div>
+                <div class="project-meta">
+                    <span class="badge badge-{{ project.field }}">{{ project.get_field_display }}</span>
+                    <span class="badge badge-{{ project.priority }}">{{ project.get_priority_display }}</span>
+                    <span class="badge badge-{{ project.status }}">{{ project.get_status_display }}</span>
+                </div>
+                {% if project.progress_percentage > 0 %}
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// Chart.js configuration
+Chart.defaults.color = '#d4d6bd';
+Chart.defaults.borderColor = 'rgba(55, 167, 73, 0.3)';
+
+{% if field_labels %}
+// Projects by Field - Doughnut Chart
+const fieldCtx = document.getElementById('fieldChart');
+if (fieldCtx) {
+    new Chart(fieldCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ field_labels|safe }},
+            datasets: [{
+                data: {{ field_data|safe }},
+                backgroundColor: {{ field_colors|safe }},
+                borderWidth: 2,
+                borderColor: 'rgba(35, 31, 32, 0.8)',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#d4d6bd',
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            family: "'Source Code Pro', monospace"
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(35, 31, 32, 0.95)',
+                    titleColor: '#f4f6d2',
+                    bodyColor: '#d4d6bd',
+                    borderColor: '#37a749',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Projects by Status - Bar Chart
+const statusCtx = document.getElementById('statusChart');
+if (statusCtx) {
+    new Chart(statusCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ status_labels|safe }},
+            datasets: [{
+                label: 'Projects',
+                data: {{ status_data|safe }},
+                backgroundColor: 'rgba(55, 167, 73, 0.7)',
+                borderColor: '#37a749',
+                borderWidth: 2,
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(35, 31, 32, 0.95)',
+                    titleColor: '#f4f6d2',
+                    bodyColor: '#d4d6bd',
+                    borderColor: '#37a749',
+                    borderWidth: 1,
+                    padding: 12,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#b8baa0',
+                        font: {
+                            family: "'Source Code Pro', monospace"
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(55, 167, 73, 0.2)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#b8baa0',
+                        font: {
+                            family: "'Source Code Pro', monospace"
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+{% endif %}
+</script>
+{% endblock %}

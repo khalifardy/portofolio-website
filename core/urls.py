@@ -1,3 +1,4 @@
+# core/urls.py
 from django.urls import include, path, re_path
 from .views import (
     home,
@@ -6,7 +7,10 @@ from .views import (
     blog_list,
     blog_detail,
     contact,
-    about
+    about,
+    login_view,
+    logout_view,
+    dashboard_selection
 )
 
 app_name = 'core'
@@ -19,4 +23,10 @@ urlpatterns = [
     path('blog/', blog_list, name='blog'),
     path('blog/<slug:slug>/', blog_detail, name='blog_detail'),
     path('contact/', contact, name='contact'),
+     # ========================================
+    # AUTHENTICATION URLs
+    # ========================================
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('dashboard/', dashboard_selection, name='dashboard'),
 ]

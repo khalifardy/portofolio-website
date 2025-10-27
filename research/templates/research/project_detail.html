@@ -1,0 +1,524 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} - Research Project{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c7c41 100%);
+        min-height: 100vh;
+    }
+    
+    .detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 6rem 2rem 2rem;
+    }
+    
+    .detail-header {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 2rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        margin-bottom: 2rem;
+    }
+    
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .title-section {
+        flex: 1;
+    }
+    
+    .project-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .project-title {
+        font-size: 2.5rem;
+        color: #f4f6d2;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .project-subtitle {
+        color: #b8baa0;
+        font-size: 1.1rem;
+    }
+    
+    .actions-section {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #37a749, #2c7c41);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2c7c41, #37a749);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(55, 167, 73, 0.4);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #f4f6d2;
+        border: 2px solid #f4f6d2;
+    }
+    
+    .btn-secondary:hover {
+        background: #f4f6d2;
+        color: #231f20;
+    }
+    
+    .btn-danger {
+        background: transparent;
+        color: #dc3545;
+        border: 2px solid #dc3545;
+    }
+    
+    .btn-danger:hover {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .meta-label {
+        color: #b8baa0;
+        font-size: 0.85rem;
+    }
+    
+    .meta-value {
+        color: #f4f6d2;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .badge-ai { background: #667eea; color: white; }
+    .badge-physics { background: #f093fb; color: white; }
+    .badge-mathematics { background: #4facfe; color: white; }
+    .badge-engineering { background: #fa709a; color: white; }
+    .badge-astronomy { background: #feca57; color: #231f20; }
+    .badge-other { background: #6c757d; color: white; }
+    
+    .badge-active { background: #37a749; color: white; }
+    .badge-planning { background: #6c757d; color: white; }
+    .badge-completed { background: #0d6efd; color: white; }
+    .badge-paused { background: #ffc107; color: #231f20; }
+    .badge-archived { background: #6c757d; color: white; }
+    
+    .badge-high, .badge-urgent { background: #dc3545; color: white; }
+    .badge-medium { background: #0d6efd; color: white; }
+    .badge-low { background: #6c757d; color: white; }
+    
+    .progress-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid rgba(55, 167, 73, 0.3);
+    }
+    
+    .progress-label {
+        color: #b8baa0;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 12px;
+        background: rgba(55, 167, 73, 0.2);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #37a749, #83c441);
+        transition: width 0.3s ease;
+    }
+    
+    .content-section {
+        background: rgba(35, 31, 32, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 2rem;
+        border: 2px solid rgba(55, 167, 73, 0.3);
+        margin-bottom: 2rem;
+    }
+    
+    .section-title {
+        color: #83c441;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-content {
+        color: #d4d6bd;
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .info-card {
+        background: rgba(55, 167, 73, 0.1);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border-left: 4px solid #37a749;
+    }
+    
+    .info-title {
+        color: #83c441;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+    }
+    
+    .info-content {
+        color: #d4d6bd;
+        line-height: 1.6;
+    }
+    
+    .json-data {
+        background: rgba(55, 167, 73, 0.1);
+        border: 1px solid rgba(55, 167, 73, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        overflow-x: auto;
+        margin-top: 1rem;
+    }
+    
+    .json-data pre {
+        color: #d4d6bd;
+        margin: 0;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+    }
+    
+    .collaborator-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .collaborator-item {
+        padding: 0.75rem;
+        background: rgba(55, 167, 73, 0.1);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        color: #d4d6bd;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .empty-message {
+        color: #b8baa0;
+        font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+        .header-top {
+            flex-direction: column;
+        }
+        
+        .project-title {
+            font-size: 2rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <!-- Project Header -->
+    <div class="detail-header">
+        <div class="header-top">
+            <div class="title-section">
+                <div class="project-icon">
+                    {% if project.field == 'ai' %}🤖
+                    {% elif project.field == 'physics' %}⚛️
+                    {% elif project.field == 'mathematics' %}📐
+                    {% elif project.field == 'engineering' %}⚙️
+                    {% elif project.field == 'astronomy' %}🔭
+                    {% else %}📚
+                    {% endif %}
+                </div>
+                <h1 class="project-title">{{ project.title }}</h1>
+                <p class="project-subtitle">{{ project.get_field_display }} Research</p>
+            </div>
+            
+            <div class="actions-section">
+                <a href="{% url 'research:project_list' %}" class="btn btn-secondary">
+                    ⬅️ Back to List
+                </a>
+                <a href="{% url 'research:project_edit' project.slug %}" class="btn btn-primary">
+                    ✏️ Edit
+                </a>
+                <a href="{% url 'research:project_delete' project.slug %}" class="btn btn-danger">
+                    🗑️ Delete
+                </a>
+            </div>
+        </div>
+        
+        <div class="meta-grid">
+            <div class="meta-item">
+                <span class="meta-label">Status</span>
+                <span class="badge badge-{{ project.status }}">{{ project.get_status_display }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Priority</span>
+                <span class="badge badge-{{ project.priority }}">{{ project.get_priority_display }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Start Date</span>
+                <span class="meta-value">{{ project.start_date|date:"d M Y" }}</span>
+            </div>
+            {% if project.end_date %}
+            <div class="meta-item">
+                <span class="meta-label">End Date</span>
+                <span class="meta-value">{{ project.end_date|date:"d M Y" }}</span>
+            </div>
+            {% endif %}
+            <div class="meta-item">
+                <span class="meta-label">Duration</span>
+                <span class="meta-value">{{ duration_days }} days</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Last Updated</span>
+                <span class="meta-value">{{ project.updated_at|timesince }} ago</span>
+            </div>
+        </div>
+        
+        {% if project.progress_percentage > 0 %}
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>Research Progress</span>
+                <span style="color: #83c441; font-weight: 700;">{{ project.progress_percentage }}%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Description -->
+    <div class="content-section">
+        <h2 class="section-title">
+            <span>📝</span> Description
+        </h2>
+        <div class="section-content">
+            {{ project.description }}
+        </div>
+    </div>
+    
+    <!-- Research Details -->
+    <div class="content-section">
+        <h2 class="section-title">
+            <span>🔬</span> Research Details
+        </h2>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-title">📌 Objectives</div>
+                <div class="info-content">{{ project.objectives }}</div>
+            </div>
+            
+            {% if project.methodology %}
+            <div class="info-card">
+                <div class="info-title">🔧 Methodology</div>
+                <div class="info-content">{{ project.methodology }}</div>
+            </div>
+            {% endif %}
+            
+            {% if project.hypothesis %}
+            <div class="info-card">
+                <div class="info-title">💡 Hypothesis</div>
+                <div class="info-content">{{ project.hypothesis }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Results -->
+    {% if project.findings or project.conclusions or project.future_work %}
+    <div class="content-section">
+        <h2 class="section-title">
+            <span>📊</span> Results & Findings
+        </h2>
+        
+        <div class="info-grid">
+            {% if project.findings %}
+            <div class="info-card">
+                <div class="info-title">🔍 Findings</div>
+                <div class="info-content">{{ project.findings }}</div>
+            </div>
+            {% endif %}
+            
+            {% if project.conclusions %}
+            <div class="info-card">
+                <div class="info-title">✅ Conclusions</div>
+                <div class="info-content">{{ project.conclusions }}</div>
+            </div>
+            {% endif %}
+            
+            {% if project.future_work %}
+            <div class="info-card">
+                <div class="info-title">🚀 Future Work</div>
+                <div class="info-content">{{ project.future_work }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Metadata -->
+    {% if project.institution or project.supervisor or collaborators_list %}
+    <div class="content-section">
+        <h2 class="section-title">
+            <span>👥</span> Team & Institution
+        </h2>
+        
+        <div class="info-grid">
+            {% if project.institution %}
+            <div class="info-card">
+                <div class="info-title">🏛️ Institution</div>
+                <div class="info-content">{{ project.institution }}</div>
+            </div>
+            {% endif %}
+            
+            {% if project.supervisor %}
+            <div class="info-card">
+                <div class="info-title">👨‍🏫 Supervisor</div>
+                <div class="info-content">{{ project.supervisor }}</div>
+            </div>
+            {% endif %}
+            
+            {% if collaborators_list %}
+            <div class="info-card" style="grid-column: span 2;">
+                <div class="info-title">🤝 Collaborators</div>
+                <ul class="collaborator-list">
+                    {% for collaborator in collaborators_list %}
+                    <li class="collaborator-item">
+                        <span>👤</span>
+                        <span>{{ collaborator }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Data Schema -->
+    {% if project.data_schema %}
+    <div class="content-section">
+        <h2 class="section-title">
+            <span>⚙️</span> Data Schema
+        </h2>
+        <div class="section-content">
+            <p style="margin-bottom: 1rem;">Flexible JSON data structure for field-specific requirements:</p>
+            <div class="json-data">
+                <pre>{{ project.data_schema|safe }}</pre>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Publication Status -->
+    <div class="content-section">
+        <h2 class="section-title">
+            <span>📄</span> Publication Status
+        </h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-title">🌐 Public Access</div>
+                <div class="info-content">
+                    {% if project.is_public %}
+                        <span style="color: #37a749; font-weight: 600;">✅ Public</span>
+                        <p style="margin-top: 0.5rem;">This project is visible to the public</p>
+                    {% else %}
+                        <span style="color: #6c757d; font-weight: 600;">🔒 Private</span>
+                        <p style="margin-top: 0.5rem;">This project is only visible to you</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-title">📰 Publication Status</div>
+                <div class="info-content">
+                    {% if project.is_published %}
+                        <span style="color: #0d6efd; font-weight: 600;">✅ Published</span>
+                        <p style="margin-top: 0.5rem;">This research has been published</p>
+                    {% else %}
+                        <span style="color: #6c757d; font-weight: 600;">📝 Unpublished</span>
+                        <p style="margin-top: 0.5rem;">This research is not yet published</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
