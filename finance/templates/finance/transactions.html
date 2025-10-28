@@ -83,6 +83,8 @@
     cursor: pointer;
     transition: all 0.3s;
     font-family: 'Source Code Pro', monospace;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-filter:hover {
@@ -164,8 +166,8 @@
 
 .transaction-row {
     display: grid;
-    grid-template-columns: 60px 1fr 150px 120px auto;
-    gap: 1rem;
+    grid-template-columns: 60px 2fr 180px 120px 150px 140px;
+    gap: 1.5rem;
     align-items: center;
     padding: 1.5rem;
     background: rgba(55, 167, 73, 0.05);
@@ -221,6 +223,57 @@
     color: #ef4444;
 }
 
+/* Action Buttons */
+.row-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 80px
+}
+
+.action-btn {
+    padding: 0.4rem 0.6rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    font-family: 'Source Code Pro', monospace;
+    white-space: nowrap;
+}
+
+.btn-edit {
+    background: rgba(55, 167, 73, 0.2);
+    border: 1px solid rgba(55, 167, 73, 0.5);
+    color: var(--accent);
+}
+
+.btn-edit:hover {
+    background: rgba(55, 167, 73, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(55, 167, 73, 0.2);
+}
+
+.btn-delete {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -233,54 +286,39 @@
     opacity: 0.5;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-}
-
-.pagination a,
-.pagination span {
-    padding: 0.5rem 1rem;
-    background: rgba(55, 167, 73, 0.1);
-    border: 1px solid rgba(55, 167, 73, 0.3);
-    border-radius: 5px;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: all 0.3s;
-}
-
-.pagination a:hover {
-    background: rgba(55, 167, 73, 0.2);
-}
-
-.pagination .current {
-    background: var(--accent);
-    color: var(--bg-primary);
+@media (max-width: 1024px) {
+    .transaction-row {
+        grid-template-columns: 50px 1fr auto;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    
+    .row-category,
+    .row-date {
+        display: none;
+    }
+    
+    .row-actions {
+        grid-column: 1 / -1;
+        justify-content: center;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(55, 167, 73, 0.2);
+    }
 }
 
 @media (max-width: 768px) {
-    .transaction-row {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-    
-    .row-amount {
-        text-align: left;
-    }
-    
     .filters-grid {
         grid-template-columns: 1fr;
     }
     
-    .filter-actions {
-        width: 100%;
+    .transactions-stats {
+        grid-template-columns: 1fr;
     }
     
-    .btn-filter,
-    .btn-reset {
-        flex: 1;
+    .list-header {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
 </style>
@@ -289,8 +327,9 @@
 {% block content %}
 <div class="transactions-container">
     <div class="container">
+        <!-- Page Header -->
         <div class="page-header">
-            <h1>📝 Daftar Transaksi</h1>
+            <h1>📊 Daftar Transaksi</h1>
             <p style="color: var(--text-secondary);">Kelola semua transaksi keuangan Anda</p>
         </div>
 
@@ -299,22 +338,17 @@
             <form method="GET" id="filterForm">
                 <div class="filters-grid">
                     <div class="filter-group">
-                        <label>🔍 Tipe Transaksi</label>
+                        <label>💱 Tipe</label>
                         <select name="type" id="typeFilter">
-                            <option value="">Semua</option>
-                            <option value="income" {% if request.GET.type == 'income' %}selected{% endif %}>
-                                📈 Pemasukan
-                            </option>
-                            <option value="expense" {% if request.GET.type == 'expense' %}selected{% endif %}>
-                                📉 Pengeluaran
-                            </option>
+                            <option value="">Semua Tipe</option>
+                            <option value="income" {% if request.GET.type == 'income' %}selected{% endif %}>📈 Pemasukan</option>
+                            <option value="expense" {% if request.GET.type == 'expense' %}selected{% endif %}>📉 Pengeluaran</option>
                         </select>
                     </div>
 
                     <div class="filter-group">
                         <label>📅 Bulan</label>
-                        <input type="month" name="month" id="monthFilter" 
-                               value="{{ request.GET.month }}">
+                        <input type="month" name="month" id="monthFilter" value="{{ request.GET.month }}">
                     </div>
 
                     <div class="filter-group">
@@ -332,7 +366,7 @@
 
                     <div class="filter-actions">
                         <button type="submit" class="btn-filter">🔍 Filter</button>
-                        <a href="{% url 'finance:transactions' %}" class="btn-reset">↺ Reset</a>
+                        <a href="{% url 'finance:transactions' %}" class="btn-reset">↻ Reset</a>
                     </div>
                 </div>
             </form>
@@ -396,11 +430,26 @@
                         {% if transaction.type == 'income' %}+{% else %}-{% endif %}
                         Rp {{ transaction.amount|floatformat:0 }}
                     </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="row-actions">
+                        <a href="{% url 'finance:edit_transaction' transaction.id %}" 
+                           class="action-btn btn-edit"
+                           title="Edit Transaksi">
+                            ✏️ <span>Edit</span>
+                        </a>
+                        <button type="button" 
+                                class="action-btn btn-delete"
+                                onclick="confirmDelete({{ transaction.id }}, '{{ transaction.description|default:"transaksi ini"|escapejs }}')"
+                                title="Hapus Transaksi">
+                            🗑️ <spam>Hapus</span>
+                        </button>
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
                 <div class="empty-state">
-                    <div class="icon">📭</div>
+                    <div class="icon">🔭</div>
                     <h3>Belum Ada Transaksi</h3>
                     <p>Mulai catat transaksi keuangan Anda sekarang!</p>
                     <a href="{% url 'finance:add_transaction' %}" class="btn-filter" 
@@ -421,7 +470,23 @@
     </div>
 </div>
 
+<!-- Hidden Delete Form -->
+<form id="deleteForm" method="POST" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
+// Confirm Delete Function
+function confirmDelete(transactionId, description) {
+    const confirmed = confirm(`Yakin ingin menghapus "${description}"?\n\nTindakan ini tidak dapat dibatalkan.`);
+    
+    if (confirmed) {
+        const form = document.getElementById('deleteForm');
+        form.action = `/finance/transactions/delete/${transactionId}/`;
+        form.submit();
+    }
+}
+
 // Auto submit on filter change (optional)
 document.querySelectorAll('#typeFilter, #monthFilter, #categoryFilter').forEach(element => {
     element.addEventListener('change', function() {
@@ -431,3 +496,30 @@ document.querySelectorAll('#typeFilter, #monthFilter, #categoryFilter').forEach(
 });
 </script>
 {% endblock %}
+```
+
+## Fitur yang Ditambahkan:
+
+### ✅ Tombol Edit
+- **Warna**: Hijau dengan transparansi (matching dengan tema)
+- **Icon**: ✏️ Edit
+- **Hover effect**: Naik sedikit + shadow hijau
+- **Fungsi**: Redirect ke halaman edit transaksi
+
+### ✅ Tombol Delete
+- **Warna**: Merah dengan transparansi
+- **Icon**: 🗑️ Hapus
+- **Hover effect**: Naik sedikit + shadow merah
+- **Fungsi**: Konfirmasi sebelum hapus
+
+### ✅ Responsive Design
+- Desktop: Tombol di sebelah kanan amount
+- Mobile: Tombol pindah ke bawah (full width)
+
+### ✅ Konfirmasi Delete
+- JavaScript popup dengan nama transaksi
+- Pesan warning "tidak dapat dibatalkan"
+
+## Grid Layout Update:
+```
+[Icon] [Details] [Category] [Date] [Amount] [Actions]

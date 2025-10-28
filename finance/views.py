@@ -6,9 +6,8 @@ from django.db.models import Sum, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import Transaction, Category, Budget, ResearchExpense
+from .forms import TransactionForm
 import json
-
-
 
 
 # ========================================
@@ -134,38 +133,85 @@ def transactions(request):
 @login_required
 def add_transaction(request):
     """
-    View untuk menambah transaksi baru
+    View untuk menambah transaksi baru menggunakan ModelForm
     """
     if request.method == 'POST':
-        # Ambil data dari form
-        transaction_type = request.POST.get('type')
-        amount = request.POST.get('amount')
-        category_id = request.POST.get('category')
-        description = request.POST.get('description', '')
-        date = request.POST.get('date', timezone.now().date())
+        form = TransactionForm(request.POST, user=request.user)
         
-        # Buat transaksi baru
-        Transaction.objects.create(
-            user=request.user,
-            type=transaction_type,
-            amount=amount,
-            category_id=category_id if category_id else None,
-            description=description,
-            date=date
-        )
-        
-        messages.success(request, 'Transaksi berhasil ditambahkan!')
-        return redirect('finance:dashboard_finance')
+        if form.is_valid():
+            # Simpan transaksi tapi jangan commit dulu
+            transaction = form.save(commit=False)
+            # Set user
+            transaction.user = request.user
+            # Simpan ke database
+            transaction.save()
+            
+            messages.success(request, '✅ Transaksi berhasil ditambahkan!')
+            return redirect('finance:dashboard_finance')
+        else:
+            # Jika form tidak valid, tampilkan error
+            messages.error(request, '❌ Terjadi kesalahan. Periksa kembali input Anda.')
+    else:
+        # GET request - tampilkan form kosong
+        form = TransactionForm(user=request.user)
     
-    # GET request - tampilkan form
-    categories = Category.objects.filter(user=request.user)
     context = {
-        'categories': categories,
-        'today': timezone.now().date()
+        'form': form,
+        'categories': Category.objects.filter(user=request.user),
+        'today': timezone.now().date(),
+        'page_title': 'Tambah Transaksi',
+        'submit_text': 'Simpan Transaksi',
     }
     
     return render(request, 'finance/add_transaction.html', context)
 
+@login_required
+def edit_transaction(request, transaction_id):
+    """
+    View untuk edit transaksi yang sudah ada
+    """
+    # Ambil transaksi berdasarkan ID, pastikan milik user yang login
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+    
+    if request.method == 'POST':
+        form = TransactionForm(request.POST, instance=transaction, user=request.user)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Transaksi berhasil diupdate!')
+            return redirect('finance:transactions')
+        else:
+            messages.error(request, '❌ Terjadi kesalahan. Periksa kembali input Anda.')
+    else:
+        # GET request - tampilkan form dengan data transaksi
+        form = TransactionForm(instance=transaction, user=request.user)
+    
+    context = {
+        'form': form,
+        'categories': Category.objects.filter(user=request.user),
+        'today': timezone.now().date(),
+        'transaction': transaction,
+        'page_title': 'Edit Transaksi',
+        'submit_text': 'Update Transaksi',
+        'is_edit': True,
+    }
+    
+    return render(request, 'finance/add_transaction.html', context)
+
+@login_required
+def delete_transaction(request, transaction_id):
+    """
+    View untuk hapus transaksi
+    """
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+    
+    if request.method == 'POST':
+        transaction.delete()
+        messages.success(request, '🗑️ Transaksi berhasil dihapus!')
+        return redirect('finance:transactions')
+    
+    # Jika GET, redirect ke transactions
+    return redirect('finance:transactions')
 
 # ========================================
 # RESEARCH MENU VIEWS
@@ -290,3 +336,29 @@ def get_category_breakdown(user, month):
         })
     
     return categories
+
+@login_required
+def transaksi_edit(request, id):
+    """
+    Edit existing general research project
+    """
+    project = get_object_or_404(Transaction, id=id, user=request.user)
+    
+    if request.method == 'POST':
+        form = Transaction(request.POST, instance=project)
+        if form.is_valid():
+            project = form.save()
+            messages.success(request, f'Transaction "{project.title}" has been updated successfully!')
+            return redirect('research:project_detail', slug=project.slug)
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ResearchProjectForm(instance=project)
+    
+    context = {
+        'form': form,
+        'mode': 'edit',
+        'project': project,
+    }
+    
+    return render(request, 'research/project_form.html', context)

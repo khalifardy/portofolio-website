@@ -19,7 +19,6 @@ from astronomy.models import (
     )
 
 from .utils import process_markdown, insert_blog_images
-
 def home(request):
     # Get featured projects
     """
@@ -286,11 +285,14 @@ def login_view(request):
         if user is not None:
             # Login berhasil
             login(request, user)
-            messages.success(request, f'Selamat datang kembali, {user.username}!')
+            messages.success(request, f'Selamat datang kembali, {user.username}!',extra_tags="login")
             return redirect('core:dashboard')
         else:
             # Login gagal
-            messages.error(request, 'Username atau password salah!')
+            messages.error(request, 'Username atau password salah!',extra_tags="login")
+           
+        
+        
     
     # Render form login
     return render(request, 'core/login.html')
@@ -305,5 +307,5 @@ def logout_view(request):
     View untuk handle logout user
     """
     logout(request)
-    messages.info(request, 'Anda telah logout.')
-    return redirect('core:home')
+    messages.info(request, 'Anda telah logout.',extra_tags="login")
+    return redirect('core:login')

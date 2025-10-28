@@ -4,7 +4,9 @@ from .views import (
     finance_dashboard,
     add_transaction,
     transactions,
-    research_menu
+    research_menu,
+    edit_transaction,
+    delete_transaction
 ) 
 
 app_name = 'finance'
@@ -23,7 +25,8 @@ urlpatterns = [
     # ========================================
     path('transactions/', transactions, name='transactions'),
     path('transactions/add/', add_transaction, name='add_transaction'),
-    
+    path('transactions/edit/<int:transaction_id>/', edit_transaction, name='edit_transaction'),
+    path('transactions/delete/<int:transaction_id>/', delete_transaction, name='delete_transaction'),
     # ========================================
     # RESEARCH MENU URLs
     # ========================================
