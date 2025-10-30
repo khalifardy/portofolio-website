@@ -4380,10 +4380,11 @@ body {
 
 .astro-details {
     display: flex;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    
+    gap: 1rem;
+    flex-wrap: wrap;
     margin-bottom: 1rem;
+    justify-content: flex-start;  /* ← TAMBAHKAN INI untuk rata kiri */
+    text-align: left;
 }
 
 .detail-item {
