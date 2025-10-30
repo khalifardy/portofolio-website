@@ -1473,7 +1473,7 @@ body {
     font-size: 1.2rem;
 }
 
-.astro-details {
+.astro-detailsgal {
     display: flex;
     gap: 1rem;
     font-size: 0.9rem;
@@ -4383,8 +4383,6 @@ body {
     gap: 1rem;
     flex-wrap: wrap;
     margin-bottom: 1rem;
-    justify-content: flex-start;  /* ← TAMBAHKAN INI untuk rata kiri */
-    text-align: left;
 }
 
 .detail-item {
