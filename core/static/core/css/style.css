@@ -1475,7 +1475,7 @@ body {
 
 .astro-details {
     display: flex;
-    gap: 0.5rem;
+    gap: 1rem;
     font-size: 0.9rem;
     margin-top: 0.5rem;
     opacity: 0.9;
@@ -4380,7 +4380,8 @@ body {
 
 .astro-details {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
     flex-wrap: wrap;
     margin-bottom: 1rem;
 }
