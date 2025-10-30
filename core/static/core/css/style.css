@@ -1462,15 +1462,10 @@ body {
     color: white;
     transform: translateY(100%);
     transition: transform 0.3s;
-    text-align: left !important;
 }
 
 .astro-card:hover .astro-overlay {
     transform: translateY(0);
-}
-
-.astro-overlay * {
-    text-align: left !important;  /* ← SEMUA ELEMEN RATA KIRI */
 }
 
 .astro-overlay h3 {
@@ -1478,20 +1473,12 @@ body {
     font-size: 1.2rem;
 }
 
-.astro-detailsgal {
+.astro-details {
     display: flex;
-    flex-direction: column;  /* ← VERTIKAL */
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 1rem;
     font-size: 0.9rem;
+    margin-top: 0.5rem;
     opacity: 0.9;
-    align-items: flex-start !important;  /* ← RATA KIRI */
-    text-align: left !important;
-}
-
-.astro-detailsgal span {
-    text-align: left !important;
-    display: block;
 }
 
 /* Dropdown Menu - Fix */
