@@ -1475,10 +1475,17 @@ body {
 
 .astro-detailsgal {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;  /* ← Vertikal */
+    gap: 0.5rem;
     font-size: 0.9rem;
     margin-top: 0.5rem;
     opacity: 0.9;
+    align-items: flex-start !important;  /* ← Rata kiri */
+    text-align: left !important;
+}
+
+.astro-detailsgal span {
+    text-align: left !important;
 }
 
 /* Dropdown Menu - Fix */
