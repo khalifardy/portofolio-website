@@ -37,7 +37,7 @@ services:
       - app_network
 
   db:
-    image: postgres:15-alpine
+    image: timescale/timescaledb:latest-pg15
     ports:
       - "5432:5432"
     volumes:
