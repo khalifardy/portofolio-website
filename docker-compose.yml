@@ -14,7 +14,7 @@ services:
     environment:
       - SECRET_KEY='django-insecure-dev-only-&*#@!%^)(_+=-0987654321qwertyuiopasdfghjklzxcvbnm'
       - DEBUG=False
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
+      - DATABASE_URL=postgresql://postgres:8am8zIKHSf3Qi71hJclE3txbIRGThDK7@db:5432/portfolio
       - ALLOWED_HOSTS=localhost,202.10.36.13,ideasophia.com,www.ideasophia.com
     depends_on:
       - db
@@ -40,13 +40,13 @@ services:
     image: timescale/timescaledb:latest-pg15
     command: postgres -c shared_preload_libraries=timescaledb
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=portfolio
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=8am8zIKHSf3Qi71hJclE3txbIRGThDK7
     networks:
       - app_network
 
