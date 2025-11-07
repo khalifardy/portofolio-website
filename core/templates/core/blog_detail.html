@@ -507,6 +507,317 @@ hr {
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
     margin: 3rem 0;
 }
+
+/* ================== COMMENT SECTION STYLING ================== */
+.comments-section {
+    max-width: 850px;
+    margin: 4rem auto;
+    padding: 3rem 0;
+    border-top: 2px solid rgba(55, 167, 73, 0.3);
+}
+
+.comments-section h2 {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 2rem;
+}
+
+/* Comment Form */
+.comment-form-container {
+    background: rgba(30, 41, 59, 0.6);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.comment-form-container h3 {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+}
+
+.comment-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid rgba(55, 167, 73, 0.2);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: 'Source Code Pro', monospace;
+    transition: all 0.3s;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(15, 23, 42, 1);
+    box-shadow: 0 0 0 3px rgba(55, 167, 73, 0.1);
+}
+
+.form-textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.btn-submit-comment {
+    padding: 0.875rem 2rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.btn-submit-comment:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(55, 167, 73, 0.3);
+}
+
+/* Messages */
+.message-box {
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.message-success {
+    background: rgba(34, 197, 94, 0.2);
+    border: 2px solid rgba(34, 197, 94, 0.5);
+    color: #4ade80;
+}
+
+.message-error {
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    color: #f87171;
+}
+
+/* Comments List */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.comment-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 2px solid rgba(55, 167, 73, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+}
+
+.comment-card:hover {
+    border-color: rgba(55, 167, 73, 0.5);
+    box-shadow: 0 5px 20px rgba(55, 167, 73, 0.2);
+}
+
+.comment-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.comment-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #2c7c41);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--bg-primary);
+    flex-shrink: 0;
+    border: 2px solid rgba(55, 167, 73, 0.3);
+}
+
+.comment-author-info {
+    flex: 1;
+}
+
+.comment-author-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.comment-author-name a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.comment-author-name a:hover {
+    color: var(--accent-hover);
+}
+
+.comment-date {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.comment-content {
+    color: var(--text-primary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.btn-reply {
+    padding: 0.5rem 1.25rem;
+    background: rgba(55, 167, 73, 0.2);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-reply:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+/* Reply Form */
+.reply-form-container {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    border-radius: 12px;
+}
+
+.reply-form-container h5 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.reply-form-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-cancel {
+    padding: 0.75rem 1.5rem;
+    background: rgba(55, 167, 73, 0.1);
+    border: 2px solid rgba(55, 167, 73, 0.3);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: rgba(55, 167, 73, 0.2);
+    border-color: var(--accent);
+}
+
+/* Replies/Nested Comments */
+.replies-container {
+    margin-left: 3rem;
+    margin-top: 1.5rem;
+    padding-left: 1.5rem;
+    border-left: 3px solid rgba(55, 167, 73, 0.3);
+}
+
+.reply-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid rgba(55, 167, 73, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.reply-card .comment-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+}
+
+/* No Comments */
+.no-comments {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    background: rgba(30, 41, 59, 0.3);
+    border: 2px dashed rgba(55, 167, 73, 0.3);
+    border-radius: 15px;
+}
+
+/* Hidden class */
+.hidden {
+    display: none !important;
+}
+
+/* Form Error Messages */
+.error-message {
+    color: #f87171;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .comments-section {
+        padding: 2rem 1rem;
+    }
+    
+    .comment-form-container,
+    .comment-card {
+        padding: 1.25rem;
+    }
+    
+    .comment-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .replies-container {
+        margin-left: 1rem;
+        padding-left: 1rem;
+    }
+    
+    .reply-form-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-submit-comment,
+    .btn-cancel {
+        width: 100%;
+    }
+}
 </style>
 {% endblock %}
 
@@ -582,6 +893,164 @@ hr {
                 <p><strong>🏷️ Category:</strong> {{ post.category.name|default:"General" }}</p>
             </div>
         </footer>
+
+        <!-- Comment Section -->
+<section class="comments-section">
+    <h2>💬 Comments ({{ comments.count }})</h2>
+    
+    <!-- Comment Form -->
+    <div class="comment-form-container">
+        <h3>Leave a Comment</h3>
+        
+        {% if messages %}
+            {% for message in messages %}
+            <div class="message-box {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+                {% if message.tags == 'success' %}✓{% else %}✗{% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="comment-form-grid">
+                <div>
+                    {{ comment_form.name }}
+                    {% if comment_form.name.errors %}
+                        <p class="error-message">{{ comment_form.name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    {{ comment_form.email }}
+                    {% if comment_form.email.errors %}
+                        <p class="error-message">{{ comment_form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                {{ comment_form.website }}
+                {% if comment_form.website.errors %}
+                    <p class="error-message">{{ comment_form.website.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                {{ comment_form.content }}
+                {% if comment_form.content.errors %}
+                    <p class="error-message">{{ comment_form.content.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn-submit-comment">
+                💬 Submit Comment
+            </button>
+        </form>
+    </div>
+    
+    <!-- Comments List -->
+    <div class="comments-list">
+        {% for comment in comments %}
+        <div class="comment-card" id="comment-{{ comment.id }}">
+            <div class="comment-header">
+                <div class="comment-avatar">
+                    {{ comment.name|first|upper }}
+                </div>
+                
+                <div class="comment-author-info">
+                    <div class="comment-author-name">
+                        {% if comment.website %}
+                            <a href="{{ comment.website }}" target="_blank" rel="nofollow">
+                                {{ comment.name }}
+                            </a>
+                        {% else %}
+                            {{ comment.name }}
+                        {% endif %}
+                    </div>
+                    <div class="comment-date">
+                        📅 {{ comment.created_at|date:"F d, Y \a\t g:i A" }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comment-content">
+                {{ comment.content|linebreaks }}
+            </div>
+            
+            <button onclick="showReplyForm({{ comment.id }})" class="btn-reply">
+                ↩️ Reply
+            </button>
+            
+            <!-- Reply Form (Hidden by default) -->
+            <div id="reply-form-{{ comment.id }}" class="reply-form-container hidden">
+                <h5>Reply to {{ comment.name }}</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    
+                    <div class="comment-form-grid">
+                        <input type="text" name="name" placeholder="Your Name *" required class="form-input">
+                        <input type="email" name="email" placeholder="Your Email *" required class="form-input">
+                    </div>
+                    
+                    <div style="margin: 1rem 0;">
+                        <textarea name="content" placeholder="Your Reply *" required rows="4" class="form-textarea"></textarea>
+                    </div>
+                    
+                    <div class="reply-form-buttons">
+                        <button type="submit" class="btn-submit-comment">
+                            💬 Submit Reply
+                        </button>
+                        <button type="button" onclick="hideReplyForm({{ comment.id }})" class="btn-cancel">
+                            ✕ Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Replies -->
+            {% if comment.get_replies %}
+            <div class="replies-container">
+                {% for reply in comment.get_replies %}
+                <div class="reply-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar">
+                            {{ reply.name|first|upper }}
+                        </div>
+                        
+                        <div class="comment-author-info">
+                            <div class="comment-author-name">
+                                {% if reply.website %}
+                                    <a href="{{ reply.website }}" target="_blank" rel="nofollow">
+                                        {{ reply.name }}
+                                    </a>
+                                {% else %}
+                                    {{ reply.name }}
+                                {% endif %}
+                            </div>
+                            <div class="comment-date">
+                                📅 {{ reply.created_at|date:"F d, Y \a\t g:i A" }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comment-content">
+                        {{ reply.content|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="no-comments">
+            <p>💭 No comments yet. Be the first to share your thoughts!</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 
         <!-- Author Card -->
         <div class="author-card">
@@ -692,5 +1161,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         MathJax.typesetPromise();
     }
 });
+
+function showReplyForm(commentId) {
+    document.getElementById('reply-form-' + commentId).classList.remove('hidden');
+}
+
+function hideReplyForm(commentId) {
+    document.getElementById('reply-form-' + commentId).classList.add('hidden');
+}
 </script>
 {% endblock %}

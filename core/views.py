@@ -12,11 +12,14 @@ from .models import (
     Category,
     BlogCategory,
     ContactMessage,
-    DocumentsProjects,)
+    DocumentsProjects,
+    Comment)
 
 from astronomy.models import (
     AstroPhoto,
     )
+
+from .forms import CommentForm
 
 from .utils import process_markdown, insert_blog_images
 def home(request):
@@ -218,11 +221,29 @@ def blog_detail(request, slug):
         status='published'
         ).exclude(id=post.id)[:3]
     
+    comments = post.comments.filter(is_approved=True, parent=None).order_by('-created_at')
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.blog_post = post
+            
+            parent_id = request.POST.get('parent_id')
+            if parent_id:
+                comment.parent_id = parent_id
+            comment.save()
+            messages.success(request,"Your comment has been submitted and is awaiting moderation")
+            return redirect('core:blog_detail', slug=post.slug)
+    else:
+        form = CommentForm()
     # Set up context
     context = {
         'post': post,
         'processed_content': processed_content,  # Add processed content
-        'related_posts': related_posts
+        'related_posts': related_posts,
+        'comment_form': form,
+        'comments':comments
     }
     
     # Return rendered blog post page

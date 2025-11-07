@@ -239,4 +239,23 @@ class DocumentsProjects(models.Model):
     
     def __str__(self):
         return f"{self.projects.title} - {self.title}"
+
+class Comment(models.Model):
+    blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    website = models.URLField(blank=True)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_approved = models.BooleanField(default=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Comment by {self.name} on {self.blog_post.title}"
+    def get_replies(self):
+        return self.replies.filter(is_approved=True)
     

@@ -11,6 +11,7 @@ from .models import (
     BlogImage,
     AllResearch,
     DocumentsProjects,
+    Comment
 )
 # Register your models here.
 
@@ -158,3 +159,43 @@ class DocumentsProjectsAdmin(admin.ModelAdmin):
             'fields':('projects', 'file_doc','title')
         }),
     )
+    
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'blog_post', 'content_preview', 'is_approved','created_at']
+    list_filter = ['is_approved','created_at','blog_post']
+    search_fields = ['name','email','content']
+    date_hierarchy = 'created_at'
+    list_editable = ['is_approved']
+    actions = ['approve_comments', 'unapprove_comments']
+    
+    fieldsets = (
+        ('Comment Info',{
+            'fields':('blog_post', 'name', 'email', 'website')
+        }),
+        ('Content',{
+            'fields':('content', 'parent')
+        }),
+        ('Moderation',{
+            'fields':('is_approved',)
+        })
+    )
+    
+    def content_preview(self,obj):
+        """Show preview of comment content"""
+        return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
+    content_preview.short_description = 'Content Preview'
+    
+    def approve_comments(self, request, queryset):
+        """Bulk approve comments"""
+        
+        queryset.update(is_approved=True)
+        self.message_user(request, f'{queryset.count()} comments approved.')
+    approve_comments.short_description = 'Approve selected comments'
+    
+    def unapprove_comments(self, request, queryset):
+        """Bulk unapprove comments"""
+        
+        queryset.update(is_approved=False)
+        self.message_user(request, f'{queryset.count()} comments unapproved.')
+    unapprove_comments.short_description = 'Unapprove selected comments'
