@@ -199,3 +199,5 @@ class CommentAdmin(admin.ModelAdmin):
         queryset.update(is_approved=False)
         self.message_user(request, f'{queryset.count()} comments unapproved.')
     unapprove_comments.short_description = 'Unapprove selected comments'
+    
+    #ok
