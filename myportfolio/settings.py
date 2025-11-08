@@ -59,9 +59,33 @@ APPS_DJANGO =[
     'research'
 ]
 
-APPS_THIRD = []
+APPS_THIRD = [
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders'
+]
 
 INSTALLED_APPS = APPS_DJANGO + APPS_THIRD + DJANGO_LIB
+
+#JWT Serrings
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "https://ideasophia.com",
+    "https://www.ideasophia.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -150,3 +174,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_URL = 'core:login'
 LOGIN_REDIRECT_URL = 'core:dashboard_selection'
 LOGOUT_REDIRECT_URL = 'core:login'
+
+SESSION_COOKIE_AGE = 14 * 24 * 3600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
+
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'Lax'
