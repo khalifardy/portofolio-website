@@ -35,6 +35,8 @@ services:
       - web
     networks:
       - app_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   db:
     image: timescale/timescaledb:latest-pg15
@@ -57,6 +59,22 @@ services:
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
+  novnc:
+    image: theash/novnc:latest
+    container_name: novnc
+    environment:
+      - DISPLAY_WIDTH=1920
+      - DISPLAY_HEIGHT=1080
+      - RUN_XTERM=no
+    ports:
+      - "127.0.0.1:6080:6080"
+    command: --vnc host.docker.internal:15900 --listen 8080
+    extra_host:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - app_network
+      
 volumes:
   postgres_data:  # ← HAPUS static_volume dan media_volume
 
