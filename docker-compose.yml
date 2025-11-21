@@ -66,9 +66,10 @@ services:
       - DISPLAY_WIDTH=1920
       - DISPLAY_HEIGHT=1080
       - RUN_XTERM=no
+      - VNC_SERVER=host.docker.internal:15900
     ports:
       - "127.0.0.1:6080:6080"
-    command: --vnc host.docker.internal:15900 --listen 8080
+   
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
