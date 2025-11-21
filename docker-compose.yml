@@ -35,7 +35,7 @@ services:
       - web
     networks:
       - app_network
-    extra_hosts:
+    extra_host:
       - "host.docker.internal:host-gateway"
 
   db:
@@ -74,7 +74,7 @@ services:
     restart: unless-stopped
     networks:
       - app_network
-      
+
 volumes:
   postgres_data:  # ← HAPUS static_volume dan media_volume
 
