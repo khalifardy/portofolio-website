@@ -60,7 +60,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   novnc:
-    image: theash/novnc:latest
+    image: theasp/novnc:latest
     container_name: novnc
     environment:
       - DISPLAY_WIDTH=1920
