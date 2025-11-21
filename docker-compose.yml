@@ -35,7 +35,7 @@ services:
       - web
     networks:
       - app_network
-    extra_host:
+    extra_hosts:
       - "host.docker.internal:host-gateway"
 
   db:
@@ -69,7 +69,7 @@ services:
     ports:
       - "127.0.0.1:6080:6080"
     command: --vnc host.docker.internal:15900 --listen 8080
-    extra_host:
+    extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     networks:
