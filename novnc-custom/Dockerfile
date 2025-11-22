@@ -17,4 +17,5 @@ WORKDIR /opt/noVNC
 
 EXPOSE 8080
 
-CMD ["./utils/novnc_proxy", "--listen", "8080", "--vnc", "host.docker.internal:15900"]
+# Update CMD untuk handle subpath dengan benar
+CMD ["./utils/novnc_proxy", "--listen", "8080", "--vnc", "host.docker.internal:15900", "--web", "/opt/noVNC"]
