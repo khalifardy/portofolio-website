@@ -63,13 +63,10 @@ services:
   novnc:
     build: ./novnc-custom
     container_name: novnc
-    ports:
-      - "127.0.0.1:6080:8080"
+    network_mode: "host"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
-    networks:
-      - app_network
 
 volumes:
   postgres_data:  # ← HAPUS static_volume dan media_volume

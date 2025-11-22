@@ -17,5 +17,4 @@ WORKDIR /opt/noVNC
 
 EXPOSE 8080
 
-# Gunakan IP docker0 langsung instead of host.docker.internal
-CMD ["./utils/novnc_proxy", "--listen", "8080", "--vnc", "172.17.0.1:15900"]
+CMD ["./utils/novnc_proxy", "--listen", "6080", "--vnc", "localhost:15900"]
