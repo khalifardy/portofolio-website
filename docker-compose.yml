@@ -60,21 +60,16 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   novnc:
-    image: theasp/novnc:latest
+    image: geek1011/novnc:latest  # Ganti image
     container_name: novnc
-    environment:
-      - DISPLAY_WIDTH=1920
-      - DISPLAY_HEIGHT=1080
-      - RUN_XTERM=no
-      - VNC_SERVER=host.docker.internal:15900
+    command: --listen 8080 --vnc host.docker.internal:15900
     ports:
-      - "127.0.0.1:6080:6080"
-   
+      - "127.0.0.1:6080:8080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     networks:
-      - app_network
+      - app-network
 
 volumes:
   postgres_data:  # ← HAPUS static_volume dan media_volume
