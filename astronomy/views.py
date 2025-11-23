@@ -6,6 +6,12 @@ from .models import (
     ObservationLog,
     CelestialObjects
 )
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+import socket
+import subprocess
 # Create your views here.
 
 def gallery(request):
@@ -70,3 +76,48 @@ def observation_detail(request, slug):
     
     return render(request, 'astronomy/observation_detail.html', context)
 
+def check_telescope_status():
+    
+    status = {
+        'tunnel_active': False,
+        'vnc_active': False,
+        'message': ''
+    }
+    
+    try:
+        
+        #cek port 15900 listening 
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            result = s.connect_ex(('localhost', 15900))
+            status['tunnel_active'] = (result==0)
+            
+        #cek port 6080 listening
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            result = s.connect_ex(('localhost', 6080))
+            status['vnc_active'] = (result==0)
+            
+        if status['tunnel_active'] and status['vnc_active']:
+            status['message'] = "Telescope connection active" 
+        elif status['vnc_active'] and not status['tunnel_active']:
+            status['message'] = "waiting for Astrobery connection" 
+        else:
+            status['message'] = "SERVICE UNAVAILABLE"
+    
+    except Exception as e:
+        status['message'] = f"errorchecking status: {str}"
+    
+    return status
+
+@login_required
+def telescope_remote_access(request):
+    """remote telescope access page with noVNC viewer"""
+    
+    context = {
+        'title': 'Remote Telescope Access',
+        'vnc_url':'https:/astro/ideasophia.com/vnc.html',
+        'status': check_telescope_status()
+    }
+    
+    return render(request, 'astronomy/telescope_remote.html', context)

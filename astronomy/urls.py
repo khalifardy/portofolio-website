@@ -3,7 +3,8 @@ from django.urls import path
 from .views import (
     gallery,
     observation_detail,
-    observation_list
+    observation_list,
+    telescope_remote_access
 )
 
 app_name = 'astronomy'
@@ -12,4 +13,5 @@ urlpatterns = [
     path('', gallery, name='gallery'),
     path('observations/', observation_list, name='observations'),
     path('observations/<slug:slug>/', observation_detail, name='observation_detail'),
+    path('telescope/remote/', telescope_remote_access, name='telescope_remote'),
 ]

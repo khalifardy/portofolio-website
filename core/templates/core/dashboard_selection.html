@@ -11,7 +11,7 @@
     }
     
     .selection-container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 8rem 2rem 4rem;
         min-height: calc(100vh - 80px);
@@ -42,10 +42,10 @@
     
     .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 2rem;
         width: 100%;
-        max-width: 900px;
+        max-width: 1200px;
         margin-bottom: 2rem;
     }
     
@@ -70,6 +70,10 @@
     
     .dashboard-card:nth-child(2) {
         animation-delay: 0.2s;
+    }
+    
+    .dashboard-card:nth-child(3) {
+        animation-delay: 0.3s;
     }
     
     .dashboard-card::before {
@@ -219,6 +223,12 @@
         }
     }
     
+    @media (max-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+    }
+    
     @media (max-width: 768px) {
         .dashboard-grid {
             grid-template-columns: 1fr;
@@ -301,6 +311,36 @@
             </div>
             <a href="{% url 'research:dashboard_research' %}" class="select-btn"> 
                 Open Research Dashboard
+            </a>
+        </div>
+        
+        <!-- Remote Telescope Card -->
+        <div class="dashboard-card" onclick="window.location.href='{% url 'astronomy:telescope_remote' %}'">
+            <span class="dashboard-icon">🔭</span>
+            <h2 class="dashboard-title">Remote Telescope</h2>
+            <p class="dashboard-description">
+                Control and observe with your telescope remotely
+            </p>
+            <div class="dashboard-features">
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Real-time VNC access</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Celestron AstroMaster 114EQ</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Astroberry control system</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Observation logging</span>
+                </div>
+            </div>
+            <a href="{% url 'astronomy:telescope_remote' %}" class="select-btn">
+                Access Telescope
             </a>
         </div>
     </div>
