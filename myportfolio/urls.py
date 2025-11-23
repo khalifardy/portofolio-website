@@ -31,12 +31,15 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/core/', include('core.urls_api')),
     path('api/astronomy',include('astronomy.urls_api')),
+    path('api/finance',include('workspace.urls_api')),
+    path('api/workspace',include('workspace.urls_api')),
     
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('astronomy/', include('astronomy.urls')),
     path('finance/', include('finance.urls')),
     path('research/',include('research.urls')),
+    path('workspace/', include('workspace.urls')),
 ]
 
 

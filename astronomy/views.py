@@ -135,7 +135,7 @@ def telescope_remote_access(request):
     
     context = {
         'title': 'Remote Telescope Access',
-        'vnc_url':'https://astro/ideasophia.com/vnc.html',
+        'vnc_url':'https://astro.ideasophia.com/vnc.html',
         'status': check_telescope_status()
     }
     

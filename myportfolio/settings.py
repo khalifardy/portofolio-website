@@ -56,7 +56,8 @@ APPS_DJANGO =[
     'core',
     'astronomy',
     'finance',
-    'research'
+    'research',
+    'workspace'
 ]
 
 APPS_THIRD = [

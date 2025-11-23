@@ -1,0 +1,392 @@
+{% extends 'workspace/base_workspace.html' %}
+{% load static %}
+
+{% block workspace_content %}
+<div class="dashboard-header" style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.5rem; color: var(--ws-text); margin: 0;">
+        Good {% now "H" as hour %}{% if hour|add:"0" < 12 %}morning{% elif hour|add:"0" < 17 %}afternoon{% else %}evening{% endif %}, {{ user.first_name|default:user.username }}!
+    </h1>
+    <p style="color: var(--ws-text-muted); margin: 0.5rem 0 0;">{{ today|date:"l, F j, Y" }}</p>
+</div>
+
+<!-- Stats Row -->
+<div class="ws-grid ws-grid-4" style="margin-bottom: 1.5rem;">
+    <div class="ws-card ws-stat">
+        <div class="ws-stat-value">{{ today_stats.complete_pomodoros|default:0 }}</div>
+        <div class="ws-stat-label">Pomodoros Today</div>
+    </div>
+    <div class="ws-card ws-stat">
+        <div class="ws-stat-value">{{ today_stats.total_focus_minutes|default:0 }}</div>
+        <div class="ws-stat-label">Focus Minutes</div>
+    </div>
+    <div class="ws-card ws-stat">
+        <div class="ws-stat-value">🔥 {{ streak_days }}</div>
+        <div class="ws-stat-label">Day Streak</div>
+    </div>
+    <div class="ws-card ws-stat">
+        <div class="ws-stat-value">{{ today_tasks.count }}</div>
+        <div class="ws-stat-label">Tasks Today</div>
+    </div>
+</div>
+
+<div class="ws-grid ws-grid-2">
+    <!-- Left Column -->
+    <div>
+        <!-- Pomodoro Timer Widget -->
+        <div class="ws-card" id="pomodoroWidget">
+            <div class="ws-card-header">
+                <h3 class="ws-card-title">
+                    <i class="fas fa-clock" style="color: var(--ws-primary);"></i>
+                    Pomodoro Timer
+                </h3>
+                <a href="{% url 'workspace:pomodoro' %}" class="ws-btn ws-btn-sm ws-btn-secondary">
+                    Full View
+                </a>
+            </div>
+            
+            <div class="timer-container" style="text-align: center; padding: 1rem 0;">
+                <div id="timerDisplay" style="font-size: 3.5rem; font-weight: 700; color: var(--ws-primary); font-family: 'Source Code Pro', monospace;">
+                    {{ pomodoro_settings.work_duration|stringformat:"02d" }}:00
+                </div>
+                <div id="timerLabel" style="color: var(--ws-text-muted); margin-bottom: 1rem;">
+                    {% if active_session %}
+                        {{ active_session.get_session_type_display }} - {{ active_session.get_status_display }}
+                    {% else %}
+                        Ready to focus
+                    {% endif %}
+                </div>
+                
+                <!-- Task Selection -->
+                <div style="margin-bottom: 1rem;">
+                    <select id="taskSelect" class="ws-input" style="max-width: 300px; margin: 0 auto;">
+                        <option value="">Select a task (optional)</option>
+                        {% for task in open_tasks %}
+                        <option value="{{ task.id }}">{{ task.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="timer-controls" style="display: flex; gap: 0.5rem; justify-content: center;">
+                    {% if active_session %}
+                        {% if active_session.status == 'running' %}
+                        <button onclick="pausePomodoro({{ active_session.id }})" class="ws-btn ws-btn-secondary">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        {% else %}
+                        <button onclick="resumePomodoro({{ active_session.id }})" class="ws-btn ws-btn-primary">
+                            <i class="fas fa-play"></i> Resume
+                        </button>
+                        {% endif %}
+                        <button onclick="completePomodoro({{ active_session.id }})" class="ws-btn ws-btn-primary">
+                            <i class="fas fa-check"></i> Complete
+                        </button>
+                        <button onclick="cancelPomodoro({{ active_session.id }})" class="ws-btn ws-btn-danger ws-btn-sm">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    {% else %}
+                    <button onclick="startPomodoro('work')" class="ws-btn ws-btn-primary">
+                        <i class="fas fa-play"></i> Start Focus
+                    </button>
+                    <button onclick="startPomodoro('short_break')" class="ws-btn ws-btn-secondary">
+                        <i class="fas fa-coffee"></i> Short Break
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Progress bar -->
+            <div style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--ws-text-muted); margin-bottom: 0.25rem;">
+                    <span>Daily Goal</span>
+                    <span>{{ today_stats.complete_pomodoros|default:0 }} / {{ pomodoro_settings.daily_pomodoro_goal }}</span>
+                </div>
+                <div style="height: 8px; background: var(--ws-bg); border-radius: 4px; overflow: hidden;">
+                    {% widthratio today_stats.complete_pomodoros|default:0 pomodoro_settings.daily_pomodoro_goal 100 as progress %}
+                    <div style="height: 100%; width: {{ progress|default:0 }}%; background: var(--ws-primary); transition: width 0.3s;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Today's Tasks -->
+        <div class="ws-card">
+            <div class="ws-card-header">
+                <h3 class="ws-card-title">
+                    <i class="fas fa-tasks" style="color: var(--ws-primary);"></i>
+                    Today's Tasks
+                </h3>
+                <a href="{% url 'workspace:task_list' %}" class="ws-btn ws-btn-sm ws-btn-secondary">
+                    View All
+                </a>
+            </div>
+            
+            <div class="task-list">
+                {% for task in today_tasks %}
+                <div class="task-item" style="display: flex; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--ws-border);" data-task-id="{{ task.id }}">
+                    <button onclick="toggleTask({{ task.id }})" style="background: none; border: 2px solid var(--ws-border); width: 20px; height: 20px; border-radius: 4px; cursor: pointer; margin-right: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        {% if task.status == 'done' %}
+                        <i class="fas fa-check" style="color: var(--ws-primary); font-size: 0.75rem;"></i>
+                        {% endif %}
+                    </button>
+                    <div style="flex: 1;">
+                        <div style="color: var(--ws-text); {% if task.status == 'done' %}text-decoration: line-through; opacity: 0.6;{% endif %}">
+                            {{ task.title }}
+                        </div>
+                        {% if task.due_date %}
+                        <div style="font-size: 0.75rem; color: var(--ws-text-muted);">
+                            <i class="fas fa-calendar"></i> {{ task.due_date|date:"M j, H:i" }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <span class="priority-{{ task.priority }}" style="font-size: 0.75rem;">
+                        {% if task.priority == 1 %}🔴{% elif task.priority == 2 %}🟠{% elif task.priority == 3 %}🔵{% else %}⚪{% endif %}
+                    </span>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 2rem; color: var(--ws-text-muted);">
+                    <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                    <p>No tasks for today!</p>
+                    <a href="{% url 'workspace:task_list' %}" class="ws-btn ws-btn-sm ws-btn-primary">Add Task</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div>
+        <!-- Week Stats Chart -->
+        <div class="ws-card">
+            <div class="ws-card-header">
+                <h3 class="ws-card-title">
+                    <i class="fas fa-chart-bar" style="color: var(--ws-primary);"></i>
+                    This Week
+                </h3>
+            </div>
+            <canvas id="weekChart" height="150"></canvas>
+        </div>
+        
+        <!-- Active Projects -->
+        <div class="ws-card">
+            <div class="ws-card-header">
+                <h3 class="ws-card-title">
+                    <i class="fas fa-flask" style="color: var(--ws-primary);"></i>
+                    Active Projects
+                </h3>
+                <a href="{% url 'research:dashboard_research' %}" class="ws-btn ws-btn-sm ws-btn-secondary">
+                    View All
+                </a>
+            </div>
+            
+            {% for project in active_projects %}
+            <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--ws-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--ws-text);">{{ project.title }}</span>
+                    <span class="ws-badge ws-badge-primary">{{ project.progress|default:0 }}%</span>
+                </div>
+                <div style="height: 4px; background: var(--ws-bg); border-radius: 2px; margin-top: 0.5rem;">
+                    <div style="height: 100%; width: {{ project.progress|default:0 }}%; background: var(--ws-primary);"></div>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--ws-text-muted); text-align: center; padding: 1rem;">No active projects</p>
+            {% endfor %}
+        </div>
+        
+        <!-- Recent Notes -->
+        <div class="ws-card">
+            <div class="ws-card-header">
+                <h3 class="ws-card-title">
+                    <i class="fas fa-sticky-note" style="color: var(--ws-primary);"></i>
+                    Recent Notes
+                </h3>
+                <a href="{% url 'workspace:note_list' %}" class="ws-btn ws-btn-sm ws-btn-secondary">
+                    View All
+                </a>
+            </div>
+            
+            {% for note in recent_notes %}
+            <a href="{% url 'workspace:note_detail' note.id %}" style="display: block; padding: 0.75rem 0; border-bottom: 1px solid var(--ws-border); text-decoration: none;">
+                <div style="color: var(--ws-text);">{{ note.title }}</div>
+                <div style="font-size: 0.75rem; color: var(--ws-text-muted);">
+                    {{ note.notebook.icon }} {{ note.notebook.name }} • {{ note.updated_at|timesince }} ago
+                </div>
+            </a>
+            {% empty %}
+            <p style="color: var(--ws-text-muted); text-align: center; padding: 1rem;">No notes yet</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block workspace_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Timer variables
+    let timerInterval = null;
+    let activeSessionId = {{ active_session.id|default:'null' }};
+    let timeRemaining = {{ active_session.time_remaining|default:0 }};
+    let sessionStatus = '{{ active_session.status|default:"" }}';
+    
+    // API base URL - sesuai dengan urls_api.py di project
+    const API_BASE = '/api/workspace';
+    
+    {% if active_session and active_session.status == 'running' %}
+    // Calculate remaining time for running session
+    const startedAt = new Date('{{ active_session.started_at.isoformat }}');
+    const plannedDuration = {{ active_session.planned_duration }};
+    const elapsed = Math.floor((new Date() - startedAt) / 1000);
+    timeRemaining = Math.max(0, plannedDuration - elapsed);
+    startTimer();
+    {% endif %}
+    
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function updateDisplay() {
+        document.getElementById('timerDisplay').textContent = formatTime(timeRemaining);
+    }
+    
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                updateDisplay();
+            } else {
+                clearInterval(timerInterval);
+                if (activeSessionId) {
+                    completePomodoro(activeSessionId);
+                }
+            }
+        }, 1000);
+    }
+    
+    async function startPomodoro(sessionType) {
+        const taskId = document.getElementById('taskSelect').value;
+        
+        const response = await fetchWithCSRF(`${API_BASE}/pomodoro/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'start',
+                session_type: sessionType,
+                task_id: taskId || null
+            })
+        });
+        
+        const data = await response.json();
+        if (data.status === 'success') {
+            activeSessionId = data.session_id;
+            timeRemaining = data.duration;
+            updateDisplay();
+            startTimer();
+            location.reload();
+        }
+    }
+    
+    async function pausePomodoro(sessionId) {
+        const response = await fetchWithCSRF(`${API_BASE}/pomodoro/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'pause',
+                session_id: sessionId
+            })
+        });
+        if ((await response.json()).status === 'success') {
+            location.reload();
+        }
+    }
+    
+    async function resumePomodoro(sessionId) {
+        const response = await fetchWithCSRF(`${API_BASE}/pomodoro/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'resume',
+                session_id: sessionId
+            })
+        });
+        if ((await response.json()).status === 'success') {
+            location.reload();
+        }
+    }
+    
+    async function completePomodoro(sessionId) {
+        const response = await fetchWithCSRF(`${API_BASE}/pomodoro/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'complete',
+                session_id: sessionId
+            })
+        });
+        if ((await response.json()).status === 'success') {
+            clearInterval(timerInterval);
+            location.reload();
+        }
+    }
+    
+    async function cancelPomodoro(sessionId) {
+        if (!confirm('Cancel this pomodoro session?')) return;
+        
+        const response = await fetchWithCSRF(`${API_BASE}/pomodoro/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'cancel',
+                session_id: sessionId
+            })
+        });
+        if ((await response.json()).status === 'success') {
+            clearInterval(timerInterval);
+            location.reload();
+        }
+    }
+    
+    async function toggleTask(taskId) {
+        const response = await fetchWithCSRF(`${API_BASE}/tasks/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'complete',
+                task_id: taskId
+            })
+        });
+        if ((await response.json()).status === 'success') {
+            location.reload();
+        }
+    }
+    
+    // Week Chart
+    const weekData = {{ week_stats_json|safe }};
+    const ctx = document.getElementById('weekChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: weekData.map(d => d.day),
+            datasets: [{
+                label: 'Pomodoros',
+                data: weekData.map(d => d.completed),
+                backgroundColor: weekData.map(d => d.goal_met ? '#37a749' : '#30363d'),
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#8b949e' },
+                    grid: { color: '#30363d' }
+                },
+                x: {
+                    ticks: { color: '#8b949e' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

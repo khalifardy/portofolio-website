@@ -1,0 +1,374 @@
+{% extends 'workspace/base_workspace.html' %}
+{% load static %}
+
+{% block workspace_content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size: 1.5rem; color: var(--ws-text); margin-bottom: 1.5rem;">
+        <i class="fas fa-clock" style="color: var(--ws-primary);"></i> Pomodoro Timer
+    </h1>
+    
+    <!-- Main Timer -->
+    <div class="ws-card" style="text-align: center; padding: 3rem 2rem;">
+        <!-- Session Type Tabs -->
+        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem;">
+            <button id="tabWork" onclick="setSessionType('work')" class="ws-btn ws-btn-primary">
+                Focus
+            </button>
+            <button id="tabShortBreak" onclick="setSessionType('short_break')" class="ws-btn ws-btn-secondary">
+                Short Break
+            </button>
+            <button id="tabLongBreak" onclick="setSessionType('long_break')" class="ws-btn ws-btn-secondary">
+                Long Break
+            </button>
+        </div>
+        
+        <!-- Timer Display -->
+        <div id="timerDisplay" style="font-size: 6rem; font-weight: 700; color: var(--ws-primary); font-family: 'Source Code Pro', monospace; margin-bottom: 1rem;">
+            {{ settings.work_duration|stringformat:"02d" }}:00
+        </div>
+        
+        <div id="timerLabel" style="color: var(--ws-text-muted); font-size: 1.25rem; margin-bottom: 1.5rem;">
+            {% if active_session %}
+                {{ active_session.get_session_type_display }} - {{ active_session.get_status_display }}
+                {% if active_session.task %}
+                    <br><small>Working on: {{ active_session.task.title }}</small>
+                {% endif %}
+            {% else %}
+                Ready to focus
+            {% endif %}
+        </div>
+        
+        <!-- Task Selection -->
+        <div style="margin-bottom: 1.5rem;">
+            <select id="taskSelect" class="ws-input" style="max-width: 400px; margin: 0 auto;">
+                <option value="">Select a task to work on (optional)</option>
+                {% for task in open_tasks %}
+                <option value="{{ task.id }}" {% if active_session and active_session.task_id == task.id %}selected{% endif %}>
+                    {% if task.priority == 1 %}🔴{% elif task.priority == 2 %}🟠{% elif task.priority == 3 %}🔵{% else %}⚪{% endif %}
+                    {{ task.title }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- Timer Controls -->
+        <div id="timerControls" style="display: flex; gap: 1rem; justify-content: center;">
+            {% if active_session %}
+                {% if active_session.status == 'running' %}
+                <button onclick="pausePomodoro({{ active_session.id }})" class="ws-btn ws-btn-secondary" style="font-size: 1.25rem; padding: 1rem 2rem;">
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                {% else %}
+                <button onclick="resumePomodoro({{ active_session.id }})" class="ws-btn ws-btn-primary" style="font-size: 1.25rem; padding: 1rem 2rem;">
+                    <i class="fas fa-play"></i> Resume
+                </button>
+                {% endif %}
+                <button onclick="completePomodoro({{ active_session.id }})" class="ws-btn ws-btn-primary" style="font-size: 1.25rem; padding: 1rem 2rem;">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+                <button onclick="cancelPomodoro({{ active_session.id }})" class="ws-btn ws-btn-danger">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            {% else %}
+            <button id="startBtn" onclick="startPomodoro()" class="ws-btn ws-btn-primary" style="font-size: 1.25rem; padding: 1rem 3rem;">
+                <i class="fas fa-play"></i> Start
+            </button>
+            {% endif %}
+        </div>
+        
+        <!-- Progress Ring (visual) -->
+        <div style="margin-top: 2rem;">
+            <svg width="200" height="10" style="display: block; margin: 0 auto;">
+                <rect x="0" y="0" width="200" height="10" rx="5" fill="var(--ws-bg)"/>
+                <rect id="progressBar" x="0" y="0" width="0" height="10" rx="5" fill="var(--ws-primary)"/>
+            </svg>
+        </div>
+    </div>
+    
+    <!-- Stats Row -->
+    <div class="ws-grid ws-grid-4" style="margin-top: 1.5rem;">
+        <div class="ws-card ws-stat">
+            <div class="ws-stat-value">{{ today_stats.complete_pomodoros|default:0 }}</div>
+            <div class="ws-stat-label">Today</div>
+        </div>
+        <div class="ws-card ws-stat">
+            <div class="ws-stat-value">{{ today_stats.total_focus_minutes|default:0 }}</div>
+            <div class="ws-stat-label">Minutes</div>
+        </div>
+        <div class="ws-card ws-stat">
+            <div class="ws-stat-value">🔥 {{ streak_days }}</div>
+            <div class="ws-stat-label">Streak</div>
+        </div>
+        <div class="ws-card ws-stat">
+            <div class="ws-stat-value">{{ settings.daily_pomodoro_goal }}</div>
+            <div class="ws-stat-label">Goal</div>
+        </div>
+    </div>
+    
+    <!-- Recent Sessions -->
+    <div class="ws-card" style="margin-top: 1.5rem;">
+        <div class="ws-card-header">
+            <h3 class="ws-card-title">
+                <i class="fas fa-history" style="color: var(--ws-primary);"></i>
+                Recent Sessions
+            </h3>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="color: var(--ws-text-muted); font-size: 0.75rem; text-transform: uppercase;">
+                    <th style="text-align: left; padding: 0.5rem;">Type</th>
+                    <th style="text-align: left; padding: 0.5rem;">Task</th>
+                    <th style="text-align: left; padding: 0.5rem;">Duration</th>
+                    <th style="text-align: left; padding: 0.5rem;">Status</th>
+                    <th style="text-align: left; padding: 0.5rem;">Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in recent_sessions %}
+                <tr style="border-top: 1px solid var(--ws-border);">
+                    <td style="padding: 0.75rem 0.5rem; color: var(--ws-text);">
+                        {% if session.session_type == 'work' %}
+                            <span class="ws-badge ws-badge-primary">Focus</span>
+                        {% elif session.session_type == 'short_break' %}
+                            <span class="ws-badge ws-badge-info">Short</span>
+                        {% else %}
+                            <span class="ws-badge ws-badge-warning">Long</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 0.5rem; color: var(--ws-text);">
+                        {{ session.task.title|default:"-" }}
+                    </td>
+                    <td style="padding: 0.75rem 0.5rem; color: var(--ws-text-muted);">
+                        {{ session.actual_duration|default:0|floatformat:0 }}s
+                    </td>
+                    <td style="padding: 0.75rem 0.5rem;">
+                        {% if session.status == 'completed' %}
+                            <span style="color: var(--ws-primary);">✓</span>
+                        {% elif session.status == 'cancelled' %}
+                            <span style="color: var(--ws-danger);">✗</span>
+                        {% else %}
+                            <span style="color: var(--ws-warning);">⋯</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 0.5rem; color: var(--ws-text-muted); font-size: 0.875rem;">
+                        {{ session.started_at|timesince }} ago
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: var(--ws-text-muted);">
+                        No sessions yet. Start your first pomodoro!
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Settings -->
+    <div class="ws-card" style="margin-top: 1.5rem;">
+        <div class="ws-card-header">
+            <h3 class="ws-card-title">
+                <i class="fas fa-cog" style="color: var(--ws-primary);"></i>
+                Timer Settings
+            </h3>
+            <button onclick="saveSettings()" class="ws-btn ws-btn-sm ws-btn-primary">Save</button>
+        </div>
+        
+        <div class="ws-grid ws-grid-3">
+            <div>
+                <label class="ws-label">Focus Duration (min)</label>
+                <input type="number" id="settingWork" class="ws-input" value="{{ settings.work_duration }}" min="1" max="60">
+            </div>
+            <div>
+                <label class="ws-label">Short Break (min)</label>
+                <input type="number" id="settingShort" class="ws-input" value="{{ settings.short_break_duration }}" min="1" max="30">
+            </div>
+            <div>
+                <label class="ws-label">Long Break (min)</label>
+                <input type="number" id="settingLong" class="ws-input" value="{{ settings.long_break_duration }}" min="1" max="60">
+            </div>
+        </div>
+        
+        <div class="ws-grid ws-grid-2" style="margin-top: 1rem;">
+            <div>
+                <label class="ws-label">Pomodoros Before Long Break</label>
+                <input type="number" id="settingCycle" class="ws-input" value="{{ settings.pomodoros_before_long_break }}" min="2" max="10">
+            </div>
+            <div>
+                <label class="ws-label">Daily Goal</label>
+                <input type="number" id="settingGoal" class="ws-input" value="{{ settings.daily_pomodoro_goal }}" min="1" max="20">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block workspace_js %}
+<script>
+    let timerInterval = null;
+    let activeSessionId = {{ active_session.id|default:'null' }};
+    let currentSessionType = 'work';
+    let plannedDuration = {{ settings.work_duration }} * 60;
+    let timeRemaining = 0;
+    
+    const durations = {
+        work: {{ settings.work_duration }} * 60,
+        short_break: {{ settings.short_break_duration }} * 60,
+        long_break: {{ settings.long_break_duration }} * 60
+    };
+    
+    {% if active_session %}
+    currentSessionType = '{{ active_session.session_type }}';
+    plannedDuration = {{ active_session.planned_duration }};
+    
+    {% if active_session.status == 'running' %}
+    const startedAt = new Date('{{ active_session.started_at.isoformat }}');
+    const elapsed = Math.floor((new Date() - startedAt) / 1000);
+    timeRemaining = Math.max(0, plannedDuration - elapsed);
+    startTimer();
+    {% elif active_session.status == 'paused' %}
+    timeRemaining = {{ active_session.time_remaining|default:0 }};
+    updateDisplay();
+    {% endif %}
+    {% else %}
+    timeRemaining = durations.work;
+    updateDisplay();
+    {% endif %}
+    
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function updateDisplay() {
+        document.getElementById('timerDisplay').textContent = formatTime(timeRemaining);
+        // Update progress bar
+        const progress = ((plannedDuration - timeRemaining) / plannedDuration) * 200;
+        document.getElementById('progressBar').setAttribute('width', progress);
+    }
+    
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                updateDisplay();
+            } else {
+                clearInterval(timerInterval);
+                playSound();
+                if (activeSessionId) {
+                    completePomodoro(activeSessionId);
+                }
+            }
+        }, 1000);
+    }
+    
+    function setSessionType(type) {
+        if (activeSessionId) return; // Don't change while session active
+        
+        currentSessionType = type;
+        timeRemaining = durations[type];
+        plannedDuration = durations[type];
+        updateDisplay();
+        
+        // Update tab styles
+        document.querySelectorAll('[id^="tab"]').forEach(btn => {
+            btn.className = 'ws-btn ws-btn-secondary';
+        });
+        document.getElementById('tab' + type.charAt(0).toUpperCase() + type.slice(1).replace('_', '')).className = 'ws-btn ws-btn-primary';
+    }
+    
+    async function startPomodoro() {
+        const taskId = document.getElementById('taskSelect').value;
+        
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'start',
+                session_type: currentSessionType,
+                task_id: taskId || null
+            })
+        });
+        
+        const data = await response.json();
+        if (data.status === 'success') {
+            location.reload();
+        }
+    }
+    
+    async function pausePomodoro(sessionId) {
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'pause', session_id: sessionId })
+        });
+        if ((await response.json()).status === 'success') location.reload();
+    }
+    
+    async function resumePomodoro(sessionId) {
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'resume', session_id: sessionId })
+        });
+        if ((await response.json()).status === 'success') location.reload();
+    }
+    
+    async function completePomodoro(sessionId) {
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'complete', session_id: sessionId })
+        });
+        if ((await response.json()).status === 'success') {
+            clearInterval(timerInterval);
+            location.reload();
+        }
+    }
+    
+    async function cancelPomodoro(sessionId) {
+        if (!confirm('Cancel this pomodoro session?')) return;
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'cancel', session_id: sessionId })
+        });
+        if ((await response.json()).status === 'success') {
+            clearInterval(timerInterval);
+            location.reload();
+        }
+    }
+    
+    async function saveSettings() {
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'settings_update',
+                work_duration: parseInt(document.getElementById('settingWork').value),
+                short_break_duration: parseInt(document.getElementById('settingShort').value),
+                long_break_duration: parseInt(document.getElementById('settingLong').value),
+                pomodoros_before_long_break: parseInt(document.getElementById('settingCycle').value),
+                daily_pomodoro_goal: parseInt(document.getElementById('settingGoal').value)
+            })
+        });
+        
+        if ((await response.json()).status === 'success') {
+            alert('Settings saved!');
+            location.reload();
+        }
+    }
+    
+    function playSound() {
+        // Simple beep sound
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.value = 0.3;
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 200);
+    }
+</script>
+{% endblock %}

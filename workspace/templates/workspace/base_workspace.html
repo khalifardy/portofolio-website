@@ -1,0 +1,346 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ws-primary: #37a749;
+        --ws-primary-dark: #2d8a3c;
+        --ws-primary-light: #4bc95f;
+        --ws-bg: #0d1117;
+        --ws-bg-secondary: #161b22;
+        --ws-bg-tertiary: #21262d;
+        --ws-border: #30363d;
+        --ws-text: #e6edf3;
+        --ws-text-muted: #8b949e;
+        --ws-danger: #f85149;
+        --ws-warning: #d29922;
+        --ws-info: #58a6ff;
+    }
+    
+    .workspace-container {
+        display: flex;
+        min-height: calc(100vh - 60px);
+        background: var(--ws-bg);
+    }
+    
+    /* Sidebar */
+    .ws-sidebar {
+        width: 240px;
+        background: var(--ws-bg-secondary);
+        border-right: 1px solid var(--ws-border);
+        padding: 1rem 0;
+        position: fixed;
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+    }
+    
+    .ws-sidebar.collapsed {
+        width: 60px;
+    }
+    
+    .ws-sidebar-header {
+        padding: 0 1rem 1rem;
+        border-bottom: 1px solid var(--ws-border);
+        margin-bottom: 1rem;
+    }
+    
+    .ws-sidebar-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--ws-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .ws-nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: var(--ws-text-muted);
+        text-decoration: none;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+    
+    .ws-nav-item:hover {
+        background: var(--ws-bg-tertiary);
+        color: var(--ws-text);
+    }
+    
+    .ws-nav-item.active {
+        background: var(--ws-bg-tertiary);
+        color: var(--ws-primary);
+        border-left-color: var(--ws-primary);
+    }
+    
+    .ws-nav-item i {
+        width: 24px;
+        margin-right: 0.75rem;
+        text-align: center;
+    }
+    
+    .ws-nav-section {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--ws-text-muted);
+        margin-top: 1rem;
+    }
+    
+    /* Main Content */
+    .ws-main {
+        flex: 1;
+        margin-left: 240px;
+        padding: 1.5rem;
+        background: var(--ws-bg);
+        min-height: calc(100vh - 60px);
+    }
+    
+    .ws-sidebar.collapsed + .ws-main {
+        margin-left: 60px;
+    }
+    
+    /* Cards */
+    .ws-card {
+        background: var(--ws-bg-secondary);
+        border: 1px solid var(--ws-border);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .ws-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--ws-border);
+    }
+    
+    .ws-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ws-text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Buttons */
+    .ws-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .ws-btn-primary {
+        background: var(--ws-primary);
+        color: white;
+    }
+    
+    .ws-btn-primary:hover {
+        background: var(--ws-primary-dark);
+    }
+    
+    .ws-btn-secondary {
+        background: var(--ws-bg-tertiary);
+        color: var(--ws-text);
+        border: 1px solid var(--ws-border);
+    }
+    
+    .ws-btn-secondary:hover {
+        background: var(--ws-border);
+    }
+    
+    .ws-btn-danger {
+        background: var(--ws-danger);
+        color: white;
+    }
+    
+    .ws-btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .ws-btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 6px;
+    }
+    
+    /* Forms */
+    .ws-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: var(--ws-bg);
+        border: 1px solid var(--ws-border);
+        border-radius: 6px;
+        color: var(--ws-text);
+        font-size: 0.875rem;
+    }
+    
+    .ws-input:focus {
+        outline: none;
+        border-color: var(--ws-primary);
+        box-shadow: 0 0 0 3px rgba(55, 167, 73, 0.2);
+    }
+    
+    .ws-input::placeholder {
+        color: var(--ws-text-muted);
+    }
+    
+    .ws-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--ws-text-muted);
+    }
+    
+    /* Grid */
+    .ws-grid {
+        display: grid;
+        gap: 1rem;
+    }
+    
+    .ws-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .ws-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .ws-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    
+    @media (max-width: 768px) {
+        .ws-grid-2, .ws-grid-3, .ws-grid-4 {
+            grid-template-columns: 1fr;
+        }
+        .ws-sidebar {
+            width: 60px;
+        }
+        .ws-main {
+            margin-left: 60px;
+        }
+    }
+    
+    /* Stats */
+    .ws-stat {
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .ws-stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--ws-primary);
+    }
+    
+    .ws-stat-label {
+        font-size: 0.75rem;
+        color: var(--ws-text-muted);
+        text-transform: uppercase;
+    }
+    
+    /* Badge */
+    .ws-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .ws-badge-primary { background: rgba(55, 167, 73, 0.2); color: var(--ws-primary); }
+    .ws-badge-danger { background: rgba(248, 81, 73, 0.2); color: var(--ws-danger); }
+    .ws-badge-warning { background: rgba(210, 153, 34, 0.2); color: var(--ws-warning); }
+    .ws-badge-info { background: rgba(88, 166, 255, 0.2); color: var(--ws-info); }
+    
+    /* Priority colors */
+    .priority-1 { color: var(--ws-danger); }
+    .priority-2 { color: var(--ws-warning); }
+    .priority-3 { color: var(--ws-info); }
+    .priority-4 { color: var(--ws-text-muted); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="workspace-container">
+    <!-- Sidebar -->
+    <aside class="ws-sidebar {% if workspace_prefs.sidebar_collapsed %}collapsed{% endif %}">
+        <div class="ws-sidebar-header">
+            <div class="ws-sidebar-title">
+                <i class="fas fa-leaf"></i>
+                <span>Workspace</span>
+            </div>
+        </div>
+        
+        <nav>
+            <a href="{% url 'workspace:dashboard' %}" class="ws-nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'workspace:pomodoro' %}" class="ws-nav-item {% if 'pomodoro' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-clock"></i>
+                <span>Pomodoro</span>
+            </a>
+            <a href="{% url 'workspace:task_list' %}" class="ws-nav-item {% if 'task' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="{% url 'workspace:note_list' %}" class="ws-nav-item {% if 'note' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-sticky-note"></i>
+                <span>Notes</span>
+            </a>
+            
+            <div class="ws-nav-section">Research</div>
+            <a href="{% url 'research:dashboard_research' %}" class="ws-nav-item">
+                <i class="fas fa-flask"></i>
+                <span>Projects</span>
+            </a>
+            <a href="{% url 'astronomy:telescope_remote' %}" class="ws-nav-item">
+                <i class="fas fa-star"></i>
+                <span>Astronomy</span>
+            </a>
+            
+            <div class="ws-nav-section">Settings</div>
+            <a href="{% url 'workspace:settings' %}" class="ws-nav-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="ws-main">
+        {% block workspace_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // CSRF token for AJAX
+    const csrfToken = '{{ csrf_token }}';
+    
+    // Helper function for fetch with CSRF
+    async function fetchWithCSRF(url, options = {}) {
+        const defaults = {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        };
+        return fetch(url, {...defaults, ...options});
+    }
+</script>
+{% block workspace_js %}{% endblock %}
+{% endblock %}
