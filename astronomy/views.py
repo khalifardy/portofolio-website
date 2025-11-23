@@ -86,17 +86,36 @@ def check_telescope_status():
     
     try:
         
+        host_to_try = [
+            'host.docker.internal',
+            '172.17.0.1',
+            'localhost'
+        ]
+        
+        for host in host_to_try:
         #cek port 15900 listening 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(1)
-            result = s.connect_ex(('localhost', 15900))
-            status['tunnel_active'] = (result==0)
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.settimeout(1)
+                    result = s.connect_ex((host, 15900))
+                    status['tunnel_active'] = (result==0)
+                    if result==0:
+                        break
+            except:
+                continue
             
-        #cek port 6080 listening
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(1)
-            result = s.connect_ex(('localhost', 6080))
-            status['vnc_active'] = (result==0)
+        for host in host_to_try:
+            #cek port 6080 listening
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.settimeout(1)
+                    result = s.connect_ex((host, 6080))
+                    status['vnc_active'] = (result==0)
+                    if result==0:
+                        break
+            except:
+                continue
+            
             
         if status['tunnel_active'] and status['vnc_active']:
             status['message'] = "Telescope connection active" 
@@ -116,7 +135,7 @@ def telescope_remote_access(request):
     
     context = {
         'title': 'Remote Telescope Access',
-        'vnc_url':'https:/astro/ideasophia.com/vnc.html',
+        'vnc_url':'https://astro/ideasophia.com/vnc.html',
         'status': check_telescope_status()
     }
     
