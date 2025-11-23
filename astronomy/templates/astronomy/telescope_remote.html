@@ -113,7 +113,7 @@
     
     <!-- noVNC Viewer -->
     <div class="vnc-frame-container">
-        {% if status.tunnel_active and status.vnc_active %}
+        {% if status.vnc_active %}
             <iframe src="{{ vnc_url }}" class="vnc-frame" id="vnc-iframe"></iframe>
         {% else %}
             <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
