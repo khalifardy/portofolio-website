@@ -1,0 +1,255 @@
+{% extends 'workspace/base_workspace.html' %}
+{% load static %}
+
+{% block workspace_content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size: 1.5rem; color: var(--ws-text); margin-bottom: 1.5rem;">
+        <i class="fas fa-cog" style="color: var(--ws-primary);"></i> Settings
+    </h1>
+    
+    <!-- Pomodoro Settings -->
+    <div class="ws-card">
+        <div class="ws-card-header">
+            <h3 class="ws-card-title">
+                <i class="fas fa-clock" style="color: var(--ws-primary);"></i>
+                Pomodoro Timer
+            </h3>
+        </div>
+        
+        <div class="ws-grid ws-grid-3" style="margin-bottom: 1rem;">
+            <div>
+                <label class="ws-label">Focus Duration (minutes)</label>
+                <input type="number" id="workDuration" class="ws-input" 
+                       value="{{ pomodoro_settings.work_duration }}" min="1" max="60">
+            </div>
+            <div>
+                <label class="ws-label">Short Break (minutes)</label>
+                <input type="number" id="shortBreakDuration" class="ws-input" 
+                       value="{{ pomodoro_settings.short_break_duration }}" min="1" max="30">
+            </div>
+            <div>
+                <label class="ws-label">Long Break (minutes)</label>
+                <input type="number" id="longBreakDuration" class="ws-input" 
+                       value="{{ pomodoro_settings.long_break_duration }}" min="1" max="60">
+            </div>
+        </div>
+        
+        <div class="ws-grid ws-grid-2" style="margin-bottom: 1rem;">
+            <div>
+                <label class="ws-label">Pomodoros Before Long Break</label>
+                <input type="number" id="pomodorosBeforeLongBreak" class="ws-input" 
+                       value="{{ pomodoro_settings.pomodoros_before_long_break }}" min="2" max="10">
+            </div>
+            <div>
+                <label class="ws-label">Daily Goal (pomodoros)</label>
+                <input type="number" id="dailyGoal" class="ws-input" 
+                       value="{{ pomodoro_settings.daily_pomodoro_goal }}" min="1" max="20">
+            </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="autoStartBreaks" {% if pomodoro_settings.auto_start_breaks %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Auto-start breaks</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="autoStartPomodoros" {% if pomodoro_settings.auto_start_pomodoros %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Auto-start next pomodoro after break</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="soundEnabled" {% if pomodoro_settings.sound_enabled %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Enable sound notifications</span>
+            </label>
+        </div>
+        
+        <button onclick="savePomodoroSettings()" class="ws-btn ws-btn-primary">
+            <i class="fas fa-save"></i> Save Pomodoro Settings
+        </button>
+    </div>
+    
+    <!-- Workspace Preferences -->
+    <div class="ws-card" style="margin-top: 1rem;">
+        <div class="ws-card-header">
+            <h3 class="ws-card-title">
+                <i class="fas fa-palette" style="color: var(--ws-primary);"></i>
+                Workspace Preferences
+            </h3>
+        </div>
+        
+        <div class="ws-grid ws-grid-2" style="margin-bottom: 1rem;">
+            <div>
+                <label class="ws-label">Theme</label>
+                <select id="theme" class="ws-input">
+                    <option value="dark" {% if workspace_prefs.theme == 'dark' %}selected{% endif %}>🌙 Dark</option>
+                    <option value="light" {% if workspace_prefs.theme == 'light' %}selected{% endif %}>☀️ Light</option>
+                    <option value="auto" {% if workspace_prefs.theme == 'auto' %}selected{% endif %}>🔄 Auto</option>
+                </select>
+            </div>
+            <div>
+                <label class="ws-label">Default View</label>
+                <select id="defaultView" class="ws-input">
+                    <option value="dashboard" {% if workspace_prefs.default_view == 'dashboard' %}selected{% endif %}>Dashboard</option>
+                    <option value="pomodoro" {% if workspace_prefs.default_view == 'pomodoro' %}selected{% endif %}>Pomodoro</option>
+                    <option value="tasks" {% if workspace_prefs.default_view == 'tasks' %}selected{% endif %}>Tasks</option>
+                    <option value="notes" {% if workspace_prefs.default_view == 'notes' %}selected{% endif %}>Notes</option>
+                </select>
+            </div>
+        </div>
+        
+        <h4 style="color: var(--ws-text); margin: 1rem 0 0.75rem; font-size: 0.875rem;">Dashboard Widgets</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="showPomodoroWidget" {% if workspace_prefs.show_pomodoro_widget %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Show Pomodoro Widget</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="showTasksWidget" {% if workspace_prefs.show_tasks_widget %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Show Tasks Widget</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="showCalendarWidget" {% if workspace_prefs.show_calendar_widget %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Show Calendar Widget</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="showStatsWidget" {% if workspace_prefs.show_stats_widget %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Show Stats Widget</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="showRecentNotesWidget" {% if workspace_prefs.show_recent_notes_widget %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Show Recent Notes Widget</span>
+            </label>
+        </div>
+        
+        <h4 style="color: var(--ws-text); margin: 1rem 0 0.75rem; font-size: 0.875rem;">Task Settings</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="hideCompletedTasks" {% if workspace_prefs.hide_completed_tasks %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Hide completed tasks by default</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="sidebarCollapsed" {% if workspace_prefs.sidebar_collapsed %}checked{% endif %}>
+                <span style="color: var(--ws-text);">Collapse sidebar by default</span>
+            </label>
+        </div>
+        
+        <button onclick="saveWorkspacePreferences()" class="ws-btn ws-btn-primary">
+            <i class="fas fa-save"></i> Save Preferences
+        </button>
+    </div>
+    
+    <!-- Data Management -->
+    <div class="ws-card" style="margin-top: 1rem;">
+        <div class="ws-card-header">
+            <h3 class="ws-card-title">
+                <i class="fas fa-database" style="color: var(--ws-primary);"></i>
+                Data Management
+            </h3>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="padding: 1rem; background: var(--ws-bg); border-radius: 6px;">
+                <h4 style="color: var(--ws-text); margin: 0 0 0.5rem;">Export Data</h4>
+                <p style="color: var(--ws-text-muted); font-size: 0.875rem; margin: 0 0 1rem;">
+                    Download all your tasks, notes, and pomodoro history as JSON.
+                </p>
+                <button onclick="exportData()" class="ws-btn ws-btn-secondary">
+                    <i class="fas fa-download"></i> Export All Data
+                </button>
+            </div>
+            
+            <div style="padding: 1rem; background: rgba(248, 81, 73, 0.1); border-radius: 6px; border: 1px solid var(--ws-danger);">
+                <h4 style="color: var(--ws-danger); margin: 0 0 0.5rem;">Danger Zone</h4>
+                <p style="color: var(--ws-text-muted); font-size: 0.875rem; margin: 0 0 1rem;">
+                    Clear all completed tasks or reset pomodoro statistics. This action cannot be undone.
+                </p>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button onclick="clearCompletedTasks()" class="ws-btn ws-btn-danger">
+                        <i class="fas fa-trash"></i> Clear Completed Tasks
+                    </button>
+                    <button onclick="resetPomodoroStats()" class="ws-btn ws-btn-danger">
+                        <i class="fas fa-redo"></i> Reset Stats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block workspace_js %}
+<script>
+    async function savePomodoroSettings() {
+        const data = {
+            action: 'settings_update',
+            work_duration: parseInt(document.getElementById('workDuration').value),
+            short_break_duration: parseInt(document.getElementById('shortBreakDuration').value),
+            long_break_duration: parseInt(document.getElementById('longBreakDuration').value),
+            pomodoros_before_long_break: parseInt(document.getElementById('pomodorosBeforeLongBreak').value),
+            daily_pomodoro_goal: parseInt(document.getElementById('dailyGoal').value),
+            auto_start_breaks: document.getElementById('autoStartBreaks').checked,
+            auto_start_pomodoros: document.getElementById('autoStartPomodoros').checked,
+            sound_enabled: document.getElementById('soundEnabled').checked
+        };
+        
+        const response = await fetchWithCSRF('/api/workspace/pomodoro/', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (result.status === 'success') {
+            showNotification('Pomodoro settings saved!', 'success');
+        } else {
+            showNotification('Failed to save settings', 'error');
+        }
+    }
+    
+    async function saveWorkspacePreferences() {
+        const data = {
+            theme: document.getElementById('theme').value,
+            default_view: document.getElementById('defaultView').value,
+            show_pomodoro_widget: document.getElementById('showPomodoroWidget').checked,
+            show_tasks_widget: document.getElementById('showTasksWidget').checked,
+            show_calendar_widget: document.getElementById('showCalendarWidget').checked,
+            show_stats_widget: document.getElementById('showStatsWidget').checked,
+            show_recent_notes_widget: document.getElementById('showRecentNotesWidget').checked,
+            hide_completed_tasks: document.getElementById('hideCompletedTasks').checked,
+            sidebar_collapsed: document.getElementById('sidebarCollapsed').checked
+        };
+        
+        const response = await fetchWithCSRF('{% url "workspace:preference_update" %}', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (result.status === 'success') {
+            showNotification('Preferences saved!', 'success');
+        } else {
+            showNotification('Failed to save preferences', 'error');
+        }
+    }
+    
+    function showNotification(message, type) {
+        // Simple alert for now, can be replaced with toast notification
+        alert(message);
+    }
+    
+    async function exportData() {
+        // TODO: Implement export
+        alert('Export feature coming soon!');
+    }
+    
+    async function clearCompletedTasks() {
+        if (!confirm('Are you sure you want to delete all completed tasks? This cannot be undone.')) return;
+        // TODO: Implement clear
+        alert('Clear completed tasks feature coming soon!');
+    }
+    
+    async function resetPomodoroStats() {
+        if (!confirm('Are you sure you want to reset all pomodoro statistics? This cannot be undone.')) return;
+        // TODO: Implement reset
+        alert('Reset stats feature coming soon!');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'workspace/base_workspace.html' %}
+{% load static %}
+
+{% block workspace_content %}
+<div style="max-width: 900px; margin: 0 auto; padding-top: 1rem;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+            <a href="{% url 'workspace:note_list' %}" style="color: var(--ws-text-muted); text-decoration: none; font-size: 0.875rem;">
+                ← Back to Notes
+            </a>
+            <h1 style="font-size: 1.5rem; color: var(--ws-text); margin: 0.5rem 0 0;">
+                ✏️ New Note
+            </h1>
+        </div>
+    </div>
+    
+    <!-- Note Editor -->
+    <div class="ws-card">
+        <div style="margin-bottom: 1rem;">
+            <label class="ws-label">Notebook</label>
+            <select id="noteNotebook" class="ws-input" style="max-width: 300px;">
+                {% if notebooks %}
+                    {% for nb in notebooks %}
+                    <option value="{{ nb.id }}" {% if nb.is_default %}selected{% endif %}>
+                        {{ nb.icon|default:"📓" }} {{ nb.name }}
+                    </option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">Quick Notes (Default)</option>
+                {% endif %}
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <input type="text" id="noteTitle" class="ws-input" 
+                   style="font-size: 1.5rem; font-weight: 600;"
+                   placeholder="Note title..." autofocus>
+        </div>
+        
+        <!-- Toolbar with text fallback for icons -->
+        <div style="display: flex; gap: 0.25rem; padding: 0.5rem; background: var(--ws-bg); border-radius: 6px; margin-bottom: 1rem;">
+            <button onclick="formatText('bold')" class="ws-btn ws-btn-sm ws-btn-secondary" title="Bold">
+                <b>B</b>
+            </button>
+            <button onclick="formatText('italic')" class="ws-btn ws-btn-sm ws-btn-secondary" title="Italic">
+                <i>I</i>
+            </button>
+            <button onclick="formatText('heading')" class="ws-btn ws-btn-sm ws-btn-secondary" title="Heading">
+                H
+            </button>
+            <button onclick="formatText('list')" class="ws-btn ws-btn-sm ws-btn-secondary" title="List">
+                ≡
+            </button>
+            <button onclick="formatText('code')" class="ws-btn ws-btn-sm ws-btn-secondary" title="Code">
+                &lt;/&gt;
+            </button>
+            <button onclick="formatText('link')" class="ws-btn ws-btn-sm ws-btn-secondary" title="Link">
+                🔗
+            </button>
+        </div>
+        
+        <!-- Content Editor -->
+        <textarea id="noteContent" class="ws-input" rows="20" 
+                  style="font-family: 'Source Code Pro', monospace; line-height: 1.6; resize: vertical;"
+                  placeholder="Start writing your note..."></textarea>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+            <a href="{% url 'workspace:note_list' %}" class="ws-btn ws-btn-secondary">Cancel</a>
+            <button onclick="createNote()" class="ws-btn ws-btn-primary">
+                💾 Create Note
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block workspace_js %}
+<script>
+    async function createNote() {
+        const title = document.getElementById('noteTitle').value.trim();
+        const content = document.getElementById('noteContent').value;
+        const notebookSelect = document.getElementById('noteNotebook');
+        const notebookId = notebookSelect.value || null;
+        
+        if (!title) {
+            alert('Please enter a title');
+            document.getElementById('noteTitle').focus();
+            return;
+        }
+        
+        const response = await fetchWithCSRF('/workspace/notes/create/', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+                content: content,
+                notebook_id: notebookId
+            })
+        });
+        
+        const data = await response.json();
+        if (data.status === 'success') {
+            window.location.href = `/workspace/notes/${data.id}/`;
+        } else {
+            alert('Error creating note');
+        }
+    }
+    
+    function formatText(format) {
+        const textarea = document.getElementById('noteContent');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = textarea.value.substring(start, end);
+        
+        let replacement = '';
+        switch(format) {
+            case 'bold': replacement = `**${selected || 'bold text'}**`; break;
+            case 'italic': replacement = `*${selected || 'italic text'}*`; break;
+            case 'heading': replacement = `## ${selected || 'Heading'}`; break;
+            case 'list': replacement = `- ${selected || 'List item'}`; break;
+            case 'code': replacement = selected.includes('\n') ? `\`\`\`\n${selected || 'code'}\n\`\`\`` : `\`${selected || 'code'}\``; break;
+            case 'link': replacement = `[${selected || 'link text'}](url)`; break;
+        }
+        
+        textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+        textarea.focus();
+    }
+    
+    // Keyboard shortcut: Ctrl+Enter to create
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            createNote();
+        }
+    });
+</script>
+{% endblock %}

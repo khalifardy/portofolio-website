@@ -1,0 +1,140 @@
+{% extends 'workspace/base_workspace.html' %}
+{% load static %}
+
+{% block workspace_content %}
+<div class="notes-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.5rem; color: var(--ws-text); margin: 0;">
+        <i class="fas fa-sticky-note" style="color: var(--ws-primary);"></i> Notes
+    </h1>
+    <a href="{% url 'workspace:note_create' %}" class="ws-btn ws-btn-primary">
+        <i class="fas fa-plus"></i> New Note
+    </a>
+</div>
+
+<div style="display: flex; gap: 1.5rem;">
+    <!-- Sidebar: Notebooks -->
+    <div style="width: 220px; flex-shrink: 0;">
+        <div class="ws-card">
+            <div class="ws-card-header">
+                <h3 class="ws-card-title">Notebooks</h3>
+                <button onclick="createNotebook()" class="ws-btn ws-btn-icon ws-btn-secondary" title="New Notebook">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            
+            <nav>
+                <a href="{% url 'workspace:note_list' %}" class="ws-nav-item {% if not notebook_filter %}active{% endif %}" style="border-radius: 6px; margin-bottom: 0.25rem;">
+                    <i class="fas fa-book"></i>
+                    <span>All Notes</span>
+                </a>
+                {% for nb in notebooks %}
+                <a href="{% url 'workspace:note_list' %}?notebook={{ nb.id }}" class="ws-nav-item {% if notebook_filter == nb.id|stringformat:'s' %}active{% endif %}" style="border-radius: 6px; margin-bottom: 0.25rem;">
+                    <span>{{ nb.icon }}</span>
+                    <span>{{ nb.name }}</span>
+                    <span style="margin-left: auto; font-size: 0.75rem; color: var(--ws-text-muted);">{{ nb.note_set.count }}</span>
+                </a>
+                {% endfor %}
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Main: Notes Grid -->
+    <div style="flex: 1;">
+        <!-- Search -->
+        <div class="ws-card" style="margin-bottom: 1rem;">
+            <form method="get" style="display: flex; gap: 0.5rem;">
+                {% if notebook_filter %}
+                <input type="hidden" name="notebook" value="{{ notebook_filter }}">
+                {% endif %}
+                <input type="text" name="q" class="ws-input" placeholder="Search notes..." value="{{ search }}">
+                <button type="submit" class="ws-btn ws-btn-secondary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        
+        <!-- Notes Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            {% for note in notes %}
+            <a href="{% url 'workspace:note_detail' note.id %}" class="ws-card" style="text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                {% if note.is_pinned %}
+                <div style="position: absolute; top: 0.5rem; right: 0.5rem; color: var(--ws-warning);">
+                    <i class="fas fa-thumbtack"></i>
+                </div>
+                {% endif %}
+                
+                <h3 style="color: var(--ws-text); font-size: 1rem; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    {{ note.title }}
+                </h3>
+                
+                <p style="color: var(--ws-text-muted); font-size: 0.875rem; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                    {{ note.content|truncatewords:30|striptags }}
+                </p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--ws-text-muted);">
+                    <span>{{ note.notebook.icon }} {{ note.notebook.name }}</span>
+                    <span>{{ note.updated_at|timesince }} ago</span>
+                </div>
+            </a>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--ws-text-muted);">
+                <i class="fas fa-sticky-note" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                {% if search %}
+                <p>No notes found for "{{ search }}"</p>
+                <a href="{% url 'workspace:note_list' %}" class="ws-btn ws-btn-secondary" style="margin-top: 1rem;">
+                    Clear Search
+                </a>
+                {% else %}
+                <p>No notes yet</p>
+                <a href="{% url 'workspace:note_create' %}" class="ws-btn ws-btn-primary" style="margin-top: 1rem;">
+                    Create Your First Note
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if notes.has_other_pages %}
+        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+            {% if notes.has_previous %}
+            <a href="?page={{ notes.previous_page_number }}{% if notebook_filter %}&notebook={{ notebook_filter }}{% endif %}{% if search %}&q={{ search }}{% endif %}" class="ws-btn ws-btn-secondary">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% endif %}
+            
+            <span style="display: flex; align-items: center; padding: 0 1rem; color: var(--ws-text-muted);">
+                Page {{ notes.number }} of {{ notes.paginator.num_pages }}
+            </span>
+            
+            {% if notes.has_next %}
+            <a href="?page={{ notes.next_page_number }}{% if notebook_filter %}&notebook={{ notebook_filter }}{% endif %}{% if search %}&q={{ search }}{% endif %}" class="ws-btn ws-btn-secondary">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block workspace_js %}
+<script>
+    // API endpoint
+    const API_NOTEBOOKS = '/api/workspace/notebooks/';
+    
+    async function createNotebook() {
+        const name = prompt('Enter notebook name:');
+        if (!name) return;
+        
+        const response = await fetchWithCSRF(API_NOTEBOOKS, {
+            method: 'POST',
+            body: JSON.stringify({ name: name })
+        });
+        
+        if ((await response.json()).status === 'success') {
+            location.reload();
+        }
+    }
+</script>
+{% endblock %}
