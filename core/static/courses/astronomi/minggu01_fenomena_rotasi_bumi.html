@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minggu 1 — Fenomena Rotasi Bumi | Astronomi A</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        h1 { color: #ffa657; font-size: 2em; margin-bottom: 10px; }
+        h2 { color: #79c0ff; font-size: 1.4em; margin: 30px 0 15px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+        h3 { color: #d2a8ff; font-size: 1.1em; margin: 20px 0 10px; }
+        p { line-height: 1.7; margin-bottom: 12px; color: #c9d1d9; }
+
+        .highlight { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin: 15px 0; }
+        .formula { background: #1a1f2e; border-left: 3px solid #ffa657; padding: 12px 16px; margin: 10px 0; font-family: 'Courier New', monospace; color: #ffa657; border-radius: 0 6px 6px 0; }
+        .important { background: #1a2332; border-left: 3px solid #58a6ff; padding: 12px 16px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 0; flex-wrap: wrap; }
+        .tab { padding: 10px 20px; background: #161b22; border: 1px solid #30363d; border-bottom: none; border-radius: 8px 8px 0 0; cursor: pointer; color: #8b949e; font-size: 0.95em; transition: all 0.2s; }
+        .tab.active { background: #1a1f2e; color: #ffa657; border-color: #ffa657; border-bottom: 2px solid #1a1f2e; }
+        .tab-content { display: none; background: #1a1f2e; border: 1px solid #30363d; border-radius: 0 8px 8px 8px; padding: 24px; min-height: 300px; }
+        .tab-content.active { display: block; }
+
+        /* Canvas */
+        canvas { border: 1px solid #30363d; border-radius: 8px; display: block; margin: 15px auto; background: #0d1117; }
+
+        /* Controls */
+        .controls { display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 15px 0; }
+        .controls label { color: #8b949e; font-size: 0.9em; }
+        .controls input[type="range"] { width: 150px; accent-color: #ffa657; }
+        .controls button { padding: 8px 16px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .controls button:hover { background: #30363d; border-color: #ffa657; }
+        .controls button.active { background: #1a2332; border-color: #58a6ff; color: #58a6ff; }
+
+        .value-display { color: #ffa657; font-weight: bold; min-width: 50px; display: inline-block; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { background: #161b22; color: #ffa657; padding: 10px; text-align: left; border: 1px solid #30363d; }
+        td { padding: 10px; border: 1px solid #30363d; color: #c9d1d9; }
+        tr:hover { background: #161b22; }
+
+        .emoji { font-size: 1.2em; }
+
+        /* Quiz */
+        .quiz-option { display: block; padding: 12px 16px; margin: 8px 0; background: #161b22; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; color: #c9d1d9; transition: all 0.2s; }
+        .quiz-option:hover { border-color: #58a6ff; }
+        .quiz-option.correct { background: #1a3a2a; border-color: #3fb950; color: #3fb950; }
+        .quiz-option.wrong { background: #3a1a1a; border-color: #f85149; color: #f85149; }
+        .quiz-explanation { margin-top: 10px; padding: 12px; background: #1a2332; border-radius: 6px; display: none; }
+
+        .nav-section { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+        .nav-btn { padding: 6px 14px; background: #21262d; border: 1px solid #30363d; color: #8b949e; border-radius: 20px; cursor: pointer; font-size: 0.85em; transition: all 0.2s; text-decoration: none; }
+        .nav-btn:hover { border-color: #ffa657; color: #ffa657; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🌍 Minggu 1: Fenomena Rotasi Bumi</h1>
+    <p style="color:#8b949e;">AS6031 Astronomi A — ITB | Interaktif Learning Notes</p>
+
+    <div class="nav-section">
+        <a class="nav-btn" href="#bola-langit">Bola Langit</a>
+        <a class="nav-btn" href="#koordinat">Sistem Koordinat</a>
+        <a class="nav-btn" href="#bukti-rotasi">Bukti Rotasi</a>
+        <a class="nav-btn" href="#siang-malam">Siang & Malam</a>
+        <a class="nav-btn" href="#visualisasi">Visualisasi</a>
+        <a class="nav-btn" href="#quiz">Quiz</a>
+    </div>
+
+    <!-- ===== BOLA LANGIT ===== -->
+    <h2 id="bola-langit">1. Bola Bumi & Bola Langit (Celestial Sphere)</h2>
+
+    <div class="highlight">
+        <h3>Bola Bumi</h3>
+        <p>Bumi berbentuk <strong>oblate spheroid</strong> — hampir bola tapi sedikit pepat di kutub.
+        Jari-jari ekuatorial = 6,378 km, jari-jari kutub = 6,357 km (selisih ~21 km).</p>
+        <p>Titik penting: <strong>Kutub Utara/Selatan</strong> (sumbu rotasi menembus permukaan),
+        <strong>Ekuator</strong> (lingkaran besar membagi utara-selatan),
+        <strong>Lintang (φ)</strong> dan <strong>Bujur (λ)</strong> untuk menentukan posisi di permukaan Bumi.</p>
+    </div>
+
+    <div class="highlight">
+        <h3>Bola Langit (Celestial Sphere)</h3>
+        <p>Bola imajiner berukuran tak hingga dengan Bumi di pusatnya. Semua benda langit tampak
+        "tertempel" di permukaan bola ini. Bola langit adalah <strong>model</strong> — bukan kenyataan fisik,
+        tapi sangat berguna untuk astronomi posisi.</p>
+
+        <table>
+            <tr><th>Titik/Lingkaran</th><th>Definisi</th><th>Analogi di Bumi</th></tr>
+            <tr><td>Kutub Langit Utara (NCP)</td><td>Proyeksi Kutub Utara Bumi ke langit (dekat Polaris)</td><td>Kutub Utara</td></tr>
+            <tr><td>Kutub Langit Selatan (SCP)</td><td>Proyeksi Kutub Selatan Bumi ke langit</td><td>Kutub Selatan</td></tr>
+            <tr><td>Ekuator Langit</td><td>Proyeksi ekuator Bumi ke bola langit</td><td>Ekuator</td></tr>
+            <tr><td>Ekliptika</td><td>Jalur semu Matahari di langit (bidang orbit Bumi)</td><td>-</td></tr>
+            <tr><td>Zenith</td><td>Titik tepat di atas kepala pengamat</td><td>-</td></tr>
+            <tr><td>Nadir</td><td>Titik tepat di bawah kaki pengamat</td><td>-</td></tr>
+            <tr><td>Horizon</td><td>Lingkaran batas langit yang terlihat</td><td>-</td></tr>
+        </table>
+    </div>
+
+    <div class="important">
+        <p><strong>Obliquitas Ekliptika:</strong> Ekliptika miring 23.44° terhadap ekuator langit.
+        Kemiringan inilah yang menyebabkan <strong>musim</strong> di Bumi dan variasi panjang siang-malam sepanjang tahun.</p>
+    </div>
+
+    <!-- ===== SISTEM KOORDINAT ===== -->
+    <h2 id="koordinat">2. Sistem Koordinat Langit</h2>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('horizon')">Horizon</div>
+        <div class="tab" onclick="showTab('equatorial')">Ekuatorial</div>
+        <div class="tab" onclick="showTab('ecliptic')">Ekliptika</div>
+        <div class="tab" onclick="showTab('comparison')">Perbandingan</div>
+    </div>
+
+    <div id="horizon" class="tab-content active">
+        <h3>Sistem Koordinat Horizon (Altazimuth)</h3>
+        <p>Sistem paling intuitif — berbasis pada apa yang kamu lihat dari posisimu.</p>
+        <p><strong>Altitude (h):</strong> Sudut dari horizon ke atas. Horizon = 0°, Zenith = 90°</p>
+        <p><strong>Azimuth (A):</strong> Sudut dari Utara searah jarum jam. U = 0°, T = 90°, S = 180°, B = 270°</p>
+        <div class="important">
+            <p>⚠️ <strong>Kelemahan:</strong> Koordinat berubah terus seiring waktu (karena rotasi Bumi)
+            dan berbeda untuk setiap lokasi pengamat. Tidak cocok untuk katalog bintang.</p>
+        </div>
+        <canvas id="canvasHorizon" width="500" height="400"></canvas>
+        <div class="controls">
+            <label>Azimuth: <span class="value-display" id="azVal">180°</span></label>
+            <input type="range" id="azSlider" min="0" max="360" value="180" oninput="updateHorizon()">
+            <label>Altitude: <span class="value-display" id="altVal">45°</span></label>
+            <input type="range" id="altSlider" min="0" max="90" value="45" oninput="updateHorizon()">
+        </div>
+    </div>
+
+    <div id="equatorial" class="tab-content">
+        <h3>Sistem Koordinat Ekuatorial</h3>
+        <p>Sistem paling umum dipakai astronomer — <strong>tidak bergantung lokasi dan waktu</strong>.</p>
+        <p><strong>Right Ascension (RA, α):</strong> Analog bujur, diukur dalam jam (0h - 24h) dari titik Vernal Equinox (♈) berlawanan jarum jam.</p>
+        <p><strong>Declination (Dec, δ):</strong> Analog lintang, diukur dari ekuator langit. NCP = +90°, SCP = -90°.</p>
+        <div class="formula">1 jam RA = 15° (karena 360° / 24h = 15°/h)</div>
+        <div class="highlight">
+            <h3>Contoh Koordinat Ekuatorial</h3>
+            <table>
+                <tr><th>Objek</th><th>RA (α)</th><th>Dec (δ)</th><th>Catatan</th></tr>
+                <tr><td>Polaris</td><td>2h 31m</td><td>+89° 16'</td><td>Sangat dekat NCP</td></tr>
+                <tr><td>Sirius</td><td>6h 45m</td><td>-16° 43'</td><td>Bintang paling terang</td></tr>
+                <tr><td>Betelgeuse</td><td>5h 55m</td><td>+7° 24'</td><td>Bintang raksasa merah di Orion</td></tr>
+                <tr><td>Canopus</td><td>6h 24m</td><td>-52° 42'</td><td>Bintang paling terang kedua</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="ecliptic" class="tab-content">
+        <h3>Sistem Koordinat Ekliptika</h3>
+        <p>Berbasis bidang ekliptika (bidang orbit Bumi), bukan ekuator langit.</p>
+        <p><strong>Lintang ekliptika (β):</strong> Sudut dari bidang ekliptika (-90° sampai +90°)</p>
+        <p><strong>Bujur ekliptika (λ):</strong> Sudut sepanjang ekliptika dari Vernal Equinox (0° - 360°)</p>
+        <div class="important">
+            <p><strong>Kapan dipakai?</strong> Terutama untuk objek tata surya (planet, asteroid, komet)
+            karena orbit mereka mendekati bidang ekliptika, sehingga lintang ekliptika mereka kecil.</p>
+        </div>
+    </div>
+
+    <div id="comparison" class="tab-content">
+        <h3>Perbandingan Ketiga Sistem</h3>
+        <table>
+            <tr><th>Aspek</th><th>Horizon</th><th>Ekuatorial</th><th>Ekliptika</th></tr>
+            <tr><td>Bidang referensi</td><td>Horizon pengamat</td><td>Ekuator langit</td><td>Bidang ekliptika</td></tr>
+            <tr><td>Koordinat 1</td><td>Altitude (h)</td><td>Declination (δ)</td><td>Lintang ekliptika (β)</td></tr>
+            <tr><td>Koordinat 2</td><td>Azimuth (A)</td><td>Right Ascension (α)</td><td>Bujur ekliptika (λ)</td></tr>
+            <tr><td>Bergantung lokasi?</td><td style="color:#f85149;">Ya</td><td style="color:#3fb950;">Tidak</td><td style="color:#3fb950;">Tidak</td></tr>
+            <tr><td>Bergantung waktu?</td><td style="color:#f85149;">Ya</td><td style="color:#3fb950;">Tidak*</td><td style="color:#3fb950;">Tidak*</td></tr>
+            <tr><td>Kegunaan utama</td><td>Observasi langsung</td><td>Katalog bintang</td><td>Objek tata surya</td></tr>
+        </table>
+        <p style="color:#8b949e; font-size:0.85em;">*Berubah sangat lambat karena presesi (~26,000 tahun satu siklus)</p>
+    </div>
+
+    <!-- ===== BUKTI ROTASI ===== -->
+    <h2 id="bukti-rotasi">3. Bukti Bumi Berotasi</h2>
+
+    <div class="highlight">
+        <h3>A. Ayunan Foucault (1851)</h3>
+        <p>Léon Foucault menggantungkan pendulum 67m di Panthéon, Paris. Bidang ayunan
+        tampak berputar — padahal sebenarnya <strong>lantai (Bumi) yang berputar</strong> di bawah pendulum.</p>
+        <div class="formula">Periode rotasi bidang ayunan: T = 24 jam / sin(φ)</div>
+        <p>Di mana φ = lintang pengamat.</p>
+
+        <div class="controls">
+            <label>Lintang (φ): <span class="value-display" id="latVal">-6.9°</span></label>
+            <input type="range" id="latSlider" min="-90" max="90" value="-7" step="0.1" oninput="updateFoucault()">
+        </div>
+        <p style="text-align:center;">
+            Periode rotasi bidang ayunan: <span class="value-display" id="foucaultResult" style="font-size:1.3em;">199.7 jam</span>
+        </p>
+        <p style="text-align:center; color:#8b949e; font-size:0.9em;" id="foucaultNote">
+            Di Bandung, efek Foucault sangat lambat — itulah mengapa sulit diamati di dekat ekuator.
+        </p>
+    </div>
+
+    <div class="highlight">
+        <h3>B. Trail Citra Bintang (Star Trails)</h3>
+        <p>Dengan exposure kamera yang panjang, bintang membentuk garis lengkung (trail) karena rotasi Bumi.
+        Bintang di dekat kutub langit membentuk lingkaran kecil, bintang jauh dari kutub membentuk busur besar.</p>
+        <canvas id="canvasStarTrail" width="500" height="400"></canvas>
+        <div class="controls">
+            <label>Durasi exposure: <span class="value-display" id="expVal">2 jam</span></label>
+            <input type="range" id="expSlider" min="0.5" max="8" value="2" step="0.5" oninput="drawStarTrails()">
+            <button onclick="drawStarTrails()" style="background:#1a2332; border-color:#58a6ff; color:#58a6ff;">Redraw</button>
+        </div>
+        <p style="color:#8b949e; text-align:center; font-size:0.9em;">
+            🔭 Kamu bisa coba ini dengan Celestron 114 EQ + SV205! Arahkan ke kutub langit dan rekam video panjang.
+        </p>
+    </div>
+
+    <div class="highlight">
+        <h3>C. Efek Coriolis</h3>
+        <p>Benda bergerak di permukaan Bumi mengalami pembelokan:</p>
+        <p>• Belahan Utara → dibelokkan ke <strong>kanan</strong></p>
+        <p>• Belahan Selatan → dibelokkan ke <strong>kiri</strong></p>
+        <p>Ini mempengaruhi pola angin, arus laut, dan arah putaran siklon tropis.
+        Di ekuator, efek Coriolis = 0.</p>
+    </div>
+
+    <!-- ===== SIANG MALAM ===== -->
+    <h2 id="siang-malam">4. Fenomena Siang dan Malam</h2>
+
+    <div class="highlight">
+        <h3>Hari Sideris vs Hari Matahari (Sinodis)</h3>
+        <table>
+            <tr><th>Jenis Hari</th><th>Durasi</th><th>Definisi</th></tr>
+            <tr><td>Hari Sideris</td><td>23 jam 56 menit 4 detik</td><td>Rotasi 360° tepat terhadap bintang jauh</td></tr>
+            <tr><td>Hari Matahari (Sinodis)</td><td>~24 jam 00 menit</td><td>Interval antara dua transit Matahari berturut-turut</td></tr>
+        </table>
+        <div class="important">
+            <p><strong>Mengapa berbeda ~4 menit?</strong> Selama Bumi berotasi satu putaran penuh (23h 56m),
+            Bumi juga sudah bergeser ~1° dalam orbitnya mengelilingi Matahari.
+            Bumi perlu berotasi tambahan ~1° (~4 menit) agar Matahari kembali ke posisi transit yang sama.</p>
+        </div>
+        <div class="formula">Pergeseran per hari = 360° / 365.25 hari ≈ 0.986°/hari ≈ ~4 menit</div>
+    </div>
+
+    <!-- ===== VISUALISASI ===== -->
+    <h2 id="visualisasi">5. Visualisasi: Bola Langit dari Bandung</h2>
+
+    <canvas id="canvasCelestial" width="600" height="500"></canvas>
+    <div class="controls">
+        <label>Lintang pengamat: <span class="value-display" id="obsLatVal">-6.9°</span></label>
+        <input type="range" id="obsLatSlider" min="-90" max="90" value="-7" step="1" oninput="drawCelestialSphere()">
+        <label>Rotasi waktu: <span class="value-display" id="timeVal">0h</span></label>
+        <input type="range" id="timeSlider" min="0" max="24" value="0" step="0.5" oninput="drawCelestialSphere()">
+    </div>
+    <p style="color:#8b949e; text-align:center; font-size:0.9em;">
+        Pengamat melihat ke Selatan. Garis hijau = ekuator langit, garis kuning = ekliptika.
+        Titik merah = Kutub Langit Selatan. Geser slider lintang untuk melihat bagaimana langit berubah di lokasi berbeda.
+    </p>
+
+    <!-- ===== QUIZ ===== -->
+    <h2 id="quiz">6. Quiz — Uji Pemahaman</h2>
+
+    <div class="highlight" id="q1">
+        <h3>Pertanyaan 1</h3>
+        <p>Berapa sudut kemiringan ekliptika terhadap ekuator langit (obliquitas)?</p>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q1exp')">A. 15°</div>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'q1exp')">B. 23.44°</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q1exp')">C. 45°</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q1exp')">D. 66.56°</div>
+        <div class="quiz-explanation" id="q1exp">
+            <p>✅ <strong>23.44°</strong> — Ini disebut obliquitas ekliptika. Nilai 66.56° adalah komplemen dari 23.44°
+            (yaitu 90° - 23.44°), yang merupakan sudut antara sumbu rotasi Bumi dan bidang orbitnya.</p>
+        </div>
+    </div>
+
+    <div class="highlight" id="q2">
+        <h3>Pertanyaan 2</h3>
+        <p>Dalam sistem koordinat ekuatorial, 1 jam Right Ascension sama dengan berapa derajat?</p>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'q2exp')">A. 15°</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q2exp')">B. 24°</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q2exp')">C. 30°</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q2exp')">D. 60°</div>
+        <div class="quiz-explanation" id="q2exp">
+            <p>✅ <strong>15°</strong> — Karena 360° / 24 jam = 15° per jam.
+            Jadi misalnya RA = 6h berarti 6 × 15° = 90° dari titik Vernal Equinox.</p>
+        </div>
+    </div>
+
+    <div class="highlight" id="q3">
+        <h3>Pertanyaan 3</h3>
+        <p>Mengapa hari Matahari (~24 jam) lebih panjang dari hari sideris (23h 56m)?</p>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q3exp')">A. Karena rotasi Bumi melambat akibat pasang surut</div>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'q3exp')">B. Karena Bumi juga bergerak ~1°/hari dalam orbitnya, sehingga perlu rotasi tambahan</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q3exp')">C. Karena Matahari bergerak mengelilingi Bumi</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q3exp')">D. Karena atmosfer Bumi memperlambat rotasi</div>
+        <div class="quiz-explanation" id="q3exp">
+            <p>✅ Setelah satu rotasi sideris (360° terhadap bintang), Bumi sudah bergeser ~1° dalam orbitnya.
+            Bumi perlu berotasi ~1° tambahan (~4 menit) agar Matahari kembali ke posisi transit yang sama.
+            Itulah mengapa hari Matahari ≈ 24 jam > hari sideris ≈ 23h 56m.</p>
+        </div>
+    </div>
+
+    <div class="highlight" id="q4">
+        <h3>Pertanyaan 4</h3>
+        <p>Sistem koordinat mana yang paling cocok digunakan untuk katalog bintang?</p>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q4exp')">A. Horizon (Altazimuth)</div>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'q4exp')">B. Ekuatorial</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q4exp')">C. Ekliptika</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q4exp')">D. Galaktik</div>
+        <div class="quiz-explanation" id="q4exp">
+            <p>✅ <strong>Ekuatorial</strong> — Karena koordinat RA dan Dec tidak bergantung pada lokasi maupun waktu pengamat
+            (hanya berubah sangat lambat karena presesi). Sistem horizon bergantung lokasi & waktu,
+            sedangkan ekliptika lebih cocok untuk objek tata surya.</p>
+        </div>
+    </div>
+
+    <div class="highlight" id="q5">
+        <h3>Pertanyaan 5</h3>
+        <p>Di lintang berapa Ayunan Foucault tidak akan tampak berputar sama sekali?</p>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q5exp')">A. Di Kutub (90°)</div>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'q5exp')">B. Di Ekuator (0°)</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q5exp')">C. Di Bandung (-6.9°)</div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'q5exp')">D. Berputar di semua lintang</div>
+        <div class="quiz-explanation" id="q5exp">
+            <p>✅ <strong>Di Ekuator (0°)</strong> — Karena T = 24 / sin(0°) = 24 / 0 = ∞ (tak hingga).
+            Di ekuator, bidang ayunan tidak berputar sama sekali.
+            Di kutub: T = 24 / sin(90°) = 24 jam (paling cepat).
+            Di Bandung: T ≈ 200 jam (sangat lambat).</p>
+        </div>
+    </div>
+
+    <p style="text-align:center; color:#8b949e; margin-top:40px; padding-top:20px; border-top:1px solid #30363d;">
+        Minggu 1 — Fenomena Rotasi Bumi | AS6031 Astronomi A — ITB<br>
+        📅 Maret 2026
+    </p>
+</div>
+
+<script>
+// ===== TAB SYSTEM =====
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// ===== QUIZ =====
+function checkQuiz(el, correct, expId) {
+    const parent = el.parentElement;
+    if (parent.querySelector('.correct') || parent.querySelector('.wrong')) return;
+    el.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct) {
+        parent.querySelectorAll('.quiz-option').forEach(opt => {
+            if (opt !== el) opt.style.pointerEvents = 'none';
+        });
+    }
+    document.getElementById(expId).style.display = 'block';
+}
+
+// ===== HORIZON VISUALIZATION =====
+function updateHorizon() {
+    const az = parseInt(document.getElementById('azSlider').value);
+    const alt = parseInt(document.getElementById('altSlider').value);
+    document.getElementById('azVal').textContent = az + '°';
+    document.getElementById('altVal').textContent = alt + '°';
+
+    const canvas = document.getElementById('canvasHorizon');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h - 60;
+    const r = 160;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Sky gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#0a1628');
+    grad.addColorStop(1, '#1a2a4a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Horizon arc
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, Math.PI, 0);
+    ctx.strokeStyle = '#3fb950';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Horizon line
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 20, cy);
+    ctx.lineTo(cx + r + 20, cy);
+    ctx.strokeStyle = '#3fb950';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Cardinal directions
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('U (0°)', cx, cy + 25);
+    ctx.fillText('T (90°)', cx + r + 15, cy - r / 2);
+    ctx.fillText('S (180°)', cx, cy - r - 10);
+    ctx.fillText('B (270°)', cx - r - 15, cy - r / 2);
+
+    // Zenith
+    ctx.fillStyle = '#ffa657';
+    ctx.fillText('Zenith (90°)', cx, 30);
+    ctx.beginPath();
+    ctx.arc(cx, cy - r, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffa657';
+    ctx.fill();
+
+    // Star position
+    const azRad = (az - 90) * Math.PI / 180; // -90 because 0° is North (top)
+    const altFrac = alt / 90;
+    const starX = cx + Math.cos(Math.PI - azRad) * r * (1 - altFrac);
+    const starY = cy - Math.sin(Math.PI - (az * Math.PI / 180)) * r * altFrac - altFrac * r;
+
+    // Simple projection: map az to angle around semicircle, alt to distance from rim
+    const projAngle = Math.PI * (1 - az / 360);
+    const projR = r * (1 - alt / 90);
+    const sx = cx + Math.cos(projAngle) * projR;
+    const sy = cy - Math.sin(projAngle) * projR * 0.5 - (alt / 90) * r * 0.8;
+
+    // Actually let's use a simpler projection
+    const sAz = (180 - az) * Math.PI / 180;
+    const sR = r * (1 - alt / 90);
+    const px = cx + Math.cos(sAz) * sR;
+    const py = cy - Math.abs(Math.sin(sAz)) * sR * 0.3 - (alt / 90) * r;
+
+    // Draw dashed lines from star to horizon
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px, cy);
+    ctx.strokeStyle = '#ffa65766';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Star
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffa657';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(px, py, 8, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = '#ffa657';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Az=${az}° Alt=${alt}°`, px + 14, py - 5);
+
+    // Title
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Sistem Koordinat Horizon', cx, h - 10);
+}
+
+// ===== FOUCAULT PENDULUM =====
+function updateFoucault() {
+    const lat = parseFloat(document.getElementById('latSlider').value);
+    document.getElementById('latVal').textContent = lat.toFixed(1) + '°';
+
+    const sinLat = Math.sin(Math.abs(lat) * Math.PI / 180);
+    let period, note;
+
+    if (Math.abs(lat) < 0.5) {
+        period = '∞';
+        note = 'Di ekuator, bidang ayunan tidak berputar sama sekali!';
+    } else {
+        period = (24 / sinLat).toFixed(1) + ' jam';
+        if (Math.abs(lat) > 85) {
+            note = 'Di kutub, bidang ayunan berputar tercepat — hampir 24 jam per putaran!';
+        } else if (Math.abs(lat) < 15) {
+            note = 'Di dekat ekuator, efek Foucault sangat lambat — sulit diamati.';
+        } else {
+            note = `Pada lintang ${lat.toFixed(1)}°, butuh ${period} untuk bidang ayunan berputar 360°.`;
+        }
+    }
+
+    document.getElementById('foucaultResult').textContent = period;
+    document.getElementById('foucaultNote').textContent = note;
+}
+
+// ===== STAR TRAILS =====
+function drawStarTrails() {
+    const canvas = document.getElementById('canvasStarTrail');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const exp = parseFloat(document.getElementById('expSlider').value);
+
+    document.getElementById('expVal').textContent = exp + ' jam';
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Dark sky
+    ctx.fillStyle = '#080c14';
+    ctx.fillRect(0, 0, w, h);
+
+    // NCP label
+    ctx.fillStyle = '#f85149';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('★ Kutub Langit', cx, cy - 10);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#f85149';
+    ctx.fill();
+
+    // Star trails as arcs around the pole
+    const angleSpan = (exp / 24) * 2 * Math.PI;
+    const stars = [
+        { r: 20, brightness: 0.9 }, { r: 40, brightness: 0.7 }, { r: 55, brightness: 0.8 },
+        { r: 70, brightness: 0.6 }, { r: 90, brightness: 0.9 }, { r: 105, brightness: 0.5 },
+        { r: 120, brightness: 0.7 }, { r: 140, brightness: 0.8 }, { r: 155, brightness: 0.4 },
+        { r: 170, brightness: 0.6 }, { r: 185, brightness: 0.7 }, { r: 50, brightness: 0.5 },
+        { r: 80, brightness: 0.8 }, { r: 130, brightness: 0.6 }, { r: 160, brightness: 0.9 },
+    ];
+
+    // Random start angles for each star
+    const startAngles = [0.2, 1.1, 2.5, 0.8, 3.2, 4.1, 5.5, 1.8, 3.8, 0.5, 2.1, 4.5, 5.8, 1.4, 3.5];
+
+    stars.forEach((star, i) => {
+        const startAngle = startAngles[i % startAngles.length];
+        const endAngle = startAngle + angleSpan;
+
+        const alpha = star.brightness * 0.8;
+        const lineWidth = 1 + star.brightness;
+
+        // Trail
+        ctx.beginPath();
+        ctx.arc(cx, cy, star.r, startAngle, endAngle);
+        ctx.strokeStyle = `rgba(200, 220, 255, ${alpha})`;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+
+        // Bright dot at end
+        const endX = cx + star.r * Math.cos(endAngle);
+        const endY = cy + star.r * Math.sin(endAngle);
+        ctx.beginPath();
+        ctx.arc(endX, endY, 1.5 + star.brightness, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220, 235, 255, ${alpha + 0.2})`;
+        ctx.fill();
+    });
+
+    // Info
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Exposure: ${exp} jam = ${(exp / 24 * 360).toFixed(0)}° rotasi Bumi`, cx, h - 15);
+
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('Simulasi Star Trail', cx, 25);
+}
+
+// ===== CELESTIAL SPHERE =====
+function drawCelestialSphere() {
+    const canvas = document.getElementById('canvasCelestial');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const r = 200;
+
+    const lat = parseInt(document.getElementById('obsLatSlider').value);
+    const time = parseFloat(document.getElementById('timeSlider').value);
+    document.getElementById('obsLatVal').textContent = lat + '°';
+    document.getElementById('timeVal').textContent = time + 'h';
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = '#080c14';
+    ctx.fillRect(0, 0, w, h);
+
+    // Celestial sphere outline
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Horizon line (horizontal through center)
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 20, cy);
+    ctx.lineTo(cx + r + 20, cy);
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Horizon', cx + r + 5, cy - 5);
+
+    // Ground
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI);
+    ctx.fillStyle = '#0d1a0d';
+    ctx.fill();
+
+    // Celestial equator: tilted by (90 - |lat|) from horizon
+    // For observer at latitude φ, the celestial equator crosses the meridian at altitude (90° - |φ|)
+    // from the south/north point
+    const eqTilt = (90 - Math.abs(lat)) * Math.PI / 180;
+    const latSign = lat >= 0 ? 1 : -1;
+
+    // Draw celestial equator as tilted line through the sphere
+    // The equator is perpendicular to the polar axis
+    // In our meridian view (looking south for northern hemisphere, north for southern):
+    // The NCP is at altitude = lat° above north point of horizon
+
+    // NCP position:
+    // For observer at lat φ, NCP altitude = φ from north horizon point
+    // In our view: NCP at angle (90 + lat) from east horizon (measuring counterclockwise)
+    const ncpAngle = -(90 + lat) * Math.PI / 180;
+    const scpAngle = ncpAngle + Math.PI;
+
+    const ncpX = cx + r * Math.cos(ncpAngle);
+    const ncpY = cy + r * Math.sin(ncpAngle);
+    const scpX = cx + r * Math.cos(scpAngle);
+    const scpY = cy + r * Math.sin(scpAngle);
+
+    // Polar axis
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(ncpX, ncpY);
+    ctx.lineTo(scpX, scpY);
+    ctx.strokeStyle = '#f8514966';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Celestial equator (perpendicular to polar axis, through center)
+    const eqAngle = ncpAngle + Math.PI / 2;
+    const eqX1 = cx + r * Math.cos(eqAngle);
+    const eqY1 = cy + r * Math.sin(eqAngle);
+    const eqX2 = cx + r * Math.cos(eqAngle + Math.PI);
+    const eqY2 = cy + r * Math.sin(eqAngle + Math.PI);
+
+    ctx.beginPath();
+    ctx.moveTo(eqX1, eqY1);
+    ctx.lineTo(eqX2, eqY2);
+    ctx.strokeStyle = '#3fb950';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Ecliptic (tilted 23.44° from equator)
+    const obliquity = 23.44 * Math.PI / 180;
+    const eclAngle1 = ncpAngle + Math.PI / 2 + obliquity;
+    const eclAngle2 = eclAngle1 + Math.PI;
+    const eclX1 = cx + r * Math.cos(eclAngle1);
+    const eclY1 = cy + r * Math.sin(eclAngle1);
+    const eclX2 = cx + r * Math.cos(eclAngle2);
+    const eclY2 = cy + r * Math.sin(eclAngle2);
+
+    ctx.beginPath();
+    ctx.moveTo(eclX1, eclY1);
+    ctx.lineTo(eclX2, eclY2);
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([8, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // NCP marker
+    if (ncpY <= cy) { // Above horizon
+        ctx.beginPath();
+        ctx.arc(ncpX, ncpY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#f85149';
+        ctx.fill();
+    }
+
+    // SCP marker
+    if (scpY <= cy) {
+        ctx.beginPath();
+        ctx.arc(scpX, scpY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#f85149';
+        ctx.fill();
+    }
+
+    // Zenith
+    ctx.beginPath();
+    ctx.arc(cx, cy - r, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#d2a8ff';
+    ctx.fill();
+    ctx.fillStyle = '#d2a8ff';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Zenith', cx, cy - r - 10);
+
+    // Labels
+    ctx.font = 'bold 11px sans-serif';
+    if (ncpY <= cy) {
+        ctx.fillStyle = '#f85149';
+        ctx.fillText(lat >= 0 ? 'NCP' : 'NCP', ncpX + (ncpX > cx ? 12 : -12), ncpY - 10);
+    }
+    if (scpY <= cy) {
+        ctx.fillStyle = '#f85149';
+        ctx.fillText('SCP', scpX + (scpX > cx ? 12 : -12), scpY - 10);
+    }
+
+    ctx.fillStyle = '#3fb950';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Ekuator Langit', (eqX1 + cx) / 2, (eqY1 + cy) / 2 - 10);
+
+    ctx.fillStyle = '#ffa657';
+    ctx.fillText('Ekliptika', (eclX1 + cx) / 2 + 20, (eclY1 + cy) / 2 - 5);
+
+    // Horizon labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    if (lat >= 0) {
+        ctx.fillText('S', cx - r - 12, cy + 5);
+        ctx.fillText('U', cx + r + 12, cy + 5);
+    } else {
+        ctx.fillText('U', cx - r - 12, cy + 5);
+        ctx.fillText('S', cx + r + 12, cy + 5);
+    }
+
+    // Some stars rotating with time
+    const starDecs = [-20, 0, 15, 30, 45, -45, 60, -10, 25, -30];
+    const starRAs = [2, 5, 8, 12, 16, 20, 1, 7, 14, 22];
+
+    starDecs.forEach((dec, i) => {
+        const ra = (starRAs[i] + time) % 24;
+        const hourAngle = ra * 15 * Math.PI / 180;
+
+        // Simplified: project star position based on declination
+        const decRad = dec * Math.PI / 180;
+        const latRad = lat * Math.PI / 180;
+
+        // Altitude of star
+        const sinAlt = Math.sin(decRad) * Math.sin(latRad) + Math.cos(decRad) * Math.cos(latRad) * Math.cos(hourAngle);
+        const altitude = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
+
+        if (altitude > 0) { // Above horizon
+            const cosAz = (Math.sin(decRad) - Math.sin(altitude) * Math.sin(latRad)) / (Math.cos(altitude) * Math.cos(latRad));
+            const az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
+
+            const altFrac = altitude / (Math.PI / 2);
+            const dist = r * (1 - altFrac);
+            const projAngle = Math.sin(hourAngle) > 0 ? -az : az;
+
+            const sx = cx + dist * Math.sin(projAngle);
+            const sy = cy - dist * Math.cos(0) * altFrac * r / r;
+
+            // Simple projection for meridian view
+            const simpleY = cy - (altitude / (Math.PI / 2)) * r;
+            const simpleX = cx + Math.sin(hourAngle) * Math.cos(decRad) * r * 0.5;
+
+            if (simpleY < cy) { // rough above-horizon check
+                const brightness = 0.4 + Math.random() * 0.5;
+                ctx.beginPath();
+                ctx.arc(simpleX, simpleY, 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(200, 220, 255, ${brightness})`;
+                ctx.fill();
+            }
+        }
+    });
+
+    // Title
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Bola Langit — Pengamat di Lintang ${lat}°`, cx, 25);
+
+    // Observer
+    ctx.fillStyle = '#ffa657';
+    ctx.font = '20px sans-serif';
+    ctx.fillText('🧑', cx, cy + 20);
+}
+
+// ===== INIT =====
+window.addEventListener('load', () => {
+    updateHorizon();
+    updateFoucault();
+    drawStarTrails();
+    drawCelestialSphere();
+});
+</script>
+</body>
+</html>
