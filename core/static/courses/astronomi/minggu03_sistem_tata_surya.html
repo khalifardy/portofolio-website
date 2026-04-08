@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pertemuan 3: Sistem Tata Surya - Astronomi A ITB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0f1b3d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 14, 39, 0.95);
+            padding: 1rem;
+            border-bottom: 2px solid #00d4ff;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        nav ul {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            gap: 0.5rem;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav button {
+            background: none;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        nav button:hover {
+            background: #00d4ff;
+            color: #0a0e27;
+            transform: translateY(-2px);
+        }
+
+        nav button.active {
+            background: #00d4ff;
+            color: #0a0e27;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: linear-gradient(180deg, rgba(0, 212, 255, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            margin-bottom: 1rem;
+        }
+
+        .course-info {
+            font-size: 0.9rem;
+            color: #808080;
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .card {
+            background: rgba(20, 30, 60, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #00ff88;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #c0c0c0;
+            margin-bottom: 1rem;
+        }
+
+        /* Canvas styles */
+        canvas {
+            background: rgba(10, 20, 40, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 1rem 0;
+        }
+
+        /* Controls */
+        .controls {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(10, 20, 40, 0.6);
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: #00ff88;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #00d4ff, #00ff88);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 0.7rem;
+            background: rgba(50, 70, 120, 0.6);
+            border: 1px solid #00d4ff;
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            color: #0a0e27;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #00d4ff;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            color: #c0c0c0;
+        }
+
+        tr:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Calculator */
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+
+        .calc-input {
+            background: rgba(10, 20, 40, 0.6);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .result-display {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #00d4ff;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        /* Quiz styles */
+        .quiz-container {
+            background: rgba(10, 20, 40, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .question {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .question:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-text {
+            color: #00ff88;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option {
+            background: rgba(50, 70, 120, 0.4);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #00d4ff;
+            background: rgba(50, 70, 120, 0.6);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            color: #c0c0c0;
+            margin: 0;
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
+        }
+
+        .option.incorrect {
+            background: rgba(255, 100, 100, 0.2);
+            border-color: #ff6464;
+        }
+
+        .explanation {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.8rem;
+            border-left: 4px solid #00d4ff;
+            margin-top: 1rem;
+            border-radius: 5px;
+            color: #a0c0e0;
+            font-size: 0.95rem;
+        }
+
+        .score-display {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
+            border-radius: 10px;
+            border: 2px solid #00d4ff;
+        }
+
+        .score-display h2 {
+            color: #00ff88;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-display p {
+            color: #b0b0b0;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            nav ul {
+                gap: 0.3rem;
+            }
+
+            nav button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .calculator {
+                grid-template-columns: 1fr;
+            }
+
+            canvas {
+                height: 300px;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.6rem 0.4rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #606060;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            margin-top: 3rem;
+        }
+
+        .stat-box {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            margin: 0.5rem;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .stat-box strong {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><button class="nav-btn active" onclick="switchSection('header')">Beranda</button></li>
+            <li><button class="nav-btn" onclick="switchSection('kepler')">Hukum Kepler</button></li>
+            <li><button class="nav-btn" onclick="switchSection('planets')">Planet</button></li>
+            <li><button class="nav-btn" onclick="switchSection('gravity')">Gravitasi Newton</button></li>
+            <li><button class="nav-btn" onclick="switchSection('asteroids')">Asteroid</button></li>
+            <li><button class="nav-btn" onclick="switchSection('comets')">Komet</button></li>
+            <li><button class="nav-btn" onclick="switchSection('quiz')">Kuis</button></li>
+        </ul>
+    </nav>
+
+    <header id="header-section" class="active">
+        <h1>Pertemuan 3B: Sistem Tata Surya</h1>
+        <p class="subtitle">Hukum Kepler, Orbit Planet, Asteroid & Komet</p>
+        <p class="course-info">Astronomi A AS6031 ITB</p>
+    </header>
+
+    <main>
+        <!-- Header Section -->
+        <section id="header" class="active">
+            <div class="card" style="text-align: center; border-color: #00ff88; margin-top: 2rem;">
+                <h2 style="color: #00ff88; font-size: 1.8rem;">Selamat datang ke Pertemuan 3</h2>
+                <p>Pelajari tentang Hukum Kepler, planet-planet di tata surya, asteroid, dan komet. Gunakan interaktif visual dan kalkulator untuk memahami konsep-konsep penting dalam astronomi.</p>
+                <div style="margin-top: 2rem;">
+                    <div class="stat-box"><strong>8 Planet</strong> di Tata Surya</div>
+                    <div class="stat-box"><strong>>1 Juta</strong> Asteroid Diketahui</div>
+                    <div class="stat-box"><strong>Triliunan</strong> Komet di Oort Cloud</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hukum Kepler -->
+        <section id="kepler">
+            <h2 class="section-title">Hukum Kepler</h2>
+
+            <!-- Hukum I -->
+            <div class="card">
+                <h3>Hukum I Kepler: Orbit Elips</h3>
+                <p>Setiap planet mengorbit Matahari dalam lintasan elips, dengan Matahari berada di salah satu fokus elips.</p>
+
+                <div style="margin: 1.5rem 0;">
+                    <canvas id="ellipseCanvas"></canvas>
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Eksentrisitas (e): <span id="eccentricityValue">0.30</span></label>
+                        <input type="range" id="eccentricitySlider" min="0" max="0.95" step="0.05" value="0.30" onchange="updateEllipse()">
+                    </div>
+                    <p style="color: #a0a0a0; margin-top: 1rem; font-size: 0.95rem;">
+                        <strong>Semi-major axis (a):</strong> jarak rata-rata dari Matahari<br>
+                        <strong>Eksentrisitas (e):</strong> ukuran ketajamannya elips (0 = lingkaran, 1 = parabola)<br>
+                        Gerakkan slider untuk melihat bagaimana eksentrisitas mengubah bentuk orbit.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Hukum II -->
+            <div class="card">
+                <h3>Hukum II Kepler: Luas Sama, Waktu Sama</h3>
+                <p>Garis yang menghubungkan planet dengan Matahari menyapu luas yang sama dalam waktu yang sama. Planet bergerak lebih cepat di perihelion (dekat Matahari) dan lebih lambat di aphelion (jauh dari Matahari).</p>
+
+                <div style="margin: 1.5rem 0;">
+                    <canvas id="areaCanvas"></canvas>
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <button onclick="animateAreaSweep()">Mulai Animasi</button>
+                    </div>
+                    <p style="color: #a0a0a0; margin-top: 1rem; font-size: 0.95rem;">
+                        Perhatikan bagaimana planet bergerak lebih cepat saat dekat Matahari (perihelion) dan lebih lambat saat jauh (aphelion).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Hukum III -->
+            <div class="card">
+                <h3>Hukum III Kepler: Kuadrat Periode dan Kubus Semi-major Axis</h3>
+                <p>P² = a³ (dengan P dalam tahun dan a dalam AU)</p>
+
+                <div class="calculator">
+                    <div class="calc-input">
+                        <label>Hitung dari Semi-major Axis (a)</label>
+                        <input type="number" id="aInput" placeholder="Masukkan a (AU)" min="0" step="0.01">
+                        <button onclick="calculatePeriod()">Hitung P</button>
+                        <div id="periodResult" class="result-display" style="display: none;"></div>
+                    </div>
+                    <div class="calc-input">
+                        <label>Hitung dari Periode (P)</label>
+                        <input type="number" id="pInput" placeholder="Masukkan P (tahun)" min="0" step="0.01">
+                        <button onclick="calculateSemiMajor()">Hitung a</button>
+                        <div id="semiMajorResult" class="result-display" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <h4 style="color: #00d4ff; margin-top: 2rem; margin-bottom: 1rem;">Tabel Planet (Verifikasi Hukum III)</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Planet</th>
+                            <th>a (AU)</th>
+                            <th>P (tahun)</th>
+                            <th>P² (tahun²)</th>
+                            <th>a³ (AU³)</th>
+                            <th>Rasio P²/a³</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keplerTable">
+                    </tbody>
+                </table>
+
+                <h4 style="color: #00d4ff; margin-top: 2rem; margin-bottom: 1rem;">Grafik Log-Log: P² vs a³</h4>
+                <div style="margin: 1.5rem 0;">
+                    <canvas id="logLogCanvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orbit Planet -->
+        <section id="planets">
+            <h2 class="section-title">Data dan Orbit Planet</h2>
+
+            <div class="card">
+                <h3>Tabel Karakteristik Planet</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Planet</th>
+                            <th>a (AU)</th>
+                            <th>P (tahun)</th>
+                            <th>Eksentrisitas</th>
+                            <th>Kecepatan Orbit (km/s)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="planetsTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Visualisasi Orbit Planet</h3>
+                <p style="color: #a0a0a0; margin-bottom: 1rem;">Klik pada planet untuk informasi lebih lanjut</p>
+                <canvas id="orbitCanvas"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>Catatan Penting</h3>
+                <ul style="list-style-position: inside; color: #c0c0c0;">
+                    <li><strong>Planet Terrestrial (Kerak Batu):</strong> Merkurius, Venus, Bumi, Mars - kecil, padat, dekat Matahari</li>
+                    <li><strong>Planet Jovian (Gas Giant):</strong> Jupiter, Saturnus, Uranus, Neptunus - besar, gas, jauh dari Matahari</li>
+                    <li><strong>Asteroid Belt:</strong> Antara Mars dan Jupiter (2.2-3.3 AU)</li>
+                    <li><strong>Kecepatan Orbital:</strong> Planet yang lebih dekat Matahari bergerak lebih cepat</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Gravitasi Newton -->
+        <section id="gravity">
+            <h2 class="section-title">Gravitasi Newton</h2>
+
+            <div class="card">
+                <h3>Hukum Gravitasi Universal Newton</h3>
+                <p><strong>F = G × M₁ × M₂ / r²</strong></p>
+                <p>Dimana:</p>
+                <ul style="list-style-position: inside; color: #c0c0c0; margin-left: 1rem;">
+                    <li><strong>F</strong> = gaya gravitasi (Newton)</li>
+                    <li><strong>G</strong> = konstanta gravitasi = 6.674 × 10⁻¹¹ N⋅m²/kg²</li>
+                    <li><strong>M₁, M₂</strong> = massa dua benda (kg)</li>
+                    <li><strong>r</strong> = jarak antara pusat massa (m)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Tiga Hukum Newton tentang Gerak</h3>
+                <div style="margin-top: 1rem;">
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(0, 255, 136, 0.1); border-left: 4px solid #00ff88; border-radius: 5px;">
+                        <strong style="color: #00ff88;">Hukum I (Inersia):</strong> Benda yang bergerak akan terus bergerak dengan kecepatan konstan kecuali ada gaya yang bekerja padanya.
+                    </div>
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(0, 255, 136, 0.1); border-left: 4px solid #00ff88; border-radius: 5px;">
+                        <strong style="color: #00ff88;">Hukum II (F = ma):</strong> Percepatan benda sebanding dengan gaya yang bekerja dan berbanding terbalik dengan massanya.
+                    </div>
+                    <div style="padding: 1rem; background: rgba(0, 255, 136, 0.1); border-left: 4px solid #00ff88; border-radius: 5px;">
+                        <strong style="color: #00ff88;">Hukum III (Aksi-Reaksi):</strong> Untuk setiap aksi ada reaksi yang sama besar dan berlawanan arah.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Perluasan Hukum Kepler III oleh Newton</h3>
+                <p><strong>(M₁ + M₂) × P² = a³</strong></p>
+                <p>Newton menunjukkan bahwa Hukum III Kepler valid jika massanya ditambahkan. Dalam kasus tata surya kita, Matahari sangat masif sehingga M₁ + M₂ ≈ M_Matahari.</p>
+            </div>
+
+            <div class="card">
+                <h3>Kalkulator Gaya Gravitasi</h3>
+                <div class="calculator">
+                    <div class="calc-input">
+                        <label>Massa 1 (kg)</label>
+                        <input type="number" id="m1Input" placeholder="Contoh: 5.972e24" value="5.972e24">
+                    </div>
+                    <div class="calc-input">
+                        <label>Massa 2 (kg)</label>
+                        <input type="number" id="m2Input" placeholder="Contoh: 1.989e30" value="1.989e30">
+                    </div>
+                </div>
+                <div class="calculator">
+                    <div class="calc-input">
+                        <label>Jarak (meter)</label>
+                        <input type="number" id="distanceInput" placeholder="Contoh: 1.496e11" value="1.496e11">
+                        <button onclick="calculateGravity()">Hitung Gaya Gravitasi</button>
+                        <div id="gravityResult" class="result-display" style="display: none;"></div>
+                    </div>
+                </div>
+                <p style="color: #a0a0a0; margin-top: 1.5rem; font-size: 0.9rem;">
+                    <strong>Contoh:</strong> M₁ = Massa Bumi (5.972×10²⁴ kg), M₂ = Massa Matahari (1.989×10³⁰ kg), r = 1 AU (1.496×10¹¹ m)
+                </p>
+            </div>
+        </section>
+
+        <!-- Asteroid -->
+        <section id="asteroids">
+            <h2 class="section-title">Asteroid</h2>
+
+            <div class="card">
+                <h3>Lokasi dan Penemuan</h3>
+                <p><strong>Asteroid Belt (Sabuk Asteroid):</strong> Terletak antara orbit Mars dan Jupiter (2.2 - 3.3 AU dari Matahari)</p>
+                <p><strong>Penemuan:</strong> Ceres ditemukan pada 1801 oleh Giuseppe Piazzi. Saat ini lebih dari 1 juta asteroid telah ditemukan dan dikatalogkan.</p>
+            </div>
+
+            <div class="card">
+                <h3>Tiga Tipe Asteroid</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div style="background: rgba(70, 50, 30, 0.5); padding: 1rem; border-radius: 8px; border-left: 4px solid #d4a000;">
+                        <strong style="color: #d4a000;">C-Type (Carbonaceous)</strong>
+                        <p style="margin-top: 0.5rem; color: #b0b0b0; font-size: 0.9rem;">Kaya akan karbon, gelap, paling umum (~75%). Komposisi mirip meteorit karbonaceous.</p>
+                    </div>
+                    <div style="background: rgba(150, 130, 100, 0.5); padding: 1rem; border-radius: 8px; border-left: 4px solid #c0a060;">
+                        <strong style="color: #c0a060;">S-Type (Stony)</strong>
+                        <p style="margin-top: 0.5rem; color: #b0b0b0; font-size: 0.9rem;">Mengandung silikat, lebih terang, (~17%). Komposisi batuan dan mineral.</p>
+                    </div>
+                    <div style="background: rgba(100, 100, 100, 0.5); padding: 1rem; border-radius: 8px; border-left: 4px solid #808080;">
+                        <strong style="color: #a0a0a0;">M-Type (Metallic)</strong>
+                        <p style="margin-top: 0.5rem; color: #b0b0b0; font-size: 0.9rem;">Mengandung besi dan nikel, langka (~8%). Inti planet yang terekspos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Asteroid Besar dan Terkenal</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asteroid</th>
+                            <th>Diameter (km)</th>
+                            <th>Penemuan</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ceres</strong></td>
+                            <td>940</td>
+                            <td>1801</td>
+                            <td>Dwarf planet, terbesar di sabuk asteroid</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pallas</strong></td>
+                            <td>540</td>
+                            <td>1802</td>
+                            <td>Kedua terbesar, komposisi batu</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vesta</strong></td>
+                            <td>510</td>
+                            <td>1807</td>
+                            <td>Paling terang, bisa dilihat dengan mata telanjang</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hygiea</strong></td>
+                            <td>430</td>
+                            <td>1850</td>
+                            <td>Terbesar keempat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Near-Earth Asteroids (NEAs) dan Planetary Defense</h3>
+                <p><strong>Near-Earth Asteroids:</strong> Lebih dari 25,000 NEA telah ditemukan. Ini adalah asteroid yang orbitnya melintasi orbit Bumi.</p>
+                <p><strong>Ancaman:</strong> Chelyabinsk meteor 2013 meledak di atmosfer dengan energi 440 kiloton, melukai lebih dari 1000 orang.</p>
+                <p><strong>DART Mission (2022):</strong> NASA menguji sistem pertahanan planet dengan menabrakkan pesawat ke asteroid Dimorphos. Misi ini berhasil mengubah orbit asteroid sebagai bukti konsep planetary defense.</p>
+                <p><strong>Trojan Asteroids:</strong> Asteroid yang terbenam di titik Lagrange (L4 dan L5) dari Jupiter. Ada ribuan asteroid Trojan Jupiter.</p>
+            </div>
+
+            <div class="card">
+                <h3>Visualisasi Sabuk Asteroid</h3>
+                <canvas id="asteroidCanvas"></canvas>
+            </div>
+        </section>
+
+        <!-- Komet -->
+        <section id="comets">
+            <h2 class="section-title">Komet</h2>
+
+            <div class="card">
+                <h3>Model "Dirty Snowball"</h3>
+                <p>Teori yang dikemukakan oleh Fred Whipple pada 1950 menyatakan bahwa komet adalah "bola salju kotor" - campuran es (air es, CO₂ es, methane es) dan debu. Ketika komet mendekati Matahari, lapisan es menyublim dan menyebabkan gas dan debu keluar membentuk ekor.</p>
+            </div>
+
+            <div class="card">
+                <h3>Anatomi Komet</h3>
+                <canvas id="cometDiagramCanvas"></canvas>
+                <div style="margin-top: 1.5rem;">
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid #00d4ff; border-radius: 5px;">
+                        <strong style="color: #00d4ff;">Nucleus (Inti):</strong> Bagian padat komet, bisa berdiameter beberapa kilometer. Terdiri dari es dan batu.
+                    </div>
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid #00d4ff; border-radius: 5px;">
+                        <strong style="color: #00d4ff;">Coma (Selimut):</strong> Awan gas dan debu yang mengelilingi nucleus. Bisa sebesar Jupiter atau lebih besar! Terbentuk saat es menyublim.
+                    </div>
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid #00d4ff; border-radius: 5px;">
+                        <strong style="color: #00d4ff;">Dust Tail (Ekor Debu):</strong> Ekor yang melengkung, terdiri dari partikel debu. Dipantulkan oleh radiasi matahari.
+                    </div>
+                    <div style="padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid #00d4ff; border-radius: 5px;">
+                        <strong style="color: #00d4ff;">Ion Tail (Ekor Ion):</strong> Ekor lurus, terdiri dari gas terionisasi. Ditolak oleh angin surya (solar wind).
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Mengapa Ekor Komet Selalu Menjauh dari Matahari</h3>
+                <p>Ekor komet <strong>SELALU</strong> menunjuk menjauhi Matahari, bukan mengikuti di belakang komet. Ini disebabkan oleh:</p>
+                <ul style="list-style-position: inside; color: #c0c0c0; margin-left: 1rem;">
+                    <li><strong>Radiasi Matahari:</strong> Debu dalam coma dipantulkan oleh radiasi matahari</li>
+                    <li><strong>Angin Surya (Solar Wind):</strong> Partikel bermuatan yang dipancarkan Matahari menyapu ionisasi gas</li>
+                </ul>
+                <p style="margin-top: 1rem; color: #a0a0a0; font-size: 0.95rem;">Ketika komet bergerak menjauhi Matahari, ekornya tetap menunjuk ke Matahari, bukan di belakang komet!</p>
+            </div>
+
+            <div class="card">
+                <h3>Jenis Komet</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #00ff88;">
+                        <strong style="color: #00ff88;">Short-Period Comets</strong>
+                        <p style="margin-top: 0.5rem; color: #b0b0b0; font-size: 0.9rem;"><strong>Periode:</strong> < 200 tahun</p>
+                        <p style="color: #b0b0b0; font-size: 0.9rem;"><strong>Asal:</strong> Kuiper Belt (30-50 AU)</p>
+                        <p style="color: #b0b0b0; font-size: 0.9rem;"><strong>Sifat:</strong> Lebih sering terlihat, orbit dalam bidang ekliptika</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #00d4ff;">
+                        <strong style="color: #00d4ff;">Long-Period Comets</strong>
+                        <p style="margin-top: 0.5rem; color: #b0b0b0; font-size: 0.9rem;"><strong>Periode:</strong> > 200 tahun (beberapa jutaan tahun)</p>
+                        <p style="color: #b0b0b0; font-size: 0.9rem;"><strong>Asal:</strong> Oort Cloud (30,000-100,000 AU)</p>
+                        <p style="color: #b0b0b0; font-size: 0.9rem;"><strong>Sifat:</strong> Jarang terlihat, orbit dalam segala arah</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Komet Terkenal</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Komet</th>
+                            <th>Periode (tahun)</th>
+                            <th>Terakhir Terlihat</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Halley</strong></td>
+                            <td>76</td>
+                            <td>2061</td>
+                            <td>Paling terkenal, telah dicatat sejak 239 SM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hale-Bopp</strong></td>
+                            <td>2533</td>
+                            <td>1997</td>
+                            <td>Sangat terang, terlihat dengan mata telanjang di siang hari</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Encke</strong></td>
+                            <td>3.3</td>
+                            <td>Periodik</td>
+                            <td>Periode terpendek, namun redup</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NEOWISE</strong></td>
+                            <td>6800</td>
+                            <td>2020</td>
+                            <td>Komet terang terakhir terlihat dengan mata telanjang</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Misi Rosetta (2014-2016)</h3>
+                <p><strong>Rosetta</strong> adalah misi ESA yang melacak komet 67P/Churyumov-Gerasimenko. Pada 2014, Rosetta berhasil melepaskan lander <strong>Philae</strong> ke permukaan komet - pencapaian pertama kali manusia mendaratkan pesawat di komet!</p>
+                <p style="margin-top: 1rem;">Philae memberikan data berharga tentang komposisi komet, struktur permukaan, dan kondisi lingkungan di permukaan komet yang gelap dan dingin.</p>
+            </div>
+        </section>
+
+        <!-- Quiz -->
+        <section id="quiz">
+            <h2 class="section-title">Kuis Interaktif</h2>
+
+            <div class="quiz-container">
+                <div class="question">
+                    <div class="question-text">1. Hukum Kepler mana yang menjelaskan mengapa planet bergerak lebih cepat di perihelion (dekat Matahari)?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q1" value="a">
+                            <span>A. Hukum I - Orbit Elips</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="b">
+                            <span>B. Hukum II - Luas Sama, Waktu Sama</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="c">
+                            <span>C. Hukum III - P² = a³</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="d">
+                            <span>D. Hukum Gravitasi Newton</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-text">2. Planet apa yang punya eksentrisitas orbit tertinggi di tata surya kita?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q2" value="a">
+                            <span>A. Venus (e = 0.01)</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="b">
+                            <span>B. Merkurius (e = 0.21)</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="c">
+                            <span>C. Mars (e = 0.09)</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="d">
+                            <span>D. Jupiter (e = 0.05)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-text">3. Asteroid memiliki semi-major axis a = 4 AU. Menggunakan Hukum III Kepler (P² = a³), berapa periode orbital asteroid ini?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q3" value="a">
+                            <span>A. 4 tahun</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="b">
+                            <span>B. 6 tahun</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="c">
+                            <span>C. 8 tahun</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="d">
+                            <span>D. 16 tahun</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-text">4. Apa perbedaan utama antara asteroid dan komet?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q4" value="a">
+                            <span>A. Asteroid berbentuk bola, komet berbentuk elips</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="b">
+                            <span>B. Asteroid terbuat dari batu/logam, komet terbuat dari es</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="c">
+                            <span>C. Asteroid mengorbit di sabuk asteroid, komet dari Kuiper Belt/Oort Cloud</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="d">
+                            <span>D. Semua jawaban di atas benar</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-text">5. Mengapa ekor komet selalu mengarah menjauhi Matahari, bukan mengikuti di belakang komet?</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q5" value="a">
+                            <span>A. Karena gravitasi Matahari menarik ekor ke belakang</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="b">
+                            <span>B. Karena radiasi matahari dan angin surya mendorong debu dan gas menjauhi Matahari</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="c">
+                            <span>C. Karena kecepatan komet terlalu cepat untuk ekor mengikuti</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="d">
+                            <span>D. Karena komet berputar dengan cepat</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="submitQuiz()" style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem;">Cek Jawaban</button>
+            </div>
+
+            <div id="quizResults" style="display: none; margin-top: 2rem;">
+                <div class="score-display">
+                    <h2>Skor Anda: <span id="scoreValue">0</span>/5</h2>
+                    <p id="scoreMessage"></p>
+                </div>
+                <div id="explanationContainer"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Astronomi A AS6031 - Institut Teknologi Bandung</p>
+        <p>Dibuat untuk Pertemuan 3: Sistem Tata Surya</p>
+        <p style="margin-top: 1rem; font-size: 0.85rem;">© 2026 - Materi Pembelajaran Interaktif</p>
+    </footer>
+
+    <script>
+        // Navigation
+        function switchSection(sectionId) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Draw canvases when section is active
+            if (sectionId === 'kepler') {
+                setTimeout(() => {
+                    updateEllipse();
+                    drawAreaSweep();
+                    drawKeplerTable();
+                    drawLogLogPlot();
+                }, 100);
+            } else if (sectionId === 'planets') {
+                setTimeout(() => {
+                    drawPlanetsTable();
+                    drawOrbits();
+                }, 100);
+            } else if (sectionId === 'asteroids') {
+                setTimeout(() => {
+                    drawAsteroidBelt();
+                }, 100);
+            } else if (sectionId === 'comets') {
+                setTimeout(() => {
+                    drawCometDiagram();
+                }, 100);
+            }
+        }
+
+        // Planet data
+        const planetsData = [
+            { name: 'Merkurius', a: 0.39, P: 0.24, e: 0.21, v: 48, color: '#8B6914' },
+            { name: 'Venus', a: 0.72, P: 0.62, e: 0.01, v: 35, color: '#FFC649' },
+            { name: 'Bumi', a: 1.00, P: 1.00, e: 0.02, v: 30, color: '#4A90E2' },
+            { name: 'Mars', a: 1.52, P: 1.88, e: 0.09, v: 24, color: '#E27B58' },
+            { name: 'Jupiter', a: 5.20, P: 11.86, e: 0.05, v: 13, color: '#C88B3A' },
+            { name: 'Saturnus', a: 9.54, P: 29.46, e: 0.06, v: 10, color: '#E8C547' },
+            { name: 'Uranus', a: 19.19, P: 84.01, e: 0.05, v: 7, color: '#4FD0E7' },
+            { name: 'Neptunus', a: 30.06, P: 164.82, e: 0.01, v: 5, color: '#4169E1' }
+        ];
+
+        // Ellipse visualization
+        function updateEllipse() {
+            const canvas = document.getElementById('ellipseCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const e = parseFloat(document.getElementById('eccentricitySlider').value);
+            document.getElementById('eccentricityValue').textContent = e.toFixed(2);
+
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const a = 100; // semi-major axis in pixels
+            const b = a * Math.sqrt(1 - e * e); // semi-minor axis
+            const c = a * e; // distance from center to focus
+
+            // Clear background
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw ellipse
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+                const x = centerX + a * Math.cos(angle);
+                const y = centerY + b * Math.sin(angle);
+                if (angle === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            // Draw foci
+            ctx.fillStyle = '#00ff88';
+            ctx.beginPath();
+            ctx.arc(centerX - c, centerY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ff6464';
+            ctx.beginPath();
+            ctx.arc(centerX + c, centerY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Labels
+            ctx.fillStyle = '#b0b0b0';
+            ctx.font = '12px Arial';
+            ctx.fillText('Focus (Matahari)', centerX - c - 50, centerY + 20);
+            ctx.fillText('Empty Focus', centerX + c - 50, centerY + 20);
+            ctx.fillText('a', centerX + a + 10, centerY + 5);
+            ctx.fillText('b', centerX + 10, centerY - b - 10);
+        }
+
+        // Area sweep animation
+        function drawAreaSweep() {
+            const canvas = document.getElementById('areaCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const a = 100;
+            const e = 0.4;
+            const b = a * Math.sqrt(1 - e * e);
+            const c = a * e;
+
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw orbit
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+                const x = centerX + a * Math.cos(angle);
+                const y = centerY + b * Math.sin(angle);
+                if (angle === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            // Draw Sun (Matahari)
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(centerX - c, centerY, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function animateAreaSweep() {
+            const canvas = document.getElementById('areaCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const a = 100;
+            const e = 0.4;
+            const b = a * Math.sqrt(1 - e * e);
+            const c = a * e;
+            const sunX = centerX - c;
+            const sunY = centerY;
+
+            let angle1 = 0;
+            let angle2 = 0;
+            let phase = 0;
+
+            function animate() {
+                ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+                ctx.fillRect(0, 0, width, height);
+
+                // Draw orbit
+                ctx.strokeStyle = 'rgba(0, 212, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                for (let ang = 0; ang < Math.PI * 2; ang += 0.05) {
+                    const x = centerX + a * Math.cos(ang);
+                    const y = centerY + b * Math.sin(ang);
+                    if (ang === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+                // Draw Sun
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(sunX, sunY, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (phase < 2) {
+                    // Phase 1: Near perihelion (fast)
+                    angle1 = (phase * Math.PI / 2) * 1.5;
+                    const x1 = centerX + a * Math.cos(angle1);
+                    const y1 = centerY + b * Math.sin(angle1);
+
+                    ctx.fillStyle = 'rgba(0, 212, 255, 0.3)';
+                    ctx.beginPath();
+                    ctx.moveTo(sunX, sunY);
+                    ctx.lineTo(x1, y1);
+                    ctx.lineTo(centerX + a * Math.cos(angle1 + 0.1), centerY + b * Math.sin(angle1 + 0.1));
+                    ctx.fill();
+
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.beginPath();
+                    ctx.arc(x1, y1, 5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#b0b0b0';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('Perihelion (Cepat)', x1 + 10, y1);
+                } else {
+                    // Phase 2: Near aphelion (slow)
+                    angle2 = Math.PI - (phase - 2) * Math.PI / 4;
+                    const x2 = centerX + a * Math.cos(angle2);
+                    const y2 = centerY + b * Math.sin(angle2);
+
+                    ctx.fillStyle = 'rgba(0, 212, 255, 0.3)';
+                    ctx.beginPath();
+                    ctx.moveTo(sunX, sunY);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineTo(centerX + a * Math.cos(angle2 + 0.1), centerY + b * Math.sin(angle2 + 0.1));
+                    ctx.fill();
+
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.beginPath();
+                    ctx.arc(x2, y2, 5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#b0b0b0';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('Aphelion (Lambat)', x2 - 100, y2);
+                }
+
+                phase += 0.05;
+                if (phase < 4) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        // Kepler table
+        function drawKeplerTable() {
+            const tbody = document.getElementById('keplerTable');
+            tbody.innerHTML = '';
+
+            planetsData.forEach(planet => {
+                const p2 = planet.P * planet.P;
+                const a3 = planet.a * planet.a * planet.a;
+                const ratio = (p2 / a3).toFixed(4);
+
+                const row = `
+                    <tr>
+                        <td><strong>${planet.name}</strong></td>
+                        <td>${planet.a.toFixed(2)}</td>
+                        <td>${planet.P.toFixed(2)}</td>
+                        <td>${p2.toFixed(2)}</td>
+                        <td>${a3.toFixed(2)}</td>
+                        <td>${ratio}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Log-log plot
+        function drawLogLogPlot() {
+            const canvas = document.getElementById('logLogCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            const padding = 60;
+            const plotWidth = width - 2 * padding;
+            const plotHeight = height - 2 * padding;
+
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw axes
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(padding, padding);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#b0b0b0';
+            ctx.font = '12px Arial';
+            ctx.fillText('log(a³) [AU³]', width - 100, height - 20);
+            ctx.save();
+            ctx.translate(20, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('log(P²) [tahun²]', 0, 0);
+            ctx.restore();
+
+            // Plot data points
+            planetsData.forEach(planet => {
+                const a3 = Math.log10(planet.a * planet.a * planet.a);
+                const p2 = Math.log10(planet.P * planet.P);
+
+                const x = padding + (a3 / 3) * plotWidth;
+                const y = height - padding - (p2 / 3) * plotHeight;
+
+                ctx.fillStyle = planet.color;
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = '10px Arial';
+                ctx.fillText(planet.name, x + 8, y - 8);
+            });
+
+            // Draw line of best fit
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            for (let a3 = 0; a3 <= 3; a3 += 0.1) {
+                const p2 = a3; // P² = a³
+                const x = padding + (a3 / 3) * plotWidth;
+                const y = height - padding - (p2 / 3) * plotHeight;
+                if (a3 === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Calculate period
+        function calculatePeriod() {
+            const a = parseFloat(document.getElementById('aInput').value);
+            if (isNaN(a) || a <= 0) {
+                alert('Masukkan nilai a yang valid');
+                return;
+            }
+
+            const P = Math.sqrt(a * a * a);
+            const resultDiv = document.getElementById('periodResult');
+            resultDiv.innerHTML = `<strong>Periode (P) = ${P.toFixed(3)} tahun</strong>`;
+            resultDiv.style.display = 'block';
+        }
+
+        function calculateSemiMajor() {
+            const P = parseFloat(document.getElementById('pInput').value);
+            if (isNaN(P) || P <= 0) {
+                alert('Masukkan nilai P yang valid');
+                return;
+            }
+
+            const a = Math.cbrt(P * P);
+            const resultDiv = document.getElementById('semiMajorResult');
+            resultDiv.innerHTML = `<strong>Semi-major Axis (a) = ${a.toFixed(3)} AU</strong>`;
+            resultDiv.style.display = 'block';
+        }
+
+        // Draw planets table
+        function drawPlanetsTable() {
+            const tbody = document.getElementById('planetsTable');
+            tbody.innerHTML = '';
+
+            planetsData.forEach(planet => {
+                const row = `
+                    <tr>
+                        <td><strong>${planet.name}</strong></td>
+                        <td>${planet.a.toFixed(2)}</td>
+                        <td>${planet.P.toFixed(2)}</td>
+                        <td>${planet.e.toFixed(2)}</td>
+                        <td>${planet.v}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Draw orbits
+        function drawOrbits() {
+            const canvas = document.getElementById('orbitCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = 40; // pixels per AU
+
+            // Draw Sun
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw orbits and planets
+            planetsData.forEach(planet => {
+                const orbitRadius = planet.a * scale;
+
+                // Draw orbit
+                ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Draw planet
+                const angle = Math.random() * Math.PI * 2;
+                const x = centerX + orbitRadius * Math.cos(angle);
+                const y = centerY + orbitRadius * Math.sin(angle);
+
+                ctx.fillStyle = planet.color;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Label
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = '11px Arial';
+                ctx.fillText(planet.name, x + 8, y - 8);
+            });
+
+            // Draw asteroid belt area
+            ctx.strokeStyle = 'rgba(255, 100, 100, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 2.2 * scale, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 3.3 * scale, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#ff6464';
+            ctx.font = '10px Arial';
+            ctx.fillText('Asteroid Belt', centerX + 2.75 * scale, centerY - 10);
+        }
+
+        // Calculate gravity
+        function calculateGravity() {
+            const m1 = parseFloat(document.getElementById('m1Input').value);
+            const m2 = parseFloat(document.getElementById('m2Input').value);
+            const distance = parseFloat(document.getElementById('distanceInput').value);
+            const G = 6.674e-11;
+
+            if (isNaN(m1) || isNaN(m2) || isNaN(distance) || distance <= 0) {
+                alert('Masukkan nilai yang valid');
+                return;
+            }
+
+            const F = (G * m1 * m2) / (distance * distance);
+            const resultDiv = document.getElementById('gravityResult');
+            resultDiv.innerHTML = `<strong>Gaya Gravitasi = ${F.toExponential(3)} N</strong><br>
+                atau ${(F / 1e22).toFixed(2)} × 10²² N`;
+            resultDiv.style.display = 'block';
+        }
+
+        // Draw asteroid belt
+        function drawAsteroidBelt() {
+            const canvas = document.getElementById('asteroidCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = 30;
+
+            // Draw orbits
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
+            ctx.lineWidth = 1;
+            [1.52, 2.2, 2.8, 3.3, 5.2].forEach(a => {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, a * scale, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+
+            // Draw Sun
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Mars
+            ctx.fillStyle = '#E27B58';
+            const marsRadius = 1.52 * scale;
+            ctx.beginPath();
+            ctx.arc(centerX + marsRadius, centerY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Jupiter
+            ctx.fillStyle = '#C88B3A';
+            const jupiterRadius = 5.2 * scale;
+            ctx.beginPath();
+            ctx.arc(centerX + jupiterRadius, centerY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw asteroid belt
+            for (let i = 0; i < 300; i++) {
+                const angle = (i / 300) * Math.PI * 2;
+                const r = 2.2 + Math.random() * 1.1;
+                const radius = r * scale;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                ctx.fillStyle = 'rgba(150, 100, 50, 0.6)';
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Labels
+            ctx.fillStyle = '#b0b0b0';
+            ctx.font = '12px Arial';
+            ctx.fillText('Mars', centerX + marsRadius + 10, centerY - 15);
+            ctx.fillText('Asteroid Belt (2.2-3.3 AU)', centerX, centerY - 2.5 * scale - 20);
+            ctx.fillText('Jupiter', centerX + jupiterRadius + 10, centerY - 15);
+        }
+
+        // Draw comet diagram
+        function drawCometDiagram() {
+            const canvas = document.getElementById('cometDiagramCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw Sun
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(100, height / 2, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#b0b0b0';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('Matahari', 110, height / 2 + 5);
+
+            const cometX = width - 150;
+            const cometY = height / 2;
+
+            // Draw nucleus
+            ctx.fillStyle = '#8B7355';
+            ctx.beginPath();
+            ctx.arc(cometX, cometY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw coma
+            ctx.fillStyle = 'rgba(0, 212, 255, 0.15)';
+            ctx.beginPath();
+            ctx.arc(cometX, cometY, 60, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw dust tail (curved)
+            ctx.strokeStyle = 'rgba(200, 150, 100, 0.6)';
+            ctx.lineWidth = 15;
+            ctx.beginPath();
+            ctx.moveTo(cometX, cometY);
+            ctx.quadraticCurveTo(cometX - 100, cometY - 40, cometX - 180, cometY - 20);
+            ctx.stroke();
+
+            // Draw ion tail (straight)
+            ctx.strokeStyle = 'rgba(0, 200, 255, 0.8)';
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(cometX, cometY);
+            ctx.lineTo(cometX - 200, cometY);
+            ctx.stroke();
+
+            // Draw solar wind arrows
+            for (let i = 0; i < 3; i++) {
+                ctx.fillStyle = 'rgba(255, 200, 0, 0.5)';
+                ctx.beginPath();
+                ctx.moveTo(50 + i * 80, cometY - 80);
+                ctx.lineTo(40 + i * 80, cometY - 70);
+                ctx.lineTo(45 + i * 80, cometY - 75);
+                ctx.fill();
+            }
+
+            // Labels
+            ctx.fillStyle = '#b0b0b0';
+            ctx.font = '11px Arial';
+            ctx.fillText('Nucleus', cometX - 10, cometY + 25);
+            ctx.fillText('Coma', cometX - 70, cometY - 70);
+            ctx.fillText('Dust Tail', cometX - 140, cometY - 40);
+            ctx.fillText('Ion Tail', cometX - 150, cometY + 20);
+            ctx.fillText('Solar Wind', 60, cometY - 100);
+
+            // Draw direction indicator
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(cometX, cometY + 80);
+            ctx.lineTo(cometX, cometY + 110);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#00ff88';
+            ctx.font = 'bold 11px Arial';
+            ctx.fillText('Arah gerak komet', cometX - 50, cometY + 130);
+        }
+
+        // Quiz
+        function submitQuiz() {
+            const answers = {
+                q1: document.querySelector('input[name="q1"]:checked')?.value,
+                q2: document.querySelector('input[name="q2"]:checked')?.value,
+                q3: document.querySelector('input[name="q3"]:checked')?.value,
+                q4: document.querySelector('input[name="q4"]:checked')?.value,
+                q5: document.querySelector('input[name="q5"]:checked')?.value
+            };
+
+            const correctAnswers = {
+                q1: 'b',
+                q2: 'b',
+                q3: 'c',
+                q4: 'd',
+                q5: 'b'
+            };
+
+            const explanations = {
+                q1: 'Hukum II Kepler menjelaskan bahwa planet menyapu luas yang sama dalam waktu yang sama. Ini berarti planet bergerak lebih cepat saat dekat Matahari (perihelion) dan lebih lambat saat jauh (aphelion).',
+                q2: 'Merkurius memiliki eksentrisitas tertinggi (e = 0.21) di antara semua planet. Ini membuat orbitnya paling memanjang dibandingkan planet lainnya.',
+                q3: 'Menggunakan P² = a³: P² = 4³ = 64, maka P = √64 = 8 tahun.',
+                q4: 'Semua jawaban benar. Asteroid berbeda dari komet dalam komposisi (batu vs es), lokasi (sabuk asteroid vs Kuiper Belt/Oort Cloud), dan bentuk (tidak ada ekor).',
+                q5: 'Ekor komet selalu menunjuk menjauhi Matahari karena radiasi matahari dan angin surya mendorong debu dan gas keluar dari komet. Ini bukan efek gravitasi melainkan gaya radiasi dan plasma.'
+            };
+
+            let score = 0;
+            const quizContainer = document.querySelector('.quiz-container');
+            const questions = quizContainer.querySelectorAll('.question');
+
+            questions.forEach((question, index) => {
+                const qNum = 'q' + (index + 1);
+                const correctAnswer = correctAnswers[qNum];
+                const userAnswer = answers[qNum];
+                const isCorrect = userAnswer === correctAnswer;
+
+                const options = question.querySelectorAll('.option');
+                options.forEach(option => {
+                    option.classList.remove('correct', 'incorrect');
+                    const input = option.querySelector('input');
+                    if (input.value === correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (input.value === userAnswer && userAnswer !== correctAnswer) {
+                        option.classList.add('incorrect');
+                    }
+                });
+
+                let explanation = question.querySelector('.explanation');
+                if (!explanation) {
+                    explanation = document.createElement('div');
+                    explanation.className = 'explanation';
+                    question.appendChild(explanation);
+                }
+                explanation.innerHTML = '<strong>Penjelasan:</strong> ' + explanations[qNum];
+
+                if (isCorrect) score++;
+            });
+
+            // Show score
+            const resultsDiv = document.getElementById('quizResults');
+            const scoreValue = document.getElementById('scoreValue');
+            const scoreMessage = document.getElementById('scoreMessage');
+
+            scoreValue.textContent = score;
+
+            if (score === 5) {
+                scoreMessage.textContent = 'Sempurna! Anda menguasai semua topik.';
+                scoreMessage.style.color = '#00ff88';
+            } else if (score >= 3) {
+                scoreMessage.textContent = 'Bagus! Anda memahami materi dengan baik.';
+                scoreMessage.style.color = '#00d4ff';
+            } else {
+                scoreMessage.textContent = 'Silakan pelajari kembali materi-materi yang belum dipahami.';
+                scoreMessage.style.color = '#ff9999';
+            }
+
+            resultsDiv.style.display = 'block';
+            window.scrollTo({ top: quizContainer.offsetTop - 100, behavior: 'smooth' });
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            drawKeplerTable();
+            updateEllipse();
+            drawAreaSweep();
+            drawLogLogPlot();
+            drawPlanetsTable();
+            drawOrbits();
+            drawAsteroidBelt();
+            drawCometDiagram();
+        });
+    </script>
+</body>
+</html>
