@@ -1,11 +1,11 @@
 // Typing animation
 const roles = [
-    "AI & Machine Learning Engineer 🤖",
+    "Ideas Growing Under the Sun 🌱",
+    "Different Perspectives, One Vision 📖",
+    "Where Wisdom Meets Innovation 🦉",
+    "AI & Machine Learning 🤖",
     "Amateur Astronomer 🔭",
-    "Physics Enthusiast ⚛️",
-    "Mathematics Lover ∑",
-    "Full-Stack Developer 💻",
-    "Science Fiction Writer ✍️"
+    "Science & Philosophy ⚛️"
 ];
 
 let roleIndex = 0;
@@ -36,6 +36,22 @@ function type() {
     } else {
         setTimeout(type, isDeleting ? 50 : 100);
     }
+}
+
+// Leaf falling animation
+function createLeaf() {
+    const leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.innerHTML = '🍃';
+    leaf.style.left = Math.random() * 100 + '%';
+    leaf.style.animationDuration = (Math.random() * 3 + 7) + 's';
+    document.getElementById('leaves')?.appendChild(leaf);
+    
+    setTimeout(() => leaf.remove(), 10000);
+}
+
+if(document.getElementById('leaves')) {
+    setInterval(createLeaf, 2000);
 }
 
 // Create stars

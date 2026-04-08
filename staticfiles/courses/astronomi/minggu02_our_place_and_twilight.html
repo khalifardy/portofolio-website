@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AS6031 Minggu 2: Tempat Kita & Fenomena Fajar-Senja</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
+            color: #e0e6ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Starfield background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #fff, rgba(255,255,255,.2)),
+                radial-gradient(2px 2px at 60px 70px, #fff, rgba(255,255,255,.2)),
+                radial-gradient(1px 1px at 50px 50px, #fff, rgba(255,255,255,.2)),
+                radial-gradient(1px 1px at 130px 80px, #fff, rgba(255,255,255,.2));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(15, 20, 40, 0.7);
+            border-radius: 10px;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #0099ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            color: #00d4ff;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            margin: 20px 0 15px 0;
+            color: #7dd3ff;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: rgba(15, 20, 40, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: 2px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Card styling */
+        .card {
+            background: rgba(25, 30, 60, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Cosmic Zoom Section */
+        .zoom-container {
+            margin: 20px 0;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .zoom-slider {
+            flex: 1;
+            min-width: 200px;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #001f3f, #00d4ff);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        .zoom-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        .zoom-display {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .zoom-scale {
+            font-size: 1.5em;
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .zoom-description {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #b0c4ff;
+        }
+
+        .zoom-emoji {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        /* Sun Structure */
+        .sun-structure {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .sun-layers {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffeb3b, #ff9800, #e74c3c);
+            box-shadow: 0 0 30px rgba(255, 152, 0, 0.8), inset -10px -10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sun-label {
+            position: absolute;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            font-size: 0.9em;
+        }
+
+        .sun-core { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .sun-legend {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            border-radius: 4px;
+        }
+
+        .legend-item strong {
+            color: #00d4ff;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 30px;
+            bottom: -30px;
+            width: 2px;
+            background: linear-gradient(180deg, #00d4ff, #0099ff);
+        }
+
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            background: #00d4ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 30px;
+            flex-shrink: 0;
+            color: #000;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .timeline-content {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        /* Distance Converter */
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .converter-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .converter-input label {
+            color: #7dd3ff;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .converter-input input {
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            color: #e0e6ff;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .converter-input input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Universe Content Tabs */
+        .content-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .content-tab-btn {
+            padding: 10px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            color: #7dd3ff;
+            cursor: pointer;
+            border-radius: 5px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .content-tab-btn:hover,
+        .content-tab-btn.active {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .content-display {
+            display: none;
+        }
+
+        .content-display.active {
+            display: block;
+        }
+
+        /* Twilight Diagram */
+        .twilight-diagram {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(180deg,
+                #1a1f3a 0%,
+                #2d3a5c 20%,
+                #3d5a8f 40%,
+                #4f7bb8 60%,
+                #8ba8d4 80%,
+                #c9d9f0 100%);
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .twilight-sun {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #ff9800);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            bottom: -40px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 40px rgba(255, 152, 0, 0.6);
+        }
+
+        .horizon-line {
+            position: absolute;
+            bottom: 40%;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .twilight-zones {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .twilight-zone {
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .twilight-zone.civil { border-left-color: #ff9800; }
+        .twilight-zone.nautical { border-left-color: #1976d2; }
+        .twilight-zone.astronomical { border-left-color: #283593; }
+
+        /* Calculator */
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .calc-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calc-group label {
+            color: #7dd3ff;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .calc-group input,
+        .calc-group select {
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            color: #e0e6ff;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .calc-group input:focus,
+        .calc-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .calc-results {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .result-item {
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 5px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .result-label {
+            color: #7dd3ff;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #00d4ff;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        /* Circumpolar Stars */
+        .circumpolar-diagram {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            background: radial-gradient(circle, #1a1f3a 0%, #0a0e27 100%);
+            border-radius: 50%;
+            border: 2px solid #00d4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .circumpolar-info {
+            color: #7dd3ff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Quiz */
+        .quiz-container {
+            margin: 30px 0;
+        }
+
+        .quiz-question {
+            background: rgba(25, 30, 60, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .quiz-question.answered {
+            border-color: rgba(0, 212, 255, 0.6);
+            background: rgba(25, 30, 60, 0.9);
+        }
+
+        .quiz-question h4 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-option {
+            padding: 12px 15px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #e0e6ff;
+        }
+
+        .quiz-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .quiz-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .quiz-option.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .quiz-explanation {
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid #00d4ff;
+            border-radius: 4px;
+            margin-top: 15px;
+            display: none;
+            color: #b0c4ff;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .quiz-explanation.show {
+            display: block;
+        }
+
+        .quiz-submit-btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-submit-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Utility */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            color: #fff9c4;
+        }
+
+        .reference {
+            text-align: center;
+            color: #7dd3ff;
+            font-size: 0.9em;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .tab-container { flex-direction: column; }
+            .tab-btn { width: 100%; }
+            .converter-grid { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .circumpolar-diagram {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌌 Tempat Kita dalam Alam Semesta 🌌</h1>
+            <p><strong>AS6031 — Astronomi A</strong> | Minggu 2</p>
+            <p style="font-size: 0.95em; margin-top: 10px;">Observatorium Bosscha, Lembang, Bandung (φ = -6.9°)</p>
+        </header>
+
+        <!-- Main Tab Navigation -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('partA')">Bagian A: Tempat Kita</button>
+            <button class="tab-btn" onclick="switchTab('partB')">Bagian B: Fajar & Senja</button>
+            <button class="tab-btn" onclick="switchTab('quiz')">Kuis</button>
+        </div>
+
+        <!-- ========== BAGIAN A: TEMPAT KITA ========== -->
+        <div id="partA" class="tab-content active">
+
+            <!-- Section 1: Cosmic Zoom -->
+            <div class="card">
+                <h2>🔭 Penjelajahan Kosmik: Skala Alam Semesta</h2>
+                <p style="margin-bottom: 20px;">Mulai dari Observatorium Bosscha di Lembang dan zoom hingga batas alam semesta yang terlihat...</p>
+
+                <div class="zoom-container">
+                    <div class="zoom-controls">
+                        <button onclick="zoomOut()" style="padding: 10px 15px; background: #00d4ff; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">← Zoom Out</button>
+                        <input type="range" id="zoomSlider" class="zoom-slider" min="0" max="32" value="0" oninput="updateZoom()">
+                        <button onclick="zoomIn()" style="padding: 10px 15px; background: #00d4ff; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Zoom In →</button>
+                    </div>
+
+                    <div class="zoom-display">
+                        <div class="zoom-scale"><span class="zoom-emoji" id="zoomEmoji">🔭</span><span id="zoomScale">Observatorium Bosscha</span></div>
+                        <div class="zoom-description" id="zoomDescription">Lokasi pengamatan di Lembang, Bandung. Ketinggian: ~1300 m. Dengan teleskop Zeiss 60cm refractor dan peralatan modern, astronom ITB menjelajahi alam semesta.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Matahari (The Sun) -->
+            <div class="card">
+                <h2>☀️ Matahari (The Sun)</h2>
+
+                <h3>Struktur Matahari</h3>
+                <div class="sun-structure">
+                    <div class="sun-layers">
+                        <div class="sun-label sun-core">Inti<br>14M K</div>
+                    </div>
+                </div>
+
+                <div class="sun-legend">
+                    <div class="legend-item"><strong>Inti (Core):</strong> 14 juta Kelvin, reaksi termonuklir</div>
+                    <div class="legend-item"><strong>Zona Radiasi (Radiative Zone):</strong> Energi ditransmisi via radiasi</div>
+                    <div class="legend-item"><strong>Zona Konveksi (Convective Zone):</strong> Energi ditransmisi via konveksi plasma</div>
+                    <div class="legend-item"><strong>Fotosfer (Photosphere):</strong> Permukaan terlihat, ~6000 K</div>
+                    <div class="legend-item"><strong>Korona (Corona):</strong> Atsmosfer luar, ~100,000 K (!)</div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Aktivitas Matahari</h3>
+                <div class="grid-2">
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 5px; border-left: 4px solid #ff9800;">
+                        <strong>Bintik Matahari (Sunspots)</strong>
+                        <p>Wilayah gelap dengan medan magnet kuat. Siklus 11 tahun (siklus Schwabe).</p>
+                    </div>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 5px; border-left: 4px solid #ff9800;">
+                        <strong>Loop Korona (Coronal Loops)</strong>
+                        <p>Struktur magnet berkurva di korona yang memancarkan X-ray.</p>
+                    </div>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 5px; border-left: 4px solid #ff9800;">
+                        <strong>Erupsi Massa Korona (CME)</strong>
+                        <p>Pelontaran plasma & medan magnet ke luar angkasa. Dapat mengganggu magnetosfer Bumi!</p>
+                    </div>
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 15px; border-radius: 5px; border-left: 4px solid #ff9800;">
+                        <strong>Angin Surya (Solar Wind)</strong>
+                        <p>Aliran partikel (terutama proton & elektron) dari korona menuju luar angkasa. Menciptakan magnetosfer di sekitar Bumi.</p>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Evolusi Matahari (Sebelum & Sesudah)</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <strong>Sekarang (Main Sequence)</strong><br>
+                            Umur: ~4.6 Miliar tahun. Luminositas: 1 L☉ (solar luminosity). Akan bertahan ~5 miliar tahun lagi sebagai bintang utama.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <strong>+2 Miliar Tahun</strong><br>
+                            Luminositas meningkat ~25%. Efek rumah kaca liar (runaway greenhouse) di Bumi. Lautan menguap. Bumi menjadi gurun tandus.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <strong>+4 Miliar Tahun</strong><br>
+                            Matahari mulai meninggalkan Main Sequence. Inti H habis, mulai fusi He. Ekspansi dimulai → Raksasa Merah (Red Giant).
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <strong>+5 Miliar Tahun (Fase Raksasa Merah)</strong><br>
+                            Matahari membengkak. Fotosfer meluas hingga orbit Venus (~0.7 AU). <strong>Bumi tertelan oleh Matahari!</strong> 🔥
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">5</div>
+                        <div class="timeline-content">
+                            <strong>+7 Miliar Tahun (Raksasa Putih)</strong><br>
+                            Kulit luar melontir (Planetary Nebula). Inti tersisa sebagai bintang putih (White Dwarf). Perlahan-lahan mendingin selama triliunan tahun.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Distance Units -->
+            <div class="card">
+                <h2>📏 Satuan Jarak dalam Astronomi</h2>
+                <p style="margin-bottom: 20px;">Masukkan nilai dalam satu satuan untuk melihat konversi ke satuan lainnya:</p>
+
+                <div class="converter-grid">
+                    <div class="converter-input">
+                        <label>Kilometer (km)</label>
+                        <input type="number" id="conv-km" oninput="convertDistance('km')" placeholder="0">
+                    </div>
+                    <div class="converter-input">
+                        <label>AU (Satuan Astronomi)</label>
+                        <input type="number" id="conv-au" oninput="convertDistance('au')" placeholder="0">
+                    </div>
+                    <div class="converter-input">
+                        <label>Tahun Cahaya (ly)</label>
+                        <input type="number" id="conv-ly" oninput="convertDistance('ly')" placeholder="0">
+                    </div>
+                    <div class="converter-input">
+                        <label>Parsec (pc)</label>
+                        <input type="number" id="conv-pc" oninput="convertDistance('pc')" placeholder="0">
+                    </div>
+                    <div class="converter-input">
+                        <label>Megaparsec (Mpc)</label>
+                        <input type="number" id="conv-mpc" oninput="convertDistance('mpc')" placeholder="0">
+                    </div>
+                    <div class="converter-input">
+                        <label>Gigaparsec (Gpc)</label>
+                        <input type="number" id="conv-gpc" oninput="convertDistance('gpc')" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>Definisi Satuan:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>1 AU</strong> = 150,000,000 km (jarak Bumi-Matahari rata-rata)</li>
+                        <li><strong>1 ly</strong> = 9.461 × 10¹² km (jarak cahaya dalam 1 tahun)</li>
+                        <li><strong>1 pc</strong> = 3.26 ly (parallax 1 arcsecond, untuk pengukuran bintang)</li>
+                        <li><strong>1 Mpc</strong> = 1 juta parsec (untuk galaksi terjauh)</li>
+                        <li><strong>1 Gpc</strong> = 1 miliar parsec (untuk alam semesta jarak jauh)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 4: Contents of the Universe -->
+            <div class="card">
+                <h2>🌍 Isi Alam Semesta (Alam Semesta pada Skala Berbeda)</h2>
+
+                <div class="content-tabs">
+                    <button class="content-tab-btn active" onclick="switchContentTab('solsys')">Tata Surya</button>
+                    <button class="content-tab-btn" onclick="switchContentTab('stars')">Bintang</button>
+                    <button class="content-tab-btn" onclick="switchContentTab('nebula')">Nebula</button>
+                    <button class="content-tab-btn" onclick="switchContentTab('galaxies')">Galaksi</button>
+                    <button class="content-tab-btn" onclick="switchContentTab('largescale')">Struktur Besar</button>
+                </div>
+
+                <!-- Tata Surya -->
+                <div id="solsys" class="content-display active">
+                    <h3>Tata Surya Kita (Our Solar System)</h3>
+                    <p><strong>Planet Dalam (Inner Planets):</strong></p>
+                    <div style="margin: 15px 0; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 5px;">
+                        <div>☿️ <strong>Merkurius:</strong> 0.39 AU (paling dekat Matahari)</div>
+                        <div>♀️ <strong>Venus:</strong> 0.72 AU (mirip ukuran Bumi, sangat panas)</div>
+                        <div>🌍 <strong>Bumi:</strong> 1.0 AU (rumah kita)</div>
+                        <div>♂️ <strong>Mars:</strong> 1.52 AU (Planet Merah, ada es polar)</div>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Planet Luar (Outer Planets):</strong></p>
+                    <div style="margin: 15px 0; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 5px;">
+                        <div>♃ <strong>Jupiter:</strong> 5.2 AU (raksasa gas, dengan Bintik Merah Besar)</div>
+                        <div>♄ <strong>Saturnus:</strong> 9.5 AU (terkenal dengan cincin spektakuler)</div>
+                        <div>♅ <strong>Uranus:</strong> 19.2 AU (planet es)</div>
+                        <div>♆ <strong>Neptunus:</strong> 30.1 AU (paling jauh, angin 2000 km/s)</div>
+                        <div>🪨 <strong>Pluto:</strong> 39.5 AU (Dwarf Planet di Kuiper Belt)</div>
+                    </div>
+                    <p style="margin-top: 15px; color: #7dd3ff;"><em>Antara Mars & Jupiter: Asteroid Belt (sabuk asteroid). Setelah Neptunus: Kuiper Belt & Oort Cloud (komet).</em></p>
+                </div>
+
+                <!-- Bintang -->
+                <div id="stars" class="content-display">
+                    <h3>Bintang (Stars) & Diagram Hertzsprung-Russell</h3>
+                    <p style="margin-bottom: 15px;">Diagram HR menunjukkan relasi antara luminositas (kecerahan) dan jenis spektral (suhu) bintang:</p>
+
+                    <div style="padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 5px; margin: 15px 0;">
+                        <strong>Jenis Spektral (dari panas ke dingin):</strong><br>
+                        <code style="color: #ffb74d;">O → B → A → F → G → K → M</code><br>
+                        <em style="color: #7dd3ff;">(Ingat: "Oh Be A Fine Girl/Guy, Kiss Me")</em>
+                    </div>
+
+                    <strong>Kelas Bintang di Diagram HR:</strong>
+                    <div style="margin: 15px 0; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 5px;">
+                        <div><strong>Main Sequence (Deret Utama):</strong> 90% bintang berada di sini (seperti Matahari ☀️). Menyeimbangkan gravitasi & tekanan radiasi.</div>
+                        <div style="margin-top: 10px;"><strong>Giants (Raksasa):</strong> Bintang tua, besar, cahaya merah. Contoh: Aldebaran (α Tauri, tipe K).</div>
+                        <div style="margin-top: 10px;"><strong>Supergiants (Supergiant):</strong> Sangat terang & besar. Contoh: Betelgeuse (α Orioni, merah) & Rigel (β Orioni, biru).</div>
+                        <div style="margin-top: 10px;"><strong>White Dwarfs (Bintang Putih):</strong> Sisa inti bintang, sangat padat & panas tapi redup. Contoh: Sirius B.</div>
+                    </div>
+                </div>
+
+                <!-- Nebula -->
+                <div id="nebula" class="content-display">
+                    <h3>Nebula (Nebulae)</h3>
+                    <p style="margin-bottom: 15px;">Nebula adalah awan gas & debu di antarabintang. Ada 4 jenis utama:</p>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 4px solid #00d4ff;">
+                        <strong>1. Nebula Refleksi (Reflection Nebula)</strong><br>
+                        Gas & debu yang memantulkan cahaya bintang terdekat. Biasanya berwarna biru. Contoh: Nebula Pleiades.
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 4px solid #ff9800;">
+                        <strong>2. Nebula Emisi (Emission Nebula)</strong><br>
+                        Gas yang bersinar sendiri karena diionisasi oleh radiasi bintang O & B terdekat. Merah (H-alpha), biru (O III). Contoh: Nebula Orion (M42).
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 4px solid #9c27b0;">
+                        <strong>3. Nebula Gelap/Penyerapan (Dark/Absorption Nebula)</strong><br>
+                        Awan debu tebal yang mengabsorpsi cahaya bintang di belakangnya. Tampak gelap melawan latar belakang cahaya. Contoh: Horsehead Nebula di Orion.
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; border-left: 4px solid #4caf50;">
+                        <strong>4. Nebula Planetari (Planetary Nebula)</strong><br>
+                        Kulit gas yang dilontarkan oleh bintang raksasa merah yang sedang sekarat. Meninggalkan bintang putih di pusat. Contoh: Ring Nebula (M57) & Helix Nebula (M27).
+                    </div>
+                </div>
+
+                <!-- Galaksi -->
+                <div id="galaxies" class="content-display">
+                    <h3>Galaksi (Galaxies)</h3>
+                    <p style="margin-bottom: 15px;"><strong>Galaksi</strong> adalah kumpulan miliaran bintang terikat gravitasi. Klasifikasi Hubble:</p>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Galaksi Elips (Elliptical):</strong> E0 (bulat) hingga E7 (gepeng). Tua, bintang merah. Contoh: M87 (galaksi elips raksasa di Virgo).
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Galaksi Lentikular (Lenticular):</strong> S0. Disk dengan bulge, tapi tanpa lengan spiral. Intermediate antara elips & spiral.
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Galaksi Spiral (Spiral):</strong> Sa, Sb, Sc (lengan semakin terbuka). Disk dengan disk bulge & lengan spiral. Contoh: Andromeda (M31, Sa), Whirlpool (M51, Sc).
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px;">
+                        <strong>Galaksi Spiral Berpalang (Barred Spiral):</strong> SBa, SBb, SBc. Seperti spiral, tapi dengan "palang" pusat. Contoh: NGC 1097.
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: #7dd3ff;">Bimasakti (Milky Way) - Galaksi Kita</h4>
+                    <div style="background: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107; padding: 15px; border-radius: 5px;">
+                        <div>💫 <strong>Jenis:</strong> Galaksi spiral berpalang (SBc)</div>
+                        <div>💫 <strong>Diameter:</strong> ~100,000 ly (30 kpc)</div>
+                        <div>💫 <strong>Jumlah bintang:</strong> ~200 miliar</div>
+                        <div>💫 <strong>Posisi Matahari:</strong> Di lengan Orion, ~26,000 ly dari pusat galaksi</div>
+                        <div>💫 <strong>Lubang hitam pusat:</strong> Sagittarius A* (Sgr A*), ~2.6 juta massa Matahari</div>
+                        <div>💫 <strong>Galaksi satelit:</strong> Large Magellanic Cloud (LMC) & Small Magellanic Cloud (SMC) di sekitar Bimasakti</div>
+                    </div>
+                </div>
+
+                <!-- Struktur Besar -->
+                <div id="largescale" class="content-display">
+                    <h3>Struktur Skala Besar Alam Semesta</h3>
+                    <p style="margin-bottom: 15px;">Jika kita zoom out lebih jauh dari galaksi individual, kita lihat struktur yang menakjubkan:</p>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Kelompok Galaksi (Galaxy Group):</strong><br>
+                        Beberapa galaksi terikat gravitasi. Contoh: Kelompok Lokal (Local Group) berisi Bimasakti, Andromeda, Triangulum, & ~50 galaksi kecil lainnya.
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Cluster Galaksi (Galaxy Cluster):</strong><br>
+                        Ratusan hingga ribuan galaksi dalam wilayah ~10 Mpc. Contoh: Virgo Cluster (dengan M87), Coma Cluster.
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Supercluster:</strong><br>
+                        Cluster clusters. Contoh: Virgo Supercluster (kami adalah bagian darinya, dengan diameter ~150 Mpc).
+                    </div>
+
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Cosmic Web (Jaring Kosmik):</strong><br>
+                        Pada skala ultra-besar (~1 Gpc), galaksi & cluster tidak tersebar merata. Mereka membentuk filamen & dinding, dengan void (hampa) raksasa di antara. Struktur ini mirip web atau foam yang mengagumkan!
+                    </div>
+
+                    <div class="note">
+                        <strong>Batas Alam Semesta yang Terlihat (Observable Universe):</strong><br>
+                        Jari-jari: ~46.5 Miliar tahun cahaya (Hubble Radius). Diameter: ~93 Miliar tahun cahaya (~4 Gpc). Usia: 13.8 Miliar tahun.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========== BAGIAN B: FAJAR & SENJA ========== -->
+        <div id="partB" class="tab-content">
+
+            <!-- Section 5: Definisi Terbit Terbenam -->
+            <div class="card">
+                <h2>🌅 Definisi Terbit & Terbenam (Sunrise & Sunset)</h2>
+
+                <div class="grid-2">
+                    <div>
+                        <h3>📍 Definisi Geometris</h3>
+                        <p><strong>Sunrise (Matahari Terbit):</strong> Saat tepi atas (upper limb) Matahari menyentuh cakrawala.</p>
+                        <p style="margin-top: 10px;"><strong>Sunset (Matahari Terbenam):</strong> Saat tepi atas (upper limb) Matahari terakhir kali menyentuh cakrawala.</p>
+                    </div>
+                    <div>
+                        <h3>🔧 Koreksi Refraksi Atmosfer</h3>
+                        <p><strong>Refraksi Atmosfer:</strong> ~34 menit busur (arcminutes). Jadi Matahari masih terlihat di atas horizon geometris ketika posisinya sebenarnya sudah di bawah.</p>
+                        <p style="margin-top: 10px;"><strong>Diameter Angular Matahari:</strong> ~32 menit busur (~16' semi-diameter).</p>
+                    </div>
+                </div>
+
+                <div class="note" style="margin-top: 20px;">
+                    <strong>Definisi Resmi International Astronomical Union (IAU):</strong><br>
+                    Matahari dianggap terbit/terbenam ketika <strong>pusat geometrisnya berada 50 menit busur di bawah horizon</strong>. Angka 50' = koreksi refraksi (34') + semi-diameter Matahari (16').
+                </div>
+            </div>
+
+            <!-- Section 6: Jenis-Jenis Twilight -->
+            <div class="card">
+                <h2>🌆 Tiga Jenis Fajar & Senja (Twilight)</h2>
+
+                <p style="margin-bottom: 20px;">Fajar (dawn) adalah periode terang sebelum sunrise. Senja (dusk) adalah periode terang setelah sunset. Keduanya memiliki 3 fase berdasarkan kedalaman Matahari di bawah horizon:</p>
+
+                <div class="twilight-diagram" id="twilightDiagram">
+                    <div class="twilight-sun"></div>
+                    <div class="horizon-line"></div>
+                    <div class="twilight-zones">
+                        <div class="twilight-zone civil" onclick="highlightTwilight('civil')">
+                            <strong>Sipil (Civil)</strong><br>0° hingga -6°
+                        </div>
+                        <div class="twilight-zone nautical" onclick="highlightTwilight('nautical')">
+                            <strong>Nautika (Nautical)</strong><br>-6° hingga -12°
+                        </div>
+                        <div class="twilight-zone astronomical" onclick="highlightTwilight('astronomical')">
+                            <strong>Astronomi (Astronomical)</strong><br>-12° hingga -18°
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div style="background: rgba(255, 152, 0, 0.1); padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <h4 style="color: #ff9800;">🟡 Fajar/Senja Sipil (Civil Twilight)</h4>
+                        <p><strong>Definisi:</strong> Matahari 0° hingga -6° di bawah horizon.</p>
+                        <p style="margin-top: 10px;"><strong>Kondisi cahaya:</strong> Masih cukup terang untuk aktivitas outdoor tanpa lampu. Cakrawala masih jelas.</p>
+                        <p style="margin-top: 10px;"><strong>Durasi:</strong> Paling pendek (~20-30 menit di lintang ekuator).</p>
+                    </div>
+
+                    <div style="background: rgba(25, 100, 200, 0.1); padding: 20px; border-radius: 8px; border-left: 4px solid #1976d2;">
+                        <h4 style="color: #1976d2;">🔵 Fajar/Senja Nautika (Nautical Twilight)</h4>
+                        <p><strong>Definisi:</strong> Matahari -6° hingga -12° di bawah horizon.</p>
+                        <p style="margin-top: 10px;"><strong>Kondisi cahaya:</strong> Cukup gelap untuk mata. Cakrawala masih terlihat. Dulu pelaut dapat navigasi dengan bintang terang & horizon visible.</p>
+                        <p style="margin-top: 10px;"><strong>Durasi:</strong> Sedang (~20-30 menit).</p>
+                    </div>
+
+                    <div style="background: rgba(40, 53, 147, 0.1); padding: 20px; border-radius: 8px; border-left: 4px solid #283593;">
+                        <h4 style="color: #283593;">⚫ Fajar/Senja Astronomi (Astronomical Twilight)</h4>
+                        <p><strong>Definisi:</strong> Matahari -12° hingga -18° di bawah horizon.</p>
+                        <p style="margin-top: 10px;"><strong>Kondisi cahaya:</strong> Langit tampak sangat gelap ke mata telanjang. Garis senja di horizon masih terlihat samar, tapi bintang-bintang lemah tidak terlihat lagi dilindungi cahaya senja.</p>
+                        <p style="margin-top: 10px;"><strong>Durasi:</strong> Paling lama (~40-50 menit).</p>
+                    </div>
+
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 8px; border-left: 4px solid #000;">
+                        <h4 style="color: #7dd3ff;">⭐ Malam Astronomi (Astronomical Night)</h4>
+                        <p><strong>Definisi:</strong> Matahari lebih dalam dari -18° di bawah horizon.</p>
+                        <p style="margin-top: 10px;"><strong>Kondisi cahaya:</strong> Benar-benar gelap. Semua bintang hingga magnitudo limit dapat terlihat. Ideal untuk observasi astronomi!</p>
+                        <p style="margin-top: 10px;"><strong>Catatan:</strong> Cahaya polusi cahaya (light pollution) dari kota dapat mengurangi visibilitas.</p>
+                    </div>
+                </div>
+
+                <div class="note" style="margin-top: 20px;">
+                    <strong>Catatan untuk Bandung (φ = -6.9°):</strong><br>
+                    Karena Bandung dekat ekuator, twilight relatif pendek. Fajar/senja astronomi hanya berlangsung ~35-40 menit. Bandingkan dengan lintang tinggi (misalnya London 51.5°N) di mana senja astronomi bisa berlangsung hingga 2+ jam di musim panas!
+                </div>
+            </div>
+
+            <!-- Section 7: Twilight Duration Calculator -->
+            <div class="card">
+                <h2>⏱️ Kalkulator Durasi Fajar & Senja</h2>
+
+                <p style="margin-bottom: 20px;">Gunakan persamaan astronomi untuk menghitung waktu terbit/terbenam & durasi setiap fase twilight. Formula:</p>
+
+                <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px; margin-bottom: 20px; font-family: monospace; overflow-x: auto;">
+                    cos(H) = [sin(a) - sin(φ)·sin(δ)] / [cos(φ)·cos(δ)]
+                </div>
+
+                <p style="margin-bottom: 20px; color: #b0c4ff;">
+                    Di mana:<br>
+                    • <strong>H</strong> = hour angle (sudut jam dari meridian lokal)<br>
+                    • <strong>a</strong> = altitude (ketinggian sudut): -50' untuk sunrise/set, -6° untuk civil, -12° untuk nautical, -18° untuk astronomical<br>
+                    • <strong>φ</strong> = observer latitude (lintang pengamat)<br>
+                    • <strong>δ</strong> = solar declination (deklinasi surya)
+                </p>
+
+                <div class="calculator-inputs">
+                    <div class="calc-group">
+                        <label>Tanggal</label>
+                        <input type="date" id="calcDate">
+                    </div>
+                    <div class="calc-group">
+                        <label>Lintang (derajat, - untuk Selatan)</label>
+                        <input type="number" id="calcLat" value="-6.9" step="0.1">
+                    </div>
+                    <div class="calc-group">
+                        <label>Bujur (derajat, - untuk Barat)</label>
+                        <input type="number" id="calcLon" value="107.6" step="0.1">
+                    </div>
+                    <div class="calc-group">
+                        <label>Zona Waktu (UTC offset)</label>
+                        <select id="calcTZ">
+                            <option value="7">UTC+7 (Bandung/WIB)</option>
+                            <option value="8">UTC+8</option>
+                            <option value="0">UTC</option>
+                            <option value="-5">UTC-5 (EST)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="calculateTwilight()" style="padding: 12px 30px; background: linear-gradient(45deg, #00d4ff, #0099ff); color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; margin-top: 15px;">Hitung Twilight</button>
+
+                <div class="calc-results" id="twilightResults" style="display: none;">
+                    <div class="result-item">
+                        <div class="result-label">Matahari Terbit</div>
+                        <div class="result-value" id="result-sunrise">--:--</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Sipil Pagi</div>
+                        <div class="result-value" id="result-civil-dawn">-- menit</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Nautika Pagi</div>
+                        <div class="result-value" id="result-nautical-dawn">-- menit</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Astronomi Pagi</div>
+                        <div class="result-value" id="result-astro-dawn">-- menit</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Matahari Terbenam</div>
+                        <div class="result-value" id="result-sunset">--:--</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Sipil Sore</div>
+                        <div class="result-value" id="result-civil-dusk">-- menit</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Nautika Sore</div>
+                        <div class="result-value" id="result-nautical-dusk">-- menit</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Astronomi Sore</div>
+                        <div class="result-value" id="result-astro-dusk">-- menit</div>
+                    </div>
+                </div>
+
+                <div class="note" style="margin-top: 20px;">
+                    <strong>Catatan Perhitungan:</strong> Kalkulator di sini menggunakan aproksimasi sederhana. Untuk akurasi tinggi di penelitian, gunakan libraries seperti Skyfield atau Astropy Python. Deklinasi surya dihitung dari hari dalam tahun.
+                </div>
+            </div>
+
+            <!-- Section 8: Circumpolar Stars -->
+            <div class="card">
+                <h2>⭐ Bintang Sirkumpolar (Circumpolar Stars)</h2>
+
+                <p style="margin-bottom: 20px;">Bintang sirkumpolar adalah bintang yang tidak pernah terbit atau tidak pernah terbenam untuk pengamat di lintang tertentu. Mereka selalu terlihat di atas horizon, bergerak dalam lingkaran di sekitar kutub langit.</p>
+
+                <h3>Kondisi untuk Bintang Sirkumpolar</h3>
+                <div style="background: rgba(0, 212, 255, 0.1); padding: 20px; border-radius: 5px; border-left: 4px solid #00d4ff; margin-bottom: 20px;">
+                    <p><strong>Rumus:</strong> |δ| > 90° - |φ|</p>
+                    <p style="margin-top: 10px;">Di mana:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>δ</strong> = deklinasi bintang (posisi utara/selatan ekuator langit)</li>
+                        <li><strong>φ</strong> = lintang pengamat (posisi utara/selatan ekuator Bumi)</li>
+                    </ul>
+                </div>
+
+                <h3>Contoh: Bandung (φ = -6.9°)</h3>
+                <div style="background: rgba(255, 193, 7, 0.1); padding: 20px; border-radius: 5px; border-left: 4px solid #ffc107;">
+                    <p><strong>Batas Sirkumpolar:</strong> |δ| > 90° - 6.9° = 83.1°</p>
+                    <p style="margin-top: 10px;">Berarti hanya bintang dengan deklinasi lebih besar dari +83.1° (sangat dekat kutub Utara) atau lebih kecil dari -83.1° (sangat dekat kutub Selatan) yang sirkumpolar.</p>
+                    <p style="margin-top: 10px;"><strong>Realitas:</strong> Ada sangat sedikit bintang terang di area ini! Polaris (kutub Utara) punya δ ≈ +89.3°, jadi sirkumpolar untuk Bandung. Tapi bintang-bintang terang lainnya seperti Sirius, Betelgeuse, Rigel, dll. terbit & terbenam.</p>
+                </div>
+
+                <h3 style="margin-top: 30px;">Perbandingan Lintang Berbeda</h3>
+                <div class="grid-2">
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px;">
+                        <h4 style="color: #00d4ff;">🌍 Ekuator (φ = 0°)</h4>
+                        <p>Batas: |δ| > 90°. Tidak ada bintang sirkumpolar sama sekali! Semua bintang terbit & terbenam.</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px;">
+                        <h4 style="color: #00d4ff;">📍 Bandung (φ = -6.9°)</h4>
+                        <p>Batas: |δ| > 83.1°. Hanya beberapa bintang ultra-kutub. Polaris sirkumpolar tapi jauh dari zenith.</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px;">
+                        <h4 style="color: #00d4ff;">🗻 Lintang Pertengahan (φ = 45°N)</h4>
+                        <p>Batas: |δ| > 45°. Banyak bintang terang sirkumpolar utara! Contoh: Polaris, Ursa Major, Cassiopeia.</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 5px;">
+                        <h4 style="color: #00d4ff;">❄️ Kutub (φ = 90°N)</h4>
+                        <p>Batas: |δ| > 0°. Semua bintang di belahan Utara sirkumpolar! Mereka bergerak horizontal sepanjang malam.</p>
+                    </div>
+                </div>
+
+                <div class="note" style="margin-top: 20px;">
+                    <strong>Aplikasi:</strong> Bintang sirkumpolar sangat berguna untuk navigasi lama. Misalnya, pelaut Polinesia menggunakan Polaris untuk menentukan lintang di belahan utara. Di Bandung, pengamat tidak memiliki "landmark" bintang sirkumpolar yang nyaman, kecuali Polaris yang rendah di utara.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========== KUIS ========== -->
+        <div id="quiz" class="tab-content">
+            <div class="quiz-container">
+                <h2>🎯 Kuis Minggu 2: Tempat Kita & Fenomena Fajar-Senja</h2>
+                <p style="margin-bottom: 30px; color: #b0c4ff;">Jawab 5 pertanyaan di bawah ini. Penjelasan akan ditampilkan setelah Anda memilih jawaban.</p>
+
+                <!-- Question 1 -->
+                <div class="quiz-question" id="q1">
+                    <h4>1. Berapa jarak dari Bumi ke Matahari dalam AU, dan berapa kilometer?</h4>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="a"> A) 0.5 AU ≈ 75 juta km
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="b"> B) 1.0 AU ≈ 150 juta km ✓
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="c"> C) 2.0 AU ≈ 300 juta km
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="d"> D) 10 AU ≈ 1.5 miliar km
+                        </label>
+                    </div>
+                    <button class="quiz-submit-btn" onclick="submitAnswer('q1', 'b')">Jawab</button>
+                    <div class="quiz-explanation">
+                        <strong>Jawaban benar: B) 1.0 AU ≈ 150 juta km</strong><br>
+                        AU (Satuan Astronomi) didefinisikan sebagai jarak rata-rata Bumi-Matahari. Ini adalah satuan dasar untuk pengukuran di Tata Surya. Semua planet memiliki jarak dari Matahari dalam AU (Merkurius 0.4 AU, Venus 0.7 AU, Mars 1.5 AU, Jupiter 5.2 AU, dll.).
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-question" id="q2">
+                    <h4>2. Matahari memiliki struktur berlapis. Zona apa yang memiliki suhu terting­gi?</h4>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="a"> A) Fotosfer (~6000 K)
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="b"> B) Zona Konveksi
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="c"> C) Inti (Core, ~14 juta K) ✓
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="d"> D) Korona (~100,000 K)
+                        </label>
+                    </div>
+                    <button class="quiz-submit-btn" onclick="submitAnswer('q2', 'c')">Jawab</button>
+                    <div class="quiz-explanation">
+                        <strong>Jawaban benar: C) Inti (Core, ~14 juta K)</strong><br>
+                        Inti Matahari mencapai suhu 14 juta Kelvin, di mana terjadi reaksi fusi hidrogen menjadi helium. Menariknya, Korona (lapisan luar) mencapai 100,000 K, lebih panas dari Fotosfer yang hanya 6000 K. Ini adalah "paradoks korona" yang masih menjadi misteri astronomi!
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-question" id="q3">
+                    <h4>3. Apa perbedaan utama antara twilight sipil dan twilight astronomi?</h4>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="a"> A) Sipil: 0° hingga -6°, Astronomi: -12° hingga -18° ✓
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="b"> B) Tidak ada perbedaan, hanya nama berbeda
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="c"> C) Sipil hanya di pagi, Astronomi hanya di sore
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="d"> D) Astronomi terjadi sebelum sipil
+                        </label>
+                    </div>
+                    <button class="quiz-submit-btn" onclick="submitAnswer('q3', 'a')">Jawab</button>
+                    <div class="quiz-explanation">
+                        <strong>Jawaban benar: A) Sipil: 0° hingga -6°, Astronomi: -12° hingga -18°</strong><br>
+                        Ketiga jenis twilight didefinisikan oleh kedalaman Matahari di bawah horizon:<br>
+                        • Sipil: cukup terang untuk aktivitas outdoor<br>
+                        • Nautika: diantara sipil & astronomi<br>
+                        • Astronomi: langit tampak gelap, tapi sedikit cahaya masih terlihat<br>
+                        Baik fajar (dawn/pagi) maupun senja (dusk/sore) memiliki ketiga fase ini.
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-question" id="q4">
+                    <h4>4. Untuk Bandung (φ = -6.9°), bintang apa yang paling mungkin sirkumpolar?</h4>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="a"> A) Sirius (δ ≈ -16.7°)
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="b"> B) Polaris (δ ≈ +89.3°) ✓
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="c"> C) Orion (δ ≈ 0°)
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="d"> D) Canopus (δ ≈ -52.7°)
+                        </label>
+                    </div>
+                    <button class="quiz-submit-btn" onclick="submitAnswer('q4', 'b')">Jawab</button>
+                    <div class="quiz-explanation">
+                        <strong>Jawaban benar: B) Polaris (δ ≈ +89.3°)</strong><br>
+                        Batas sirkumpolar untuk Bandung adalah |δ| > 83.1°. Polaris dengan δ = +89.3° memenuhi syarat. Namun, Polaris dilihat dari Bandung berada sangat rendah di ufuk utara (hanya sekitar 83° di atas utara langit, bukan zenith). Bintang-bintang terang lainnya seperti Sirius, Orion, Canopus semuanya terbit & terbenam di Bandung.
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="quiz-question" id="q5">
+                    <h4>5. Berapa diameter Bimasakti (Milky Way) kita, dan di posisi mana Matahari kita berada?</h4>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q5" value="a"> A) ~10,000 ly, Matahari di pusat
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q5" value="b"> B) ~100,000 ly (30 kpc), Matahari di lengan Orion ~26,000 ly dari pusat ✓
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q5" value="c"> C) ~1 juta ly, Matahari di pinggir galaksi
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q5" value="d"> D) ~500,000 ly, Matahari di bulge pusat
+                        </label>
+                    </div>
+                    <button class="quiz-submit-btn" onclick="submitAnswer('q5', 'b')">Jawab</button>
+                    <div class="quiz-explanation">
+                        <strong>Jawaban benar: B) ~100,000 ly (30 kpc), Matahari di lengan Orion ~26,000 ly dari pusat</strong><br>
+                        Bimasakti adalah galaksi spiral raksasa dengan ~200 miliar bintang. Pusat galaksi ditandai lubang hitam Sagittarius A* (2.6 juta massa Matahari). Matahari kita mengelilingi pusat galaksi dengan periode ~230-250 juta tahun (1 galactic year). Karena jaraknya dari pusat, Matahari tidak merasakan gravitasi inti secara langsung, tetapi terikat oleh distribusi massa keseluruhan galaksi.
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border-left: 4px solid #00d4ff; text-align: center;">
+                    <p style="font-size: 1.1em; color: #7dd3ff;"><strong>Selesai menjawab? Bagus!</strong></p>
+                    <p style="margin-top: 10px;">Periksa jawaban Anda dengan penjelasan di atas. Jika ada yang kurang jelas, kembali ke bagian teori di Tab A atau Tab B.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reference -->
+        <div class="reference">
+            <p>📚 <strong>Sumber:</strong> Catatan Kuliah AS6031 Astronomi A | Observatorium Bosscha, ITB, Bandung</p>
+            <p>Diperbarui: April 2026</p>
+        </div>
+    </div>
+
+    <script>
+        // ===== TAB NAVIGATION =====
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const btns = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            btns.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ===== COSMIC ZOOM =====
+        const zoomData = [
+            { scale: "1 cm", emoji: "🔭", description: "Observatorium Bosscha, Lembang. Teleskop optik & peralatan astronomi." },
+            { scale: "10 cm", emoji: "📏", description: "Ukuran manusia—kepala hingga dada." },
+            { scale: "1 m", emoji: "🚶", description: "Tinggi manusia, ukuran ruangan kecil." },
+            { scale: "10 m", emoji: "🏠", description: "Rumah kecil, panjang teleskop refractor Bosscha." },
+            { scale: "100 m", emoji: "🏢", description: "Gedung bertingkat, lapangan olahraga." },
+            { scale: "1 km", emoji: "🏘️", description: "Desa kecil, pusat kota Lembang." },
+            { scale: "10 km", emoji: "🗺️", description: "Wilayah kota Bandung." },
+            { scale: "100 km", emoji: "🌏", description: "Provinsi Jawa Barat, radius Bandung metropolitan." },
+            { scale: "1.000 km", emoji: "🌍", description: "Diameter Bumi ≈ 12,742 km. Seluruh Indonesia terlihat." },
+            { scale: "10.000 km", emoji: "🪐", description: "Wilayah planet-planet seperti Jupiter." },
+            { scale: "100.000 km", emoji: "☀️", description: "Diameter Matahari ≈ 1.4 juta km." },
+            { scale: "400.000 km", emoji: "🌙", description: "Jarak Bumi-Bulan ≈ 384,400 km. Skala Tata Surya dalam Zona dekat." },
+            { scale: "1 juta km", emoji: "🪐", description: "Diameter Jupiter ≈ 139,000 km. Jarak Merkurius-Matahari." },
+            { scale: "10 juta km", emoji: "💫", description: "Orbit Venus, Merkurius. Wilayah planet dalam." },
+            { scale: "100 juta km", emoji: "⭐", description: "Orbit Mars ≈ 150 juta km dari Matahari." },
+            { scale: "150 juta km (1 AU)", emoji: "🌎", description: "Orbit Bumi sempurna. Satuan dasar astronomi!" },
+            { scale: "10 AU", emoji: "🪐", description: "Orbit Saturnus ≈ 9.5 AU. Tata Surya luar dimulai." },
+            { scale: "50 AU", emoji: "❄️", description: "Kuiper Belt, tempat Pluto & komet es." },
+            { scale: "1.000 AU", emoji: "☄️", description: "Jarak Matahari dari sistem bintang terdekat (Proxima Centauri)." },
+            { scale: "10.000 AU", emoji: "🌌", description: "Inner Oort Cloud, sumber komet jangka panjang." },
+            { scale: "100.000 AU", emoji: "🌌", description: "Outer Oort Cloud, batas pengaruh gravitasi Matahari." },
+            { scale: "5 ly", emoji: "⭐", description: "Proxima Centauri (bintang terdekat). Jarak ≈ 4.24 ly. Cahaya butuh 5 tahun sampai." },
+            { scale: "10 ly", emoji: "⭐", description: "Sirius, Vega. Bintang-bintang terdekat yang terlihat terang." },
+            { scale: "100 ly", emoji: "💫", description: "Wilayah bintang lokal. Aldebaran, Betelgeuse." },
+            { scale: "1.000 ly", emoji: "🌟", description: "Orion Arm, lengan spiral Bimasakti tempat Matahari berada." },
+            { scale: "10.000 ly", emoji: "🌌", description: "Pusat Bimasakti (Sagittarius A*). Lubang hitam 2.6 juta M☉." },
+            { scale: "100.000 ly", emoji: "🌌", description: "Diameter Bimasakti ≈ 30 kpc. Seluruh galaksi spiral kita." },
+            { scale: "10 Mpc", emoji: "🪐", description: "Cluster Virgo, ratusan galaksi. Diameter ~2 Mpc." },
+            { scale: "100 Mpc", emoji: "🌐", description: "Supercluster Virgo, jutaan galaksi. Kelompok Lokal adalah bagian kecil." },
+            { scale: "1 Gpc", emoji: "🔭", description: "Jaring kosmik (Cosmic Web). Filamen, dinding, void raksasa." },
+            { scale: "4 Gpc", emoji: "🪐", description: "Observable Universe (Alam Semesta Terlihat). Jari-jari Hubble ~46.5 Miliar ly!" }
+        ];
+
+        let currentZoomIndex = 0;
+
+        function updateZoom() {
+            currentZoomIndex = parseInt(document.getElementById('zoomSlider').value);
+            const data = zoomData[currentZoomIndex];
+            document.getElementById('zoomScale').textContent = data.scale;
+            document.getElementById('zoomEmoji').textContent = data.emoji;
+            document.getElementById('zoomDescription').textContent = data.description;
+        }
+
+        function zoomIn() {
+            if (currentZoomIndex < zoomData.length - 1) {
+                currentZoomIndex++;
+                document.getElementById('zoomSlider').value = currentZoomIndex;
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoomIndex > 0) {
+                currentZoomIndex--;
+                document.getElementById('zoomSlider').value = currentZoomIndex;
+                updateZoom();
+            }
+        }
+
+        // ===== CONTENT TABS (Isi Alam Semesta) =====
+        function switchContentTab(tabName) {
+            const tabs = document.querySelectorAll('.content-display');
+            const btns = document.querySelectorAll('.content-tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            btns.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ===== DISTANCE CONVERTER =====
+        const CONVERSIONS = {
+            km: 1,
+            au: 150000000,
+            ly: 9.461e12,
+            pc: 3.086e13,
+            mpc: 3.086e22,
+            gpc: 3.086e25
+        };
+
+        function convertDistance(unit) {
+            const value = parseFloat(document.getElementById('conv-' + unit).value);
+            if (isNaN(value) || value === '') return;
+
+            const km = value * CONVERSIONS[unit];
+
+            document.getElementById('conv-km').value = (km).toExponential(3);
+            document.getElementById('conv-au').value = (km / CONVERSIONS.au).toFixed(6);
+            document.getElementById('conv-ly').value = (km / CONVERSIONS.ly).toFixed(6);
+            document.getElementById('conv-pc').value = (km / CONVERSIONS.pc).toFixed(6);
+            document.getElementById('conv-mpc').value = (km / CONVERSIONS.mpc).toFixed(6);
+            document.getElementById('conv-gpc').value = (km / CONVERSIONS.gpc).toFixed(6);
+        }
+
+        // ===== TWILIGHT DIAGRAM =====
+        function highlightTwilight(type) {
+            const zones = document.querySelectorAll('.twilight-zone');
+            zones.forEach(z => z.style.opacity = '0.5');
+            event.target.closest('.twilight-zone').style.opacity = '1';
+        }
+
+        // ===== TWILIGHT CALCULATOR =====
+        function calculateTwilight() {
+            const dateStr = document.getElementById('calcDate').value;
+            const lat = parseFloat(document.getElementById('calcLat').value);
+            const lon = parseFloat(document.getElementById('calcLon').value);
+            const tz = parseInt(document.getElementById('calcTZ').value);
+
+            if (!dateStr) {
+                alert('Pilih tanggal terlebih dahulu!');
+                return;
+            }
+
+            const date = new Date(dateStr);
+            const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+
+            // Solar declination (aproksimasi Fourier)
+            const declination = 23.44 * Math.sin((2 * Math.PI * (dayOfYear - 81)) / 365) * (Math.PI / 180);
+            const latRad = lat * (Math.PI / 180);
+
+            // Calculate hour angles for different altitudes
+            function hourAngleForAltitude(altitude) {
+                const altRad = altitude * (Math.PI / 180);
+                const numerator = Math.sin(altRad) - Math.sin(latRad) * Math.sin(declination);
+                const denominator = Math.cos(latRad) * Math.cos(declination);
+                const cosH = numerator / denominator;
+
+                if (Math.abs(cosH) > 1) return null; // No rise/set
+                return Math.acos(cosH) * (180 / Math.PI); // In degrees
+            }
+
+            // Altitudes for different twilight types
+            const altitudes = {
+                sunrise: -50 / 60, // 50 arcminutes
+                civil: -6,
+                nautical: -12,
+                astronomical: -18
+            };
+
+            const ha_sunrise = hourAngleForAltitude(altitudes.sunrise);
+            const ha_civil = hourAngleForAltitude(altitudes.civil);
+            const ha_nautical = hourAngleForAltitude(altitudes.nautical);
+            const ha_astronomical = hourAngleForAltitude(altitudes.astronomical);
+
+            if (!ha_sunrise) {
+                alert('Polar night atau polar day di lokasi/tanggal ini!');
+                return;
+            }
+
+            // Solar noon (12:00 local solar time, roughly)
+            const eot = 229.18 * (0.000075 + 0.001868 * Math.cos(2 * Math.PI * dayOfYear / 365) - 0.032077 * Math.sin(2 * Math.PI * dayOfYear / 365)) * (180 / Math.PI);
+            const solarNoonMinutes = 12 * 60 + eot + lon / 15 * 60;
+
+            function timeFromHourAngle(ha, tzOffset) {
+                const minutes = 12 * 60 - ha * 4; // Hour angle to minutes (1 hour = 15 degrees)
+                const localTime = solarNoonMinutes + minutes;
+                const hours = Math.floor(localTime / 60) % 24;
+                const mins = Math.floor(localTime % 60);
+                return `${String(hours + tzOffset).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+            }
+
+            document.getElementById('result-sunrise').textContent = timeFromHourAngle(ha_sunrise, tz);
+            document.getElementById('result-sunset').textContent = timeFromHourAngle(-ha_sunrise, tz);
+            document.getElementById('result-civil-dawn').textContent = Math.round((ha_civil - ha_sunrise) * 4) + ' menit';
+            document.getElementById('result-civil-dusk').textContent = Math.round((ha_civil - ha_sunrise) * 4) + ' menit';
+            document.getElementById('result-nautical-dawn').textContent = Math.round((ha_nautical - ha_sunrise) * 4) + ' menit';
+            document.getElementById('result-nautical-dusk').textContent = Math.round((ha_nautical - ha_sunrise) * 4) + ' menit';
+            document.getElementById('result-astro-dawn').textContent = Math.round((ha_astronomical - ha_sunrise) * 4) + ' menit';
+            document.getElementById('result-astro-dusk').textContent = Math.round((ha_astronomical - ha_sunrise) * 4) + ' menit';
+
+            document.getElementById('twilightResults').style.display = 'grid';
+        }
+
+        // Set default date to today
+        document.getElementById('calcDate').valueAsDate = new Date();
+
+        // ===== QUIZ =====
+        function submitAnswer(questionId, correctAnswer) {
+            const selected = document.querySelector(`input[name="${questionId}"]:checked`);
+            if (!selected) {
+                alert('Pilih jawaban terlebih dahulu!');
+                return;
+            }
+
+            const question = document.getElementById(questionId);
+            const options = question.querySelectorAll('.quiz-option');
+            const explanation = question.querySelector('.quiz-explanation');
+
+            options.forEach(opt => {
+                const input = opt.querySelector('input');
+                if (input.value === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (input.checked) {
+                    opt.classList.add('incorrect');
+                }
+                opt.style.pointerEvents = 'none';
+            });
+
+            explanation.classList.add('show');
+            question.classList.add('answered');
+            event.target.disabled = true;
+        }
+    </script>
+</body>
+</html>
